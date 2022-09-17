@@ -50,7 +50,7 @@
                 <TextBlock Foreground="{StaticResource WHITE_300}"
                            FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
                            FontSize="8"
-                           Text="{loc:LocalizationString '//Strings/Client/Settings/Setting[@Id=&quot;REQUIRES_RESTART_STRING&quot;]'}"
+                           Text="{loc:LocalizationString '//Strings/Client/Generics/Generic[@Id=&quot;REQUIRES_RESTART_STRING&quot;]'}"
                            VerticalAlignment="Center"
                            Visibility="{Binding RequiresRestart, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </StackPanel>
