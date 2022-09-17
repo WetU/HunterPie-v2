@@ -669,6 +669,9 @@
 					 String="개발 도구"
 					 Description="심화 개발 도구"/>
 
+			<Setting Id="REQUIRES_RESTART_STRING"
+					 String="(재시작 필요)"/>
+
 			<Setting Id="ABNORMALITY_SONGS_STRING"
 					 String="선율"
 					 Description="선율 효과"/>

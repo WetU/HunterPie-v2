@@ -670,6 +670,9 @@
 					 String="Dev Tools"
 					 Description="Advanced development tools"/>
 
+			<Setting Id="REQUIRES_RESTART_STRING"
+					 String="(Requires restart)"/>
+
 			<Setting Id="ABNORMALITY_SONGS_STRING"
 					 String="Songs"
 					 Description="Song abnormalities"/>
