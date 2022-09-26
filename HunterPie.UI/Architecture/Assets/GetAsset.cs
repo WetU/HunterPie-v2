@@ -8,41 +8,47 @@ using System.Threading.Tasks;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace HunterPie.UI.Architecture.Assets;
-
-[MarkupExtensionReturnType(typeof(ImageSource))]
-public class MonsterIcon : MarkupExtension
+namespace HunterPie.UI.Architecture.Assets
 {
-    public string MonsterEm { get; set; }
-
-    public MonsterIcon(string monsterEm)
+    [MarkupExtensionReturnType(typeof(ImageSource))]
+    public class MonsterIcon : MarkupExtension
     {
-        MonsterEm = monsterEm;
+        public string MonsterEm { get; set; }
+
+        public MonsterIcon(string monsterEm)
+        {
+            MonsterEm = monsterEm;
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            async Task<string> DownloadMonsterIcon()
+            {
+                return await CDN.GetMonsterIconUrl(MonsterEm);
+            }
+            string imagePath = ClientInfo.GetPathFor($"Assets/Monsters/Icons/{MonsterEm}.png");
+
+            // If file doesn't exist locally, we can check for the CDN
+            if (!File.Exists(imagePath))
+                AsyncHelper.RunSync(DownloadMonsterIcon);
+
+            return $"pack://siteoforigin:,,,/Assets/Monsters/Icons/{MonsterEm}.png";
+        }
     }
 
-    public override object ProvideValue(IServiceProvider serviceProvider)
+    [MarkupExtensionReturnType(typeof(string))]
+    public class LocalizationString : MarkupExtension
     {
-        async Task<string> DownloadMonsterIcon() => await CDN.GetMonsterIconUrl(MonsterEm);
+        public string LocalizationId { get; set; }
 
-        string imagePath = ClientInfo.GetPathFor($"Assets/Monsters/Icons/{MonsterEm}.png");
+        public LocalizationString(string localizationId)
+        {
+            LocalizationId = localizationId;
+        }
 
-        // If file doesn't exist locally, we can check for the CDN
-        if (!File.Exists(imagePath))
-            _ = AsyncHelper.RunSync(DownloadMonsterIcon);
-
-        return $"pack://siteoforigin:,,,/Assets/Monsters/Icons/{MonsterEm}.png";
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return Localization.Query(LocalizationId)?.Attributes["String"].Value;
+        }
     }
-}
-
-[MarkupExtensionReturnType(typeof(string))]
-public class LocalizationString : MarkupExtension
-{
-    public string LocalizationId { get; set; }
-
-    public LocalizationString(string localizationId)
-    {
-        LocalizationId = localizationId;
-    }
-
-    public override object ProvideValue(IServiceProvider serviceProvider) => Localization.Query(LocalizationId)?.Attributes["String"].Value;
 }

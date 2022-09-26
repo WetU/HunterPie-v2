@@ -2,17 +2,21 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class WidthToPercentMarkerPosition : IValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class WidthToPercentMarkerPosition : IValueConverter
     {
-        double width = (double)value;
-        double idx = int.Parse((string)parameter);
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double width = (double)value;
+            double idx = int.Parse((string)parameter);
 
-        return width / 10 * idx;
+            return (width / 10) * idx;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

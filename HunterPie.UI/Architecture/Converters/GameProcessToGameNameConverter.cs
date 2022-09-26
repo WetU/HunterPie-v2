@@ -4,36 +4,44 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class GameProcessToGameNameConverter : IValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class GameProcessToGameNameConverter : IValueConverter
     {
-        return value is GameProcess game
-            ? (object)(game switch
-            {
-                GameProcess.None => "None",
-                GameProcess.MonsterHunterRiseSunbreakDemo => Games.MONSTER_HUNTER_RISE_SUNBREAK_DEMO,
-                GameProcess.MonsterHunterRise => Games.MONSTER_HUNTER_RISE,
-                GameProcess.MonsterHunterWorld => Games.MONSTER_HUNTER_WORLD,
-                _ => throw new NotImplementedException(),
-            })
-            : throw new ArgumentException($"Expected type {typeof(GameProcess)}, found {targetType}");
-    }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return value is string game
-            ? (object)(game switch
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is GameProcess game)
             {
-                "None" => GameProcess.None,
-                Games.MONSTER_HUNTER_RISE_SUNBREAK_DEMO => GameProcess.MonsterHunterRiseSunbreakDemo,
-                Games.MONSTER_HUNTER_RISE => GameProcess.MonsterHunterRise,
-                Games.MONSTER_HUNTER_WORLD => GameProcess.MonsterHunterWorld,
-                _ => throw new NotImplementedException(),
-            })
-            : throw new ArgumentException($"Expected type {typeof(GameProcess)}, found {targetType}");
+                return game switch
+                {
+                    GameProcess.None => "None",
+                    GameProcess.MonsterHunterRiseSunbreakDemo => Games.MONSTER_HUNTER_RISE_SUNBREAK_DEMO,
+                    GameProcess.MonsterHunterRise => Games.MONSTER_HUNTER_RISE,
+                    GameProcess.MonsterHunterWorld => Games.MONSTER_HUNTER_WORLD,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            throw new ArgumentException($"Expected type {typeof(GameProcess)}, found {targetType}");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string game)
+            {
+                return game switch
+                {
+                    "None" => GameProcess.None,
+                    Games.MONSTER_HUNTER_RISE_SUNBREAK_DEMO => GameProcess.MonsterHunterRiseSunbreakDemo,
+                    Games.MONSTER_HUNTER_RISE => GameProcess.MonsterHunterRise,
+                    Games.MONSTER_HUNTER_WORLD => GameProcess.MonsterHunterWorld,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            throw new ArgumentException($"Expected type {typeof(GameProcess)}, found {targetType}");
+        }
     }
 }

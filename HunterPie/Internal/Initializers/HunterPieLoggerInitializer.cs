@@ -2,15 +2,16 @@
 using HunterPie.Domain.Interfaces;
 using HunterPie.UI.Logger;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class HunterPieLoggerInitializer : IInitializer
+namespace HunterPie.Internal.Initializers
 {
-    public void Init()
+    internal class HunterPieLoggerInitializer : IInitializer
     {
-        ILogger logger = new HunterPieLogger();
-        Log.Add(logger);
+        public void Init()
+        {
+            ILogger logger = new HunterPieLogger();
+            Log.Add(logger);
 
-        Log.Info("Initialized HunterPie logger");
+            Log.Info("Initialized HunterPie logger");
+        }
     }
 }

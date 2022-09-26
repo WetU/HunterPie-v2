@@ -3,31 +3,32 @@ using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Rise.Definitions;
 using System;
 
-namespace HunterPie.Core.Game.Rise.Entities.Activities;
-
-public class MHRCohoot : IEventDispatcher, IUpdatable<MHRCohootStructure>
+namespace HunterPie.Core.Game.Rise.Entities.Activities
 {
-    private int _count;
-
-    public int Count
+    public class MHRCohoot : IEventDispatcher, IUpdatable<MHRCohootStructure>
     {
-        get => _count;
-        private set
+        private int _count;
+
+        public int Count
         {
-            if (value != _count)
+            get => _count;
+            private set
             {
-                _count = value;
-                this.Dispatch(OnCountChange, this);
+                if (value != _count)
+                {
+                    _count = value;
+                    this.Dispatch(OnCountChange, this);
+                }
             }
         }
-    }
-    public int MaxCount { get; private set; }
+        public int MaxCount { get; private set; }
 
-    public event EventHandler<MHRCohoot> OnCountChange;
+        public event EventHandler<MHRCohoot> OnCountChange;
 
-    void IUpdatable<MHRCohootStructure>.Update(MHRCohootStructure data)
-    {
-        MaxCount = data.MaxCount;
-        Count = data.Count;
+        void IUpdatable<MHRCohootStructure>.Update(MHRCohootStructure data)
+        {
+            MaxCount = data.MaxCount;
+            Count = data.Count;
+        }
     }
 }

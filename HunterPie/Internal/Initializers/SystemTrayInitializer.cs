@@ -5,20 +5,21 @@ using System;
 using System.Drawing;
 using System.IO;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class SystemTrayInitializer : IInitializer, IDisposable
+namespace HunterPie.Internal.Initializers
 {
-    public void Dispose() => TrayService.Dispose();
-
-    public void Init()
+    internal class SystemTrayInitializer : IInitializer, IDisposable
     {
-        TrayService.Initialize(
-            "HunterPie",
-            "HunterPie",
-            Icon.ExtractAssociatedIcon(
-                Path.Combine(ClientInfo.ClientPath, "HunterPie.exe")
-            )
-        );
+        public void Dispose() => TrayService.Dispose();
+
+        public void Init()
+        {
+            TrayService.Initialize(
+                "HunterPie",
+                "HunterPie",
+                Icon.ExtractAssociatedIcon(
+                    Path.Combine(ClientInfo.ClientPath, "HunterPie.exe")
+                )
+            );
+        }
     }
 }

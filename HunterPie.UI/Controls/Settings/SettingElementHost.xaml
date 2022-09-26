@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-	     xmlns:loc="clr-namespace:HunterPie.UI.Architecture.Assets"
              xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters"
              Background="Transparent"
              d:DesignWidth="400"
@@ -50,7 +49,7 @@
                 <TextBlock Foreground="{StaticResource WHITE_300}"
                            FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
                            FontSize="8"
-                           Text="{loc:LocalizationString '//Strings/Client/Generics/Generic[@Id=&quot;REQUIRES_RESTART_STRING&quot;]'}"
+                           Text="(Requires restart)"
                            VerticalAlignment="Center"
                            Visibility="{Binding RequiresRestart, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </StackPanel>

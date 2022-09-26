@@ -1,6 +1,13 @@
-﻿namespace HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal class DesignModeViewModels
+namespace HunterPie.UI.Overlay.Widgets.Monster.ViewModels
 {
-    public static readonly MockBossMonsterViewModel MockBossMonsterViewModel = new(new());
+    internal class DesignModeViewModels
+    {
+        public readonly static MockBossMonsterViewModel MockBossMonsterViewModel = new MockBossMonsterViewModel(new());
+    }
 }

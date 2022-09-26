@@ -12,8 +12,7 @@
                        d:DesignWidth="60" 
                        ClipToBounds="True">
     <arch:ClickableControl.Resources>
-        <Storyboard x:Key="PART_RippleAnimation" 
-                    Storyboard.TargetName="PART_Ripple">
+        <Storyboard x:Key="PART_RippleAnimation" Storyboard.TargetName="PART_Ripple">
             <DoubleAnimation Storyboard.TargetProperty="Width" 
                              From="0" 
                              Duration="0:0:0.3" />
@@ -43,11 +42,8 @@
         <converters:RelativeSizeConverter x:Key="RelativeSizeConverter"/>
     </arch:ClickableControl.Resources>
 
-    <Border CornerRadius="{Binding CornerRadius, ElementName=NativeButtonControl}"
-            BorderThickness="{Binding BorderThickness, ElementName=NativeButtonControl}"
-            BorderBrush="{Binding BorderBrush, ElementName=NativeButtonControl}"
-            Background="{Binding Background, ElementName=NativeButtonControl}">
-        <Grid ClipToBounds="True">
+    <Border>
+        <Grid>
             <Canvas>
                 <Rectangle x:Name="PART_Highlight"
                                VerticalAlignment="Top"
@@ -67,14 +63,6 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Canvas>
-            
-            <Label Content="{Binding Content, ElementName=NativeButtonControl}"
-                   Foreground="{Binding Foreground, ElementName=NativeButtonControl}"
-                   FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
-                   Padding="{Binding Padding, ElementName=NativeButtonControl}"
-                   HorizontalContentAlignment="{Binding HorizontalContentAlignment, ElementName=NativeButtonControl}"
-                   VerticalContentAlignment="{Binding VerticalContentAlignment, ElementName=NativeButtonControl}"/>
-
             <Canvas>
                 <Ellipse x:Name="PART_Ripple"
                              Fill="#40F5F5F5" 
@@ -82,6 +70,13 @@
                              Height="{Binding Path=Width, RelativeSource={RelativeSource Self}}"
                              VerticalAlignment="Top"/>
             </Canvas>
+
+            <Label Content="{Binding Content, ElementName=NativeButtonControl}"
+                   Foreground="{Binding Foreground, ElementName=NativeButtonControl}"
+                   FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
+                   Padding="2,5,2,5"
+                   HorizontalContentAlignment="{Binding HorizontalContentAlignment, ElementName=NativeButtonControl}"
+                   VerticalContentAlignment="{Binding VerticalContentAlignment, ElementName=NativeButtonControl}"/>
         </Grid>
     </Border>
     <arch:ClickableControl.Style>

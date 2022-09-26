@@ -2,13 +2,14 @@
 using HunterPie.Domain.Interfaces;
 using HunterPie.UI.Dialog;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class DialogManagerInitializer : IInitializer
+namespace HunterPie.Internal.Initializers
 {
-    public void Init()
+    internal class DialogManagerInitializer : IInitializer
     {
-        INativeDialogFactory factory = new UIDialogFactory();
-        _ = new DialogManager(factory);
+        public void Init()
+        {
+            INativeDialogFactory factory = new UIDialogFactory();
+            _ = new DialogManager(factory);
+        }
     }
 }

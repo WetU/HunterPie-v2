@@ -5,18 +5,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Settings.Internal;
-
-internal class StringVisualConverter : IVisualConverter
+namespace HunterPie.UI.Settings.Internal
 {
-    public FrameworkElement Build(object parent, PropertyInfo childInfo)
+    internal class StringVisualConverter : IVisualConverter
     {
-        var observable = (Observable<string>)childInfo.GetValue(parent);
-        Binding binding = VisualConverterHelper.CreateBinding(observable);
-        TextBox textbox = new();
+        public FrameworkElement Build(object parent, PropertyInfo childInfo)
+        {
+            Observable<string> observable = (Observable<string>)childInfo.GetValue(parent);
+            var binding = VisualConverterHelper.CreateBinding(observable);
+            TextBox textbox = new();
 
-        _ = BindingOperations.SetBinding(textbox, TextBox.TextProperty, binding);
+            BindingOperations.SetBinding(textbox, TextBox.TextProperty, binding);
 
-        return textbox;
+            return textbox;
+        }
     }
 }

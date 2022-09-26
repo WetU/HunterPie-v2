@@ -1,45 +1,46 @@
-﻿using HunterPie.Core.Client;
+﻿using System;
+using HunterPie.Core.Client;
 using HunterPie.Core.Http;
 using Newtonsoft.Json;
-using System;
 using PoogieClient = HunterPie.Core.Http.Poogie;
 
-namespace HunterPie.Internal.Poogie;
-
-public class RemoteCrashReporter
+namespace HunterPie.Internal.Poogie
 {
-    public const string REPORT_CRASH = "/v1/report/crash";
-
-    private class CrashReportSchema
+    public class RemoteCrashReporter
     {
-        [JsonProperty("version")]
-        public string Version { get; init; }
+        public const string REPORT_CRASH = "/v1/report/crash";
 
-        [JsonProperty("game_build")]
-        public string GameBuild { get; init; }
-
-        [JsonProperty("exception")]
-        public string Exception { get; init; }
-
-        [JsonProperty("stacktrace")]
-        public string Stacktrace { get; init; }
-    }
-
-    public static void Send(Exception exception)
-    {
-        CrashReportSchema schema = new()
+        private class CrashReportSchema
         {
-            Version = ClientInfo.Version.ToString(),
-            GameBuild = "-",
-            Exception = exception.GetType().ToString(),
-            Stacktrace = exception.ToString()
-        };
+            [JsonProperty("version")]
+            public string Version { get; init; }
 
-        PoogieClient poogie = PoogieFactory.Default()
-                                           .Post(REPORT_CRASH)
-                                           .WithJson(schema)
-                                           .Build();
+            [JsonProperty("game_build")]
+            public string GameBuild { get; init; }
 
-        _ = poogie.Request();
+            [JsonProperty("exception")]
+            public string Exception { get; init; }
+
+            [JsonProperty("stacktrace")]
+            public string Stacktrace { get; init; }
+        }
+
+        public static void Send(Exception exception)
+        {
+            CrashReportSchema schema = new()
+            {
+                Version = ClientInfo.Version.ToString(),
+                GameBuild = "-",
+                Exception = exception.GetType().ToString(),
+                Stacktrace = exception.ToString()
+            };
+
+            PoogieClient poogie = PoogieFactory.Default()
+                                               .Post(REPORT_CRASH)
+                                               .WithJson(schema)
+                                               .Build();
+
+            poogie.Request();
+        }
     }
 }

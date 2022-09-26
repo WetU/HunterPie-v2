@@ -1,8 +1,9 @@
 ﻿using HunterPie.Core.Architecture;
 
-namespace HunterPie.Core.Domain.Features.Domain;
-
-public interface IFeature
+namespace HunterPie.Core.Domain.Features.Domain
 {
-    public Observable<bool> IsEnabled { get; }
+    public interface IFeature
+    {
+        public Observable<bool> IsEnabled { get; }
+    }
 }

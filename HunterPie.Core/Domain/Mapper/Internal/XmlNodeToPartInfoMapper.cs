@@ -5,59 +5,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
-namespace HunterPie.Core.Domain.Mapper.Internal;
-
-internal class XmlNodeToPartInfoMapper : IMapper<XmlNode, PartInfo[]>
+namespace HunterPie.Core.Domain.Mapper.Internal
 {
-    private static uint[] ParseTenderizedIdsToArray(string tenderizedIds)
+    class XmlNodeToPartInfoMapper : IMapper<XmlNode, PartInfo[]>
     {
-        if (tenderizedIds == "")
-            return Array.Empty<uint>();
-
-        string[] ids = tenderizedIds.Split(',');
-        uint[] parsed = new uint[ids.Length];
-        uint i = 0;
-
-        foreach (string id in ids)
+        static private uint[] ParseTenderizedIdsToArray(string tenderizedIds)
         {
-            parsed[i] = Convert.ToUInt32(id);
-            i++;
-        }
-
-        return parsed;
-    }
-
-    public PartInfo[] Map(XmlNode data)
-    {
-        var parts = new List<PartInfo>();
-        if (data == null)
-            return null;
-
-        XmlNodeList mParts = data.SelectNodes("Parts/Part");
-        uint RemovablePartIndex = 0;
-        foreach (XmlNode partData in mParts)
-        {
-            var pInfo = new PartInfo
+            if (tenderizedIds == "") 
+                return Array.Empty<uint>();
+            
+            string[] ids = tenderizedIds.Split(',');
+            uint[] parsed = new uint[ids.Length];
+            uint i = 0;
+            
+            foreach (string id in ids)
             {
-                Id = partData.Attributes["Name"]?.Value ?? "MONSTER_PART_UNKNOWN",
-                IsRemovable = bool.Parse(partData.Attributes["IsRemovable"]?.Value ?? "false"),
-                GroupId = partData.Attributes["Group"]?.Value ?? "MISC",
-                Skip = bool.Parse(partData.Attributes["Skip"]?.Value ?? "false"),
-                Index = uint.Parse(partData.Attributes["Index"]?.Value ?? RemovablePartIndex.ToString()),
-                TenderizeIds = ParseTenderizedIdsToArray(partData.Attributes["TenderizeIds"]?.Value ?? "")
-            };
+                parsed[i] = Convert.ToUInt32(id);
+                i++;
+            }
 
-            if (pInfo.IsRemovable)
-                RemovablePartIndex++;
-
-            pInfo.BreakThresholds = partData.SelectNodes("Break")
-                .Cast<XmlNode>()
-                .Select(node => MapFactory.Map<XmlNode, ThresholdInfo>(node))
-                .ToArray();
-
-            parts.Add(pInfo);
+            return parsed;
         }
 
-        return parts.ToArray();
+        public PartInfo[] Map(XmlNode data)
+        {
+            List<PartInfo> parts = new List<PartInfo>();
+            if (data == null) return null;
+
+            XmlNodeList mParts = data.SelectNodes("Parts/Part");
+            uint RemovablePartIndex = 0;
+            foreach (XmlNode partData in mParts)
+            {
+                PartInfo pInfo = new PartInfo
+                {
+                    Id = partData.Attributes["Name"]?.Value ?? "MONSTER_PART_UNKNOWN",
+                    IsRemovable = bool.Parse(partData.Attributes["IsRemovable"]?.Value ?? "false"),
+                    GroupId = partData.Attributes["Group"]?.Value ?? "MISC",
+                    Skip = bool.Parse(partData.Attributes["Skip"]?.Value ?? "false"),
+                    Index = uint.Parse(partData.Attributes["Index"]?.Value ?? RemovablePartIndex.ToString()),
+                    TenderizeIds = ParseTenderizedIdsToArray(partData.Attributes["TenderizeIds"]?.Value ?? "")
+                };
+
+                if (pInfo.IsRemovable) 
+                    RemovablePartIndex++;
+
+                pInfo.BreakThresholds = partData.SelectNodes("Break")
+                    .Cast<XmlNode>()
+                    .Select(node => MapFactory.Map<XmlNode, ThresholdInfo>(node))
+                    .ToArray();
+
+                parts.Add(pInfo);
+            }
+
+            return parts.ToArray();
+        }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using HunterPie.Core.Game.Enums;
 
-namespace HunterPie.Core.Domain.DTO;
-
-public struct ZoneData
+namespace HunterPie.Core.Domain.DTO
 {
-    public Stage ZoneId;
+    public struct ZoneData
+    {
+        public Stage ZoneId;
+    }
 }

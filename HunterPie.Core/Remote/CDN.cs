@@ -6,43 +6,50 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace HunterPie.Core.Remote;
-
-public class CDN
+namespace HunterPie.Core.Remote
 {
-    private const string CDN_BASE_URL = "https://cdn.hunterpie.com";
-
-    private static readonly HashSet<string> _notFoundCache = new();
-
-    public static async Task<string> GetMonsterIconUrl(string imagename)
+    public class CDN
     {
-        if (_notFoundCache.Contains(imagename))
-            return null;
+        const string CDN_BASE_URL = "https://cdn.hunterpie.com";
 
-        string localImage = ClientInfo.GetPathFor($"Assets/Monsters/Icons/{imagename}.png");
+        private static HashSet<string> _notFoundCache = new();
 
-        if (File.Exists(localImage))
-            return localImage;
-
-        using Poogie request = new PoogieBuilder(CDN_BASE_URL)
-                                    .Get($"/Assets/Monsters/Icons/{imagename}.png")
-                                    .WithTimeout(TimeSpan.FromSeconds(5))
-                                    .Build();
-
-        using PoogieResponse response = await request.RequestAsync();
+        public static string GetMonsterIcon(string imageName)
         {
-            if (!response.Success)
-                return null;
-
-            if (response.Status != HttpStatusCode.OK)
-            {
-                _ = _notFoundCache.Add(imagename);
-                return null;
-            }
-
-            await response.Download(localImage);
+            return "";
         }
 
-        return localImage;
+        public static async Task<string> GetMonsterIconUrl(string imagename)
+        {
+            if (_notFoundCache.Contains(imagename))
+                return null;
+
+            string localImage = ClientInfo.GetPathFor($"Assets/Monsters/Icons/{imagename}.png");
+
+            if (File.Exists(localImage))
+                return localImage;
+
+
+            using Poogie request = new PoogieBuilder(CDN_BASE_URL)
+                                        .Get($"/Assets/Monsters/Icons/{imagename}.png")
+                                        .WithTimeout(TimeSpan.FromSeconds(5))
+                                        .Build();
+
+            using PoogieResponse response = await request.RequestAsync();
+            {
+                if (!response.Success)
+                    return null;
+
+                if (response.Status != HttpStatusCode.OK)
+                {
+                    _notFoundCache.Add(imagename);
+                    return null;
+                }
+
+                await response.Download(localImage);
+            }
+
+            return localImage;
+        }
     }
 }

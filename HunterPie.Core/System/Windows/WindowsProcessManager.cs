@@ -1,183 +1,154 @@
-﻿using HunterPie.Core.Address.Map;
-using HunterPie.Core.Domain.Enums;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using HunterPie.Core.Extensions;
+using System.Linq;
+using HunterPie.Core.Logger;
 using HunterPie.Core.Domain.Interfaces;
 using HunterPie.Core.Domain.Memory;
 using HunterPie.Core.Domain.Process;
-using HunterPie.Core.Events;
-using HunterPie.Core.Extensions;
-using HunterPie.Core.Logger;
-using HunterPie.Core.System.Windows.Memory;
+using HunterPie.Core.Address.Map;
 using HunterPie.Core.System.Windows.Native;
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+using HunterPie.Core.System.Windows.Memory;
+using HunterPie.Core.Events;
+using HunterPie.Core.Domain.Enums;
 
-#nullable enable
-namespace HunterPie.Core.System.Windows;
-
-internal abstract class WindowsProcessManager : IProcessManager, IEventDispatcher
+namespace HunterPie.Core.System.Windows
 {
-
-    protected Thread? _pooler;
-    private bool _isProcessForeground;
-    private bool _shouldPauseThread;
-    protected bool ShouldPollProcess = true;
-
-    private IMemory? _memory;
-    private IntPtr pHandle;
-
-    public event EventHandler<ProcessEventArgs>? OnGameStart;
-    public event EventHandler<ProcessEventArgs>? OnGameClosed;
-    public event EventHandler<ProcessEventArgs>? OnGameFocus;
-    public event EventHandler<ProcessEventArgs>? OnGameUnfocus;
-
-    public abstract string Name { get; }
-    public abstract GameProcess Game { get; }
-
-    /// <inheritdoc />
-    public bool? HasExitedNormally { get; private set; }
-
-    public int Version { get; private set; }
-
-    public Process? Process { get; private set; }
-
-    public int ProcessId { get; private set; }
-
-    public bool IsRunning { get; private set; }
-
-    public bool IsProcessForeground
+    abstract class WindowsProcessManager : IProcessManager, IEventDispatcher
     {
-        get => _isProcessForeground;
-        private set
+
+        protected Thread pooler;
+        private bool _isProcessForeground;
+        private bool _shouldPauseThread;
+        protected bool ShouldPollProcess = true;
+       
+        private IMemory memory; 
+        private IntPtr pHandle;
+
+        public event EventHandler<ProcessEventArgs> OnGameStart;
+        public event EventHandler<ProcessEventArgs> OnGameClosed;
+        public event EventHandler<ProcessEventArgs> OnGameFocus;
+        public event EventHandler<ProcessEventArgs> OnGameUnfocus;
+
+        public virtual string Name { get; }
+        public virtual GameProcess Game { get; }
+
+        public int Version { get; private set; }
+        public Process? Process { get; private set; }
+        public int ProcessId { get; private set; }
+        public bool IsRunning { get; private set; }
+        public bool IsProcessForeground
         {
-            if (_isProcessForeground != value)
+            get => _isProcessForeground;
+            private set
             {
-                _isProcessForeground = value;
-
-                this.Dispatch(
-                    value ? OnGameFocus
-                          : OnGameUnfocus,
-                    new ProcessEventArgs(Name)
-                );
-            }
-        }
-    }
-
-    public IMemory Memory => _memory!;
-
-    public void Initialize()
-    {
-        Log.Info($"Started scanning for process {Name}...");
-
-        _pooler = new Thread(new ThreadStart(ExecutePolling)) { Name = "PollingBackgroundThread", IsBackground = true, };
-        _pooler.Start();
-    }
-
-    private void ExecutePolling()
-    {
-        while (ShouldPollProcess)
-        {
-            if (_shouldPauseThread)
-            {
-                try
+                if (_isProcessForeground != value)
                 {
-                    Thread.Sleep(Timeout.Infinite);
-                }
-                catch (ThreadInterruptedException)
-                {
-                    continue;
+                    _isProcessForeground = value;
+
+                    this.Dispatch(
+                        value ? OnGameFocus 
+                              : OnGameUnfocus, 
+                        new ProcessEventArgs(Name)
+                    );
                 }
             }
-
-            PollProcessInfo();
-            Thread.Sleep(150);
-        }
-    }
-
-    private void PollProcessInfo()
-    {
-        if (Process?.HasExited == true)
-        {
-            OnProcessExit();
-            return;
         }
 
-        Process? mhProcess = Process.GetProcessesByName(Name)
-            .FirstOrDefault(process => !string.IsNullOrEmpty(process.MainWindowTitle));
+        public IMemory Memory => memory;
 
-        if (mhProcess is null)
-            return;
-
-        if (Process is not null)
+        public void Initialize()
         {
-            IsProcessForeground = User32.GetForegroundWindow() == Process.MainWindowHandle;
-            mhProcess.Dispose();
-            return;
-        }
+            Log.Info($"Started scanning for process {Name}...");
 
-        if (ShouldOpenProcess(mhProcess))
-        {
-            try
+            pooler = new Thread(new ThreadStart(ExecutePolling))
             {
-                if (mhProcess.MainModule is null)
-                    throw new InvalidOperationException("Process main module is null.");
+                Name = "PollingBackgroundThread",
+                IsBackground = true,
+            };
+            pooler.Start();
+        }
 
+        private void ExecutePolling()
+        {
+            while (ShouldPollProcess)
+            {
+                if (_shouldPauseThread)
+                {
+                    try { Thread.Sleep(Timeout.Infinite); }
+                    catch(ThreadInterruptedException) { continue;  }
+                }
+
+                PollProcessInfo();
+                Thread.Sleep(150);
+            }
+        }
+
+        private void PollProcessInfo()
+        {
+            if (Process is not null && Process!.HasExited)
+            {
+                OnProcessExit();
+                return;
+            }
+
+            Process mhProcess = Process.GetProcessesByName(Name)
+                .FirstOrDefault(process => !string.IsNullOrEmpty(process?.MainWindowTitle));
+
+            if (mhProcess is null)
+                return;
+
+            if (Process is not null)
+            {
+                IsProcessForeground = User32.GetForegroundWindow() == Process.MainWindowHandle;
+                mhProcess.Dispose();
+                return;
+            }
+
+            if (ShouldOpenProcess(mhProcess))
+            {
                 Process = mhProcess;
                 ProcessId = mhProcess.Id;
-                HasExitedNormally = null;
-                // We want to retrieve process exit code, so force Process to call OpenProcess by explicitly retrieving its SafeHandle.
-                // Otherwise there will be InvalidOperationException: Process was not started by this object, so requested information cannot be determined.
-                _ = Process.SafeHandle;
                 pHandle = Kernel32.OpenProcess(Kernel32.PROCESS_ALL_ACCESS, false, ProcessId);
 
                 if (pHandle == IntPtr.Zero)
                 {
-                    throw new Win32Exception();
+                    Log.Error("Failed to open game process. Run HunterPie as Administrator!");
+                    ShouldPollProcess = false;
+                    return;
                 }
 
                 IsRunning = true;
 
-                _memory = new WindowsMemory(pHandle);
+                memory = new WindowsMemory(pHandle);
 
                 AddressMap.Add("BASE", (long)Process.MainModule.BaseAddress);
 
                 this.Dispatch(OnGameStart, new(Name));
             }
-            catch (Exception ex)
-            {
-                Log.Error("Failed to open game process. Run HunterPie as Administrator!");
-                Log.Info("Error details: {0}", ex);
-                ShouldPollProcess = false;
-            }
+        }
+
+        protected abstract bool ShouldOpenProcess(Process process);
+
+        private void OnProcessExit()
+        {
+            Process.Dispose();
+            Process = null;
+
+            Kernel32.CloseHandle(pHandle);
+            
+            pHandle = IntPtr.Zero;
+
+            this.Dispatch(OnGameClosed, new(Name));
+        }
+
+        public void Pause() => _shouldPauseThread = true;
+
+        public void Resume()
+        {
+            _shouldPauseThread = false;
+            pooler.Interrupt();
         }
     }
-
-    protected abstract bool ShouldOpenProcess(Process process);
-
-    private void OnProcessExit()
-    {
-        Debug.Assert(Process != null);
-
-        HasExitedNormally = Process.ExitCode == 0;
-        Process.Dispose();
-        Process = null;
-
-        _ = Kernel32.CloseHandle(pHandle);
-
-        pHandle = IntPtr.Zero;
-
-        this.Dispatch(OnGameClosed, new(Name));
-    }
-
-    public void Pause() => _shouldPauseThread = true;
-
-    public void Resume()
-    {
-        _shouldPauseThread = false;
-        _pooler?.Interrupt();
-    }
-
 }
-#nullable restore

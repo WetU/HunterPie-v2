@@ -1,89 +1,64 @@
-using HunterPie.Core.Domain.Interfaces;
+﻿using HunterPie.Core.Domain.Interfaces;
 using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Client;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.World.Definitions;
-using HunterPie.Core.Native.IPC.Models.Common;
 using System;
 
-namespace HunterPie.Core.Game.World.Entities.Party;
-
-public class MHWPartyMember : IPartyMember, IEventDispatcher, IUpdatable<MHWPartyMemberData>, IUpdatable<EntityDamageData>
+namespace HunterPie.Core.Game.World.Entities.Party
 {
-    private int _damage;
-    private Weapon _weapon;
-    private bool _anyNonTrivialStatisticalDamage;
-
-    public string Name { get; private set; }
-
-    public int Damage
+    public class MHWPartyMember : IPartyMember, IEventDispatcher, IUpdatable<MHWPartyMemberData>
     {
-        get => _damage;
-        private set
+        private int _damage;
+        private Weapon _weapon;
+
+        public string Name { get; private set; }
+
+        public int Damage
         {
-            if (value != _damage)
+            get => _damage;
+            private set
             {
-                _damage = value;
-                this.Dispatch(OnDamageDealt, this);
+                if (value != _damage)
+                {
+                    _damage = value;
+                    this.Dispatch(OnDamageDealt, this);
+                }
             }
         }
-    }
 
-    public Weapon Weapon
-    {
-        get => _weapon;
-        private set
+        public Weapon Weapon
         {
-            if (value != _weapon)
+            get => _weapon;
+            private set
             {
-                _weapon = value;
-                this.Dispatch(OnWeaponChange, this);
+                if (value != _weapon)
+                {
+                    _weapon = value;
+                    this.Dispatch(OnWeaponChange, this);
+                }
             }
         }
-    }
 
-    public int Slot { get; private set; }
+        public int Slot { get; private set; }
 
-    public bool IsMyself { get; private set; }
+        public bool IsMyself { get; private set; }
 
-    public MemberType Type => MemberType.Player;
+        public MemberType Type => MemberType.Player;
 
-    public int MasterRank { get; private set; }
+        public int MasterRank { get; private set; }
 
-    /// <inheritdoc />
-    public void ResetDamage()
-    {
-        _damage = 0;
-        _anyNonTrivialStatisticalDamage = false;
-    }
+        public event EventHandler<IPartyMember> OnDamageDealt;
+        public event EventHandler<IPartyMember> OnWeaponChange;
 
-    public event EventHandler<IPartyMember> OnDamageDealt;
-    public event EventHandler<IPartyMember> OnWeaponChange;
-
-    /// <inheritdoc />
-    void IUpdatable<MHWPartyMemberData>.Update(MHWPartyMemberData data)
-    {
-        Name = data.Name;
-        if (data.Damage != 0)
+        void IUpdatable<MHWPartyMemberData>.Update(MHWPartyMemberData data)
         {
-            _anyNonTrivialStatisticalDamage = true;
+            Name = data.Name;
             Damage = data.Damage;
-        }
-
-        Weapon = data.Weapon;
-        Slot = data.Slot;
-        IsMyself = data.IsMyself;
-        MasterRank = data.MasterRank;
-    }
-
-    /// <inheritdoc />
-    void IUpdatable<EntityDamageData>.Update(EntityDamageData data)
-    {
-        // If there is only trivial (zero) damage data from player statistics data,
-        // we will use EntityDamageData from HunterPie.Native as a fallback.
-        if (!_anyNonTrivialStatisticalDamage)
-        {
-            Damage = (int)(data.RawDamage + data.ElementalDamage);
+            Weapon = data.Weapon;
+            Slot = data.Slot;
+            IsMyself = data.IsMyself;
+            MasterRank = data.MasterRank;
         }
     }
 }

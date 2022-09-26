@@ -1,9 +1,10 @@
-﻿namespace HunterPie.Core.Domain.Dialog;
-
-public enum NativeDialogResult
+﻿namespace HunterPie.Core.Domain.Dialog
 {
-    NotFinished,
-    Accept,
-    Reject,
-    Cancel
+    public enum NativeDialogResult
+    {
+        NotFinished,
+        Accept,
+        Reject,
+        Cancel
+    }
 }

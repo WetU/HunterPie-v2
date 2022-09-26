@@ -4,21 +4,22 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Abnormality.View;
 using HunterPie.UI.Overlay.Widgets.Abnormality.ViewModel;
 
-namespace HunterPie.Features.Debug;
-
-internal class AbnormalityWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class AbnormalityWidgetMocker : IWidgetMocker
     {
-        if (ClientConfig.Config.Development.MockAbnormalityWidget)
+        public void Mock()
         {
-            var mockSettings = new AbnormalityWidgetConfig();
-            _ = WidgetManager.Register<AbnormalityBarView, AbnormalityWidgetConfig>(
-                new AbnormalityBarView(ref mockSettings)
-                {
-                    DataContext = new MockAbnormalityBarViewModel()
-                }
-            );
+            if (ClientConfig.Config.Development.MockAbnormalityWidget)
+            {
+                var mockSettings = new AbnormalityWidgetConfig();
+                WidgetManager.Register<AbnormalityBarView, AbnormalityWidgetConfig>(
+                    new AbnormalityBarView(ref mockSettings)
+                    {
+                        DataContext = new MockAbnormalityBarViewModel()
+                    }
+                );
+            }
         }
     }
 }

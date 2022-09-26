@@ -4,64 +4,65 @@ using HunterPie.Core.Game.Rise.Definitions;
 using System;
 using System.Linq;
 
-namespace HunterPie.Core.Game.Rise.Entities.Activities;
-
-public class MHRSubmarine : IEventDispatcher, IUpdatable<MHRSubmarineData>
+namespace HunterPie.Core.Game.Rise.Entities.Activities
 {
-    private int _count;
-    private int _daysLeft;
-    private bool _isUnlocked;
-
-    public int Count
+    public class MHRSubmarine : IEventDispatcher, IUpdatable<MHRSubmarineData>
     {
-        get => _count;
-        private set
+        private int _count;
+        private int _daysLeft;
+        private bool _isUnlocked;
+
+        public int Count
         {
-            if (value != _count)
+            get => _count;
+            private set
             {
-                _count = value;
-                this.Dispatch(OnItemCountChange, this);
+                if (value != _count)
+                {
+                    _count = value;
+                    this.Dispatch(OnItemCountChange, this);
+                }
             }
         }
-    }
 
-    public int MaxCount { get; private set; } = 20;
+        public int MaxCount { get; private set; } = 20;
 
-    public int DaysLeft
-    {
-        get => _daysLeft;
-        private set
+        public int DaysLeft
         {
-            if (value != _daysLeft)
+            get => _daysLeft;
+            private set
             {
-                _daysLeft = value;
-                this.Dispatch(OnDaysLeftChange, this);
+                if (value != _daysLeft)
+                {
+                    _daysLeft = value;
+                    this.Dispatch(OnDaysLeftChange, this);
+                }
             }
         }
-    }
 
-    public bool IsUnlocked
-    {
-        get => _isUnlocked;
-        private set
+        public bool IsUnlocked
         {
-            if (value != _isUnlocked)
+            get => _isUnlocked;
+            private set
             {
-                _isUnlocked = value;
-                this.Dispatch(OnLockStateChange, this);
+                if (value != _isUnlocked)
+                {
+                    _isUnlocked = value;
+                    this.Dispatch(OnLockStateChange, this);
+                }
             }
         }
-    }
 
-    public event EventHandler<MHRSubmarine> OnItemCountChange;
-    public event EventHandler<MHRSubmarine> OnDaysLeftChange;
-    public event EventHandler<MHRSubmarine> OnLockStateChange;
+        public event EventHandler<MHRSubmarine> OnItemCountChange;
+        public event EventHandler<MHRSubmarine> OnDaysLeftChange;
+        public event EventHandler<MHRSubmarine> OnLockStateChange;
 
-    void IUpdatable<MHRSubmarineData>.Update(MHRSubmarineData data)
-    {
-        DaysLeft = data.Data.DaysLeft;
-        MaxCount = data.Items.Length;
-        Count = data.Items.Count(item => item.IsNotEmpty());
-        IsUnlocked = data.Data.Buddy != 0;
+        void IUpdatable<MHRSubmarineData>.Update(MHRSubmarineData data)
+        {
+            DaysLeft = data.Data.DaysLeft;
+            MaxCount = data.Items.Length;
+            Count = data.Items.Count(item => item.IsNotEmpty());
+            IsUnlocked = data.Data.Buddy != 0;
+        }
     }
 }

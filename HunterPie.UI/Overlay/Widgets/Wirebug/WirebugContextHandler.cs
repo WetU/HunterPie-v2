@@ -1,58 +1,65 @@
 ﻿using HunterPie.Core.Game.Rise.Entities;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 
-namespace HunterPie.UI.Overlay.Widgets.Wirebug;
-
-internal class WirebugContextHandler : WirebugViewModel, IContextHandler
+namespace HunterPie.UI.Overlay.Widgets.Wirebug
 {
-    public readonly MHRWirebug Context;
-
-    public WirebugContextHandler(MHRWirebug context)
+    class WirebugContextHandler : WirebugViewModel, IContextHandler
     {
-        Context = context;
+        public readonly MHRWirebug Context;
 
-        UpdateData();
-        HookEvents();
-    }
+        public WirebugContextHandler(MHRWirebug context)
+        {
+            Context = context;
 
-    public void HookEvents()
-    {
-        Context.OnCooldownUpdate += OnCooldownUpdate;
-        Context.OnTimerUpdate += OnTimerUpdate;
-        Context.OnAvailable += OnAvailable;
-    }
+            UpdateData();
+            HookEvents();
+        }
 
-    public void UnhookEvents()
-    {
-        Context.OnCooldownUpdate -= OnCooldownUpdate;
-        Context.OnTimerUpdate -= OnTimerUpdate;
-        Context.OnAvailable -= OnAvailable;
-    }
+        public void HookEvents()
+        {
+            Context.OnCooldownUpdate += OnCooldownUpdate;
+            Context.OnTimerUpdate += OnTimerUpdate;
+            Context.OnAvailable += OnAvailable;
+        }
 
-    private void OnTimerUpdate(object sender, MHRWirebug e)
-    {
-        MaxTimer = e.MaxTimer;
-        Timer = e.Timer;
-        IsTemporary = Context.Timer > 0;
-    }
+        public void UnhookEvents()
+        {
+            Context.OnCooldownUpdate -= OnCooldownUpdate;
+            Context.OnTimerUpdate -= OnTimerUpdate;
+            Context.OnAvailable -= OnAvailable;
+        }
 
-    private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable;
+        private void OnTimerUpdate(object sender, MHRWirebug e)
+        {
+            MaxTimer = e.MaxTimer;
+            Timer = e.Timer;
+            IsTemporary = Context.Timer > 0;
+        }
 
-    private void OnCooldownUpdate(object sender, MHRWirebug e)
-    {
-        MaxCooldown = e.MaxCooldown;
-        Cooldown = e.Cooldown;
-        OnCooldown = Cooldown > 0;
-    }
+        private void OnAvailable(object sender, MHRWirebug e)
+        {
+            IsAvailable = e.IsAvailable;
+        }
 
-    private void UpdateData()
-    {
-        MaxCooldown = Context.MaxCooldown == 0 ? 400 : Context.MaxCooldown;
-        Cooldown = Context.Cooldown;
-        IsAvailable = Context.IsAvailable;
+        private void OnCooldownUpdate(object sender, MHRWirebug e)
+        {
+            MaxCooldown = e.MaxCooldown;
+            Cooldown = e.Cooldown;
+            OnCooldown = Cooldown > 0;
+        }
 
-        MaxTimer = Context.MaxTimer;
-        Timer = Context.Timer;
-        IsTemporary = Context.Timer > 0;
+        private void UpdateData()
+        {
+            if (Context.MaxCooldown == 0)
+                MaxCooldown = 400;
+            else
+                MaxCooldown = Context.MaxCooldown;
+            Cooldown = Context.Cooldown;
+            IsAvailable = Context.IsAvailable;
+
+            MaxTimer = Context.MaxTimer;
+            Timer = Context.Timer;
+            IsTemporary = Context.Timer > 0;
+        }
     }
 }

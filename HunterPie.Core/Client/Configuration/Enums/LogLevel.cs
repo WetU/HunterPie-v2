@@ -1,9 +1,10 @@
-﻿namespace HunterPie.Core.Client.Configuration.Enums;
-
-public enum LogLevel
+﻿namespace HunterPie.Core.Client.Configuration.Enums
 {
-    Debug,
-    Info,
-    Warn,
-    Error
+    public enum LogLevel
+    {
+        Debug,
+        Info,
+        Warn,
+        Error
+    }
 }

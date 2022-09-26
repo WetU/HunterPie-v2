@@ -3,70 +3,71 @@ using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Rise.Definitions;
 using System;
 
-namespace HunterPie.Core.Game.Rise.Entities;
-
-public class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugStructure>, IUpdatable<MHRWirebugExtrasStructure>
+namespace HunterPie.Core.Game.Rise.Entities
 {
-    private double _timer;
-    private double _cooldown;
-    private bool _isAvailable = true;
-
-    public long Address { get; internal set; }
-    public double Timer
+    public class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugStructure>, IUpdatable<MHRWirebugExtrasStructure>
     {
-        get => _timer;
-        private set
+        private double _timer;
+        private double _cooldown;
+        private bool _isAvailable = true;
+
+        public long Address { get; internal set; }
+        public double Timer
         {
-            if (value != _timer)
+            get => _timer;
+            private set
             {
-                _timer = value;
-                this.Dispatch(OnTimerUpdate, this);
+                if (value != _timer)
+                {
+                    _timer = value;
+                    this.Dispatch(OnTimerUpdate, this);
+                }
             }
         }
-    }
-    public double MaxTimer { get; private set; }
+        public double MaxTimer { get; private set; }
 
-    public double Cooldown
-    {
-        get => _cooldown;
-        private set
+        public double Cooldown
         {
-            if (value != _cooldown)
+            get => _cooldown;
+            private set
             {
-                _cooldown = value;
-                this.Dispatch(OnCooldownUpdate, this);
+                if (value != _cooldown)
+                {
+                    _cooldown = value;
+                    this.Dispatch(OnCooldownUpdate, this);
+                }
             }
         }
-    }
-    public double MaxCooldown { get; private set; }
+        public double MaxCooldown { get; private set; }
 
-    public bool IsAvailable
-    {
-        get => _isAvailable;
-        private set
+        public bool IsAvailable
         {
-            if (value != _isAvailable)
+            get => _isAvailable;
+            private set
             {
-                _isAvailable = value;
-                this.Dispatch(OnAvailable, this);
+                if (value != _isAvailable)
+                {
+                    _isAvailable = value;
+                    this.Dispatch(OnAvailable, this);
+                }
             }
         }
-    }
 
-    public event EventHandler<MHRWirebug> OnTimerUpdate;
-    public event EventHandler<MHRWirebug> OnCooldownUpdate;
-    public event EventHandler<MHRWirebug> OnAvailable;
+        public event EventHandler<MHRWirebug> OnTimerUpdate;
+        public event EventHandler<MHRWirebug> OnCooldownUpdate;
+        public event EventHandler<MHRWirebug> OnAvailable;
 
-    void IUpdatable<MHRWirebugStructure>.Update(MHRWirebugStructure data)
-    {
-        MaxCooldown = data.MaxCooldown;
-        Cooldown = data.Cooldown;
-    }
+        void IUpdatable<MHRWirebugStructure>.Update(MHRWirebugStructure data)
+        {
+            MaxCooldown = data.MaxCooldown;
+            Cooldown = data.Cooldown;
+        }
 
-    void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
-    {
-        MaxTimer = Math.Max(MaxTimer, data.Timer);
-        Timer = data.Timer;
-        IsAvailable = data.Timer > 0;
+        void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
+        {
+            MaxTimer = Math.Max(MaxTimer, data.Timer);
+            Timer = data.Timer;
+            IsAvailable = data.Timer > 0;
+        }
     }
 }

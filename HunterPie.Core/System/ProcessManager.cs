@@ -4,68 +4,68 @@ using HunterPie.Core.Events;
 using HunterPie.Core.System.Windows;
 using System;
 
-namespace HunterPie.Core.System;
-
-public static class ProcessManager
+namespace HunterPie.Core.System
 {
-    public static event EventHandler<ProcessManagerEventArgs> OnProcessFound;
-    public static event EventHandler<ProcessManagerEventArgs> OnProcessClosed;
-
-    public static GameProcess Game { get; private set; } = GameProcess.None;
-
-    public static IProcessManager[] Managers { get; } = new IProcessManager[]
+    public static class ProcessManager
     {
-        new MHWProcessManager(),
-        new MHRProcessManager(),
-        new MHRSunbreakDemoProcessManager(),
-    };
+        private static GameProcess _game = GameProcess.None;
 
-    public static void Start()
-    {
-        foreach (IProcessManager manager in Managers)
+        public static event EventHandler<ProcessManagerEventArgs> OnProcessFound;
+        public static event EventHandler<ProcessManagerEventArgs> OnProcessClosed;
+
+        public static GameProcess Game => _game;
+
+        private readonly static IProcessManager[] _managers = new IProcessManager[]
         {
-            manager.OnGameStart += OnGameStartCallback;
-            manager.OnGameClosed += OnGameClosedCallback;
+            new MHWProcessManager(),
+            new MHRProcessManager(),
+            new MHRSunbreakDemoProcessManager(),
+        };
+        public static IProcessManager[] Managers => _managers;
 
-            manager.Initialize();
+        public static void Start()
+        {
+            foreach (IProcessManager manager in Managers)
+            {
+                manager.OnGameStart += OnGameStartCallback;
+                manager.OnGameClosed += OnGameClosedCallback;
+
+                manager.Initialize();
+            }
         }
-    }
 
-    private static void OnGameClosedCallback(object sender, ProcessEventArgs e)
-    {
-        if (sender is IProcessManager manager)
+        private static void OnGameClosedCallback(object sender, ProcessEventArgs e)
         {
-            ResumeAllPollingThreads(manager);
-            Game = GameProcess.None;
-            OnProcessClosed?.Invoke(sender, new(manager, e.ProcessName));
+            if (sender is IProcessManager manager)
+            {
+                ResumeAllPollingThreads(manager);
+                _game = GameProcess.None;
+                OnProcessClosed?.Invoke(sender, new(manager, e.ProcessName));
+            }
         }
-    }
 
-    private static void OnGameStartCallback(object sender, ProcessEventArgs e)
-    {
-        if (sender is IProcessManager manager)
+        private static void OnGameStartCallback(object sender, ProcessEventArgs e)
         {
-            PauseAllPollingThreads(manager);
-            Game = manager.Game;
-            OnProcessFound?.Invoke(sender, new((IProcessManager)sender, e.ProcessName));
+            if (sender is IProcessManager manager)
+            {
+                PauseAllPollingThreads(manager);
+                _game = manager.Game;
+                OnProcessFound?.Invoke(sender, new((IProcessManager)sender, e.ProcessName));
+            }
         }
-    }
 
-    private static void PauseAllPollingThreads(IProcessManager activeManager)
-    {
-        foreach (IProcessManager manager in Managers)
+        private static void PauseAllPollingThreads(IProcessManager activeManager)
         {
-            if (manager != activeManager)
-                manager.Pause();
+            foreach (IProcessManager manager in Managers)
+                if (manager != activeManager)
+                    manager.Pause();
         }
-    }
 
-    private static void ResumeAllPollingThreads(IProcessManager activeManager)
-    {
-        foreach (IProcessManager manager in Managers)
+        private static void ResumeAllPollingThreads(IProcessManager activeManager)
         {
-            if (manager != activeManager)
-                manager.Resume();
+            foreach (IProcessManager manager in Managers)
+                if (manager != activeManager)
+                    manager.Resume();
         }
     }
 }

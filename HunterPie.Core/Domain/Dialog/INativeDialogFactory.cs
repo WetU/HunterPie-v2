@@ -1,6 +1,13 @@
-﻿namespace HunterPie.Core.Domain.Dialog;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public interface INativeDialogFactory
+namespace HunterPie.Core.Domain.Dialog
 {
-    public INativeDialog CreateDialog(NativeDialogType type, string title, string description, NativeDialogButtons buttons);
+    public interface INativeDialogFactory
+    {
+        public INativeDialog CreateDialog(NativeDialogType type, string title, string description, NativeDialogButtons buttons);
+    }
 }

@@ -4,20 +4,24 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class TargetTypeToVisibility : IValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class TargetTypeToVisibility : IValueConverter
     {
-        var target = (Target)value;
-
-        return target switch
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Target.Self => Visibility.Visible,
-            _ => Visibility.Collapsed,
-        };
-    }
+            Target target = (Target)value;
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+            return target switch
+            {
+                Target.Self => Visibility.Visible,
+                _ => Visibility.Collapsed,
+            };
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

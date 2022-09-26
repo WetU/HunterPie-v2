@@ -1,7 +1,8 @@
-﻿namespace HunterPie.Core.Game.Rise.Definitions;
-
-public struct MHRBuddyData
+﻿namespace HunterPie.Core.Game.Rise.Definitions
 {
-    public string Name;
-    public int Level;
+    public struct MHRBuddyData
+    {
+        public string Name;
+        public int Level;
+    }
 }

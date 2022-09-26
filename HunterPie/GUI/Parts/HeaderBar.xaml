@@ -8,8 +8,7 @@
              xmlns:native="clr-namespace:HunterPie.UI.Controls.Buttons;assembly=HunterPie.UI"
              mc:Ignorable="d" 
              x:TypeArguments="vm:HeaderBarViewModel"
-             d:DesignHeight="25"
-             d:DesignWidth="800">
+             d:DesignHeight="25" d:DesignWidth="800">
     <Grid Background="Transparent"
           MouseLeftButtonDown="OnLeftMouseDown">
         <!-- Left container -->
@@ -78,23 +77,6 @@
         <!-- Right container -->
         <StackPanel HorizontalAlignment="Right"
                     Orientation="Horizontal">
-            <native:Button Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                           Padding="0"
-                           BorderThickness="0"
-                           OnClick="OnNotificationsClick">
-                <Rectangle Fill="{StaticResource WHITE_300}"
-                           Height="20"
-                           Width="20">
-                    <Rectangle.OpacityMask>
-                        <ImageBrush ImageSource="{StaticResource ICON_BELL}"/>
-                    </Rectangle.OpacityMask>
-                </Rectangle>
-                <native:Button.Clip>
-                    <EllipseGeometry RadiusX="12"
-                                     RadiusY="12"
-                                     Center="12,12"/>
-                </native:Button.Clip>
-            </native:Button>
             <native:Button 
                 Content="_"
                 FontSize="14"

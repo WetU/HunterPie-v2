@@ -1,15 +1,16 @@
 ﻿using System;
 
-namespace HunterPie.Core.Http.Events;
-
-public class PoogieDownloadEventArgs : EventArgs
+namespace HunterPie.Core.Http.Events
 {
-    public long BytesDownloaded { get; }
-    public long TotalBytes { get; }
-
-    public PoogieDownloadEventArgs(long bytesDownloaded, long totalBytes)
+    public class PoogieDownloadEventArgs : EventArgs
     {
-        BytesDownloaded = bytesDownloaded;
-        TotalBytes = totalBytes;
+        public long BytesDownloaded { get; }
+        public long TotalBytes { get; }
+
+        public PoogieDownloadEventArgs(long bytesDownloaded, long totalBytes)
+        {
+            BytesDownloaded = bytesDownloaded;
+            TotalBytes = totalBytes;
+        }
     }
 }

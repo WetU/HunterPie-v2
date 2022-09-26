@@ -4,18 +4,19 @@ using HunterPie.Core.Logger;
 using HunterPie.Domain.Interfaces;
 using HunterPie.Internal.Logger;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class NativeLoggerInitializer : IInitializer
+namespace HunterPie.Internal.Initializers
 {
-    public void Init()
+    internal class NativeLoggerInitializer : IInitializer
     {
-        if (FeatureFlagManager.IsEnabled(FeatureFlags.FEATURE_NATIVE_LOGGER))
+        public void Init()
         {
-            ILogger logger = new NativeLogger();
-            Log.Add(logger);
+            if (FeatureFlagManager.IsEnabled(FeatureFlags.FEATURE_NATIVE_LOGGER))
+            {
+                ILogger logger = new NativeLogger();
+                Log.Add(logger);
 
-            Log.Info("Hello world! HunterPie stdout has been initialized!");
+                Log.Info("Hello world! HunterPie stdout has been initialized!");
+            }
         }
     }
 }

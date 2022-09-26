@@ -1,13 +1,14 @@
 ﻿using HunterPie.Core.Game.Enums;
 
-namespace HunterPie.Core.Game.World.Definitions;
-
-public struct MHWPartyMemberData
+namespace HunterPie.Core.Game.World.Definitions
 {
-    public string Name;
-    public Weapon Weapon;
-    public int Damage;
-    public int Slot;
-    public bool IsMyself;
-    public int MasterRank;
+    public struct MHWPartyMemberData
+    {
+        public string Name;
+        public Weapon Weapon;
+        public int Damage;
+        public int Slot;
+        public bool IsMyself;
+        public int MasterRank;
+    }
 }

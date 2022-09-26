@@ -1,59 +1,60 @@
 ﻿using System;
 using System.Globalization;
 
-namespace HunterPie.Memory.Core;
-
-public class Pattern : IEquatable<byte[]>
+namespace HunterPie.Memory.Core
 {
-    public byte[] Bytes;
-
-    public Pattern(string pattern)
+    public class Pattern : IEquatable<byte[]>
     {
-        Bytes = ConvertPatternWithMask(pattern);
-    }
+        public byte[] Bytes;
 
-    private static byte[] ConvertPatternWithMask(string pattern)
-    {
-        string[] bytes = pattern.Split(" ");
-        Span<byte> converted = bytes.Length <= 256
-            ? stackalloc byte[bytes.Length]
-            : new byte[bytes.Length];
-
-        for (int i = 0; i < bytes.Length; i++)
+        public Pattern(string pattern)
         {
-            ref string rawValue = ref bytes[i];
+            Bytes = ConvertPatternWithMask(pattern);
+        }
 
-            if (rawValue.StartsWith("?"))
+        private static byte[] ConvertPatternWithMask(string pattern)
+        {
+            string[] bytes = pattern.Split(" ");
+            Span<byte> converted = bytes.Length <= 256 
+                ? stackalloc byte[bytes.Length]
+                : new byte[bytes.Length];
+
+            for (int i = 0; i < bytes.Length; i++)
             {
-                converted[i] = 0xFF;
-                continue;
+                ref string rawValue = ref bytes[i];
+
+                if (rawValue.StartsWith("?"))
+                {
+                    converted[i] = 0xFF;
+                    continue;
+                }
+
+                bool success = byte.TryParse(rawValue, NumberStyles.HexNumber, null, out byte result);
+                converted[i] = result;
             }
 
-            bool success = byte.TryParse(rawValue, NumberStyles.HexNumber, null, out byte result);
-            converted[i] = result;
+            return converted.ToArray();
         }
 
-        return converted.ToArray();
-    }
-
-    public bool Equals(byte[] other)
-    {
-        if (other.Length < Bytes.Length)
-            return false;
-
-        for (int i = 0; i < Bytes.Length; i++)
+        public bool Equals(byte[] other)
         {
-            byte pattern = Bytes[i];
-
-            if (pattern == 0xFF)
-                continue;
-
-            byte comparedTo = other[i];
-
-            if (pattern != comparedTo)
+            if (other.Length < Bytes.Length)
                 return false;
-        }
 
-        return true;
+            for (int i = 0; i < Bytes.Length; i++)
+            {
+                byte pattern = Bytes[i];
+                
+                if (pattern == 0xFF)
+                    continue;
+                
+                byte comparedTo = other[i];
+
+                if (pattern != comparedTo)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

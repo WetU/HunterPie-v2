@@ -6,22 +6,26 @@ using HunterPie.UI.Architecture.Overlay;
 using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Chat;
 
-namespace HunterPie.Features.Overlay;
-
-internal class ChatWidgetInitializer : IWidgetInitializer
+namespace HunterPie.Features.Overlay
 {
-    private IContextHandler _handler;
-
-    public void Load(Context context)
+    internal class ChatWidgetInitializer : IWidgetInitializer
     {
-        Core.Client.Configuration.OverlayConfig config = ClientConfigHelper.GetOverlayConfigFrom(ProcessManager.Game);
+        private IContextHandler _handler;
 
-        if (!config.ChatWidget.Initialize)
-            return;
+        public void Load(Context context)
+        {
+            var config = ClientConfigHelper.GetOverlayConfigFrom(ProcessManager.Game);
 
-        if (context is MHRContext ctx)
-            _handler = new ChatWidgetContextHandler(ctx);
+            if (!config.ChatWidget.Initialize)
+                return;
+
+            if (context is MHRContext ctx)
+                _handler = new ChatWidgetContextHandler(ctx);
+        }
+
+        public void Unload()
+        {
+            _handler?.UnhookEvents();
+        }
     }
-
-    public void Unload() => _handler?.UnhookEvents();
 }

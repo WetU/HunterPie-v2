@@ -1,5 +1,12 @@
-﻿namespace HunterPie.Core.Game.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public interface IGameStrings
+namespace HunterPie.Core.Game.Data
 {
+    public interface IGameStrings
+    {
+    }
 }

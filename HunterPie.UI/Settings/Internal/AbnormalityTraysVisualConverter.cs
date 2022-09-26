@@ -4,16 +4,17 @@ using HunterPie.UI.Settings.Converter;
 using System.Reflection;
 using System.Windows;
 
-namespace HunterPie.UI.Settings.Internal;
-
-public class AbnormalityTraysVisualConverter : IVisualConverter
+namespace HunterPie.UI.Settings.Internal
 {
-    public FrameworkElement Build(object parent, PropertyInfo childInfo)
+    public class AbnormalityTraysVisualConverter : IVisualConverter
     {
-        var viewModel = (AbnormalityTrays)childInfo.GetValue(parent);
-        return new AbnormalityTrayList()
+        public FrameworkElement Build(object parent, PropertyInfo childInfo)
         {
-            DataContext = viewModel
-        };
+            AbnormalityTrays viewModel = (AbnormalityTrays)childInfo.GetValue(parent);
+            return new AbnormalityTrayList()
+            {
+                DataContext = viewModel
+            };
+        }
     }
 }

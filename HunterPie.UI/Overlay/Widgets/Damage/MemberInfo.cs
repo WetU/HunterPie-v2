@@ -1,12 +1,13 @@
 ﻿using HunterPie.UI.Overlay.Widgets.Damage.ViewModels;
 using LiveCharts.Wpf;
 
-namespace HunterPie.UI.Overlay.Widgets.Damage;
-
-internal class MemberInfo
+namespace HunterPie.UI.Overlay.Widgets.Damage
 {
-    public PlayerViewModel ViewModel { get; init; }
-    public Series Series { get; init; }
-    public double JoinedAt { get; set; }
-    public double FirstHitAt { get; set; } = -1;
+    class MemberInfo
+    {
+        public PlayerViewModel ViewModel { get; init; }
+        public Series Series { get; init; }
+        public double JoinedAt { get; init; }
+        public double FirstHitAt { get; set; } = -1;
+    }
 }

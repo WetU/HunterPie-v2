@@ -1,8 +1,9 @@
-﻿namespace HunterPie.Core.Game.Enums;
-
-public enum Target
+﻿namespace HunterPie.Core.Game.Enums
 {
-    None,
-    Self,
-    Another
+    public enum Target
+    {
+        None,
+        Self,
+        Another
+    }
 }

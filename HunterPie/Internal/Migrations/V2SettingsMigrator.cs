@@ -3,41 +3,48 @@ using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Domain.Interfaces;
 using System;
 
-namespace HunterPie.Internal.Migrations;
-
-internal class V2SettingsMigrator : ISettingsMigrator
+namespace HunterPie.Internal.Migrations
 {
-    public bool CanMigrate(IVersionedConfig oldSettings) => oldSettings.GetType() == typeof(Config);
-
-    public IVersionedConfig Migrate(IVersionedConfig oldSettings)
+    internal class V2SettingsMigrator : ISettingsMigrator
     {
-        if (oldSettings is Config config)
+        public bool CanMigrate(IVersionedConfig oldSettings)
         {
-            OverlayClientConfig overlayClientConfig = new()
-            {
-                ToggleDesignMode = config.Overlay.ToggleDesignMode,
-                HideWhenUnfocus = config.Overlay.HideWhenUnfocus,
-            };
-
-            config.Overlay.DamageMeterWidget = new();
-
-            var v2Config = new V2Config()
-            {
-                Client = config.Client,
-                Rise = new()
-                {
-                    RichPresence = config.RichPresence,
-                    Overlay = config.Overlay,
-                },
-                Overlay = overlayClientConfig,
-                Development = config.Debug
-            };
-
-            return v2Config;
+            return oldSettings.GetType() == typeof(Config);
         }
 
-        throw new InvalidCastException($"old config must be of type {typeof(Config)}, but was {oldSettings.GetType()}");
-    }
+        public IVersionedConfig Migrate(IVersionedConfig oldSettings)
+        {
+            if (oldSettings is Config config)
+            {
+                OverlayClientConfig overlayClientConfig = new()
+                {
+                    ToggleDesignMode = config.Overlay.ToggleDesignMode,
+                    HideWhenUnfocus = config.Overlay.HideWhenUnfocus,
+                };
 
-    public Type GetRequiredType() => typeof(Config);
+                config.Overlay.DamageMeterWidget = new();
+
+                V2Config v2Config = new V2Config()
+                {
+                    Client = config.Client,
+                    Rise = new()
+                    {
+                        RichPresence = config.RichPresence,
+                        Overlay = config.Overlay,
+                    },
+                    Overlay = overlayClientConfig,
+                    Development = config.Debug
+                };
+
+                return v2Config;
+            }
+
+            throw new InvalidCastException($"old config must be of type {typeof(Config)}, but was {oldSettings.GetType()}");
+        }
+
+        public Type GetRequiredType()
+        {
+            return typeof(Config);
+        }
+    }
 }

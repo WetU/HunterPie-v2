@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
-namespace HunterPie.Core.Settings.Types;
-
-public interface IFileSelector
+namespace HunterPie.Core.Settings.Types
 {
-    [JsonProperty]
-    public string Current { get; set; }
+    public interface IFileSelector
+    {
+        [JsonProperty]
+        public string Current { get; set; }
 
-    [JsonIgnore]
-    public ObservableCollection<string> Elements { get; }
+        [JsonIgnore]
+        public ObservableCollection<string> Elements { get; }
+    }
 }

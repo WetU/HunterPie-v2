@@ -3,85 +3,86 @@ using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Rise.Definitions;
 using System;
 
-namespace HunterPie.Core.Game.Rise.Entities.Activities;
-
-public class MHRMeowmasters : IEventDispatcher, IUpdatable<MHRMeowmasterData>
+namespace HunterPie.Core.Game.Rise.Entities.Activities
 {
-    private int _step;
-    private int _expectedOutcome;
-    private bool _isDeployed;
-    private int _buddyCount;
-
-    public int Step
+    public class MHRMeowmasters : IEventDispatcher, IUpdatable<MHRMeowmasterData>
     {
-        get => _step;
-        private set
+        private int _step;
+        private int _expectedOutcome;
+        private bool _isDeployed;
+        private int _buddyCount;
+
+        public int Step
         {
-            if (_step != value)
+            get => _step;
+            private set
             {
-                _step = value;
-                this.Dispatch(OnStepChange, this);
+                if (_step != value)
+                {
+                    _step = value;
+                    this.Dispatch(OnStepChange, this);
+                }
             }
         }
-    }
 
-    public int MaxSteps { get; private set; }
+        public int MaxSteps { get; private set; }
 
-    public int ExpectedOutcome
-    {
-        get => _expectedOutcome;
-        private set
+        public int ExpectedOutcome
         {
-            if (value != _expectedOutcome)
+            get => _expectedOutcome;
+            private set
             {
-                _expectedOutcome = value;
-                this.Dispatch(OnExpectedOutcomeChange, this);
+                if (value != _expectedOutcome)
+                {
+                    _expectedOutcome = value;
+                    this.Dispatch(OnExpectedOutcomeChange, this);
+                }
             }
         }
-    }
 
-    public bool IsDeployed
-    {
-        get => _isDeployed;
-        private set
+        public bool IsDeployed
         {
-            if (_isDeployed != value)
+            get => _isDeployed;
+            private set
             {
-                _isDeployed = value;
-                this.Dispatch(OnDeployStateChange, this);
+                if (_isDeployed != value)
+                {
+                    _isDeployed = value;
+                    this.Dispatch(OnDeployStateChange, this);
+                }
             }
         }
-    }
 
-    public int BuddyCount
-    {
-        get => _buddyCount;
-        private set
+        public int BuddyCount
         {
-            if (_buddyCount != value)
+            get => _buddyCount;
+            private set
             {
-                _buddyCount = value;
-                this.Dispatch(OnBuddyCountChange, this);
+                if (_buddyCount != value)
+                {
+                    _buddyCount = value;
+                    this.Dispatch(OnBuddyCountChange, this);
+                }
             }
         }
-    }
-    public int MaxBuddies => 4;
-    public int MaxOutcome => 5;
+        public int MaxBuddies => 4;
+        public int MaxOutcome => 5;
 
-    public bool HasLagniapple { get; private set; }
+        public bool HasLagniapple { get; private set; }
 
-    public event EventHandler<MHRMeowmasters> OnStepChange;
-    public event EventHandler<MHRMeowmasters> OnDeployStateChange;
-    public event EventHandler<MHRMeowmasters> OnExpectedOutcomeChange;
-    public event EventHandler<MHRMeowmasters> OnBuddyCountChange;
+        public event EventHandler<MHRMeowmasters> OnStepChange;
+        public event EventHandler<MHRMeowmasters> OnDeployStateChange;
+        public event EventHandler<MHRMeowmasters> OnExpectedOutcomeChange;
+        public event EventHandler<MHRMeowmasters> OnBuddyCountChange;
 
-    void IUpdatable<MHRMeowmasterData>.Update(MHRMeowmasterData data)
-    {
-        MaxSteps = data.MaxStep;
-        Step = data.CurrentStep + (data.IsDeployed ? 1 : 0);
-        BuddyCount = data.BuddiesCount;
-        HasLagniapple = data.IsLagniappleActive;
-        ExpectedOutcome = BuddyCount + (HasLagniapple ? 1 : 0);
-        IsDeployed = data.IsDeployed;
+        void IUpdatable<MHRMeowmasterData>.Update(MHRMeowmasterData data)
+        {
+            MaxSteps = data.MaxStep;
+            Step = data.CurrentStep + (data.IsDeployed ? 1 : 0);
+            BuddyCount = data.BuddiesCount;
+            HasLagniapple = data.IsLagniappleActive;
+            ExpectedOutcome = BuddyCount + (HasLagniapple ? 1 : 0);
+            IsDeployed = data.IsDeployed;
+        }
     }
 }

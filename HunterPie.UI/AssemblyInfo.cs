@@ -1,8 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Windows;
-#if DEBUG
 using System.Windows.Markup;
-#endif
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

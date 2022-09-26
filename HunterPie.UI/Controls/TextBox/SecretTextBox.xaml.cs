@@ -1,49 +1,58 @@
 ﻿using System;
+using System.Security;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace HunterPie.UI.Controls.TextBox;
-
-/// <summary>
-/// Interaction logic for SecretTextBox.xaml
-/// </summary>
-public partial class SecretTextBox : UserControl
+namespace HunterPie.UI.Controls.TextBox
 {
-    public string Text
+    /// <summary>
+    /// Interaction logic for SecretTextBox.xaml
+    /// </summary>
+    public partial class SecretTextBox : UserControl
     {
-        get => (string)GetValue(TextProperty);
-        set => SetValue(TextProperty, value);
-    }
-    public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register("Text", typeof(string), typeof(SecretTextBox), new(string.Empty, OnValueChange));
-
-    public bool IsContentVisible
-    {
-        get => (bool)GetValue(IsContentVisibleProperty);
-        set => SetValue(IsContentVisibleProperty, value);
-    }
-
-    public static readonly DependencyProperty IsContentVisibleProperty =
-        DependencyProperty.Register("IsContentVisible", typeof(bool), typeof(SecretTextBox), new(false));
-
-    public SecretTextBox()
-    {
-        InitializeComponent();
-    }
-
-    private void OnHideButtonClick(object sender, EventArgs e) => IsContentVisible = !IsContentVisible;
-
-    private void OnPasswordChanged(object sender, RoutedEventArgs e) => Text = PART_PasswordBox.Password;
-
-    private static void OnValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is SecretTextBox secretTextBox)
+        public string Text
         {
-            string value = e.NewValue as string;
-            if (secretTextBox.PART_PasswordBox.Password == value)
-                return;
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(SecretTextBox), new(string.Empty, OnValueChange));
 
-            secretTextBox.PART_PasswordBox.Password = value;
+        public bool IsContentVisible
+        {
+            get { return (bool)GetValue(IsContentVisibleProperty); }
+            set { SetValue(IsContentVisibleProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsContentVisibleProperty =
+            DependencyProperty.Register("IsContentVisible", typeof(bool), typeof(SecretTextBox), new(false));
+
+        public SecretTextBox()
+        {
+            InitializeComponent();
+        }
+
+        private void OnHideButtonClick(object sender, EventArgs e)
+        {
+            IsContentVisible = !IsContentVisible;
+        }
+
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            Text = PART_PasswordBox.Password;
+        }
+
+        private static void OnValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is SecretTextBox secretTextBox)
+            {
+                string value = e.NewValue as string;
+                if (secretTextBox.PART_PasswordBox.Password == value)
+                    return;
+
+                secretTextBox.PART_PasswordBox.Password = value;
+            }
         }
     }
 }

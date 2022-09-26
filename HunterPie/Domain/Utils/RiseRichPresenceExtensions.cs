@@ -1,6 +1,7 @@
-﻿namespace HunterPie.Domain.Utils;
-
-internal static class RiseRichPresenceExtensions
+﻿namespace HunterPie.Domain.Utils
 {
-    public static string ToImageKey(this int self) => $"rise-stage-{self}";
+    internal static class RiseRichPresenceExtensions
+    {
+        public static string ToImageKey(this int self) => $"rise-stage-{self}";
+    }
 }

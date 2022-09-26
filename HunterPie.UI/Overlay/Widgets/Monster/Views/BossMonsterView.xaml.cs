@@ -1,14 +1,15 @@
 ﻿using System.Windows.Controls;
 
-namespace HunterPie.UI.Overlay.Widgets.Monster.Views;
-
-/// <summary>
-/// Interaction logic for BossMonsterView.xaml
-/// </summary>
-public partial class BossMonsterView : UserControl
+namespace HunterPie.UI.Overlay.Widgets.Monster.Views
 {
-    public BossMonsterView()
+    /// <summary>
+    /// Interaction logic for BossMonsterView.xaml
+    /// </summary>
+    public partial class BossMonsterView : UserControl
     {
-        InitializeComponent();
+        public BossMonsterView()
+        {
+            InitializeComponent();
+        }
     }
 }

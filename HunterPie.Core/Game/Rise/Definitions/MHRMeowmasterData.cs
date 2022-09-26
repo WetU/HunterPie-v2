@@ -1,10 +1,11 @@
-﻿namespace HunterPie.Core.Game.Rise.Definitions;
-
-public struct MHRMeowmasterData
+﻿namespace HunterPie.Core.Game.Rise.Definitions
 {
-    public bool IsDeployed;
-    public bool IsLagniappleActive;
-    public int BuddiesCount;
-    public int CurrentStep;
-    public int MaxStep;
+    public struct MHRMeowmasterData
+    {
+        public bool IsDeployed;
+        public bool IsLagniappleActive;
+        public int BuddiesCount;
+        public int CurrentStep;
+        public int MaxStep;
+    }
 }

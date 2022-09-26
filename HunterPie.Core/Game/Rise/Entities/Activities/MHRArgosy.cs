@@ -1,9 +1,10 @@
-﻿namespace HunterPie.Core.Game.Rise.Entities.Activities;
-
-public class MHRArgosy
+﻿namespace HunterPie.Core.Game.Rise.Entities.Activities
 {
-    public MHRSubmarine[] Submarines { get; } = new MHRSubmarine[3]
+    public class MHRArgosy
     {
-        new(), new(), new()
-    };
+        public MHRSubmarine[] Submarines { get; } = new MHRSubmarine[3]
+        {
+            new(), new(), new()
+        };
+    }
 }

@@ -1,3 +1,10 @@
-﻿namespace HunterPie.Core.Settings;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public interface ISettings { }
+namespace HunterPie.Core.Settings
+{
+    public interface ISettings {}
+}

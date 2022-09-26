@@ -8,77 +8,76 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace HunterPie.Update;
-
-internal static class UpdateUseCase
+namespace HunterPie.Update
 {
-    public static async Task<bool> Exec(UpdateViewModel vm)
+    internal static class UpdateUseCase
     {
-        vm.State = "Initializing HunterPie";
-        UpdateService service = new();
-        _ = service.CleanupOldFiles();
-
-        vm.State = "Checking for latest version...";
-        Version latest = await service.GetLatestVersion();
-
-        if (latest is null || ClientInfo.IsVersionGreaterOrEq(latest))
-            return false;
-
-        vm.State = "New version found";
-
-        if (ClientConfig.Config.Client.EnableAutoUpdateConfirmation)
+        public static async Task<bool> Exec(UpdateViewModel vm)
         {
-            NativeDialogResult result = DialogManager.Warn(
-                Localization.QueryString("//Strings/Client/Dialogs/Dialog[@Id='UPDATE_TITLE_STRING']"),
-                Localization.QueryString("//Strings/Client/Dialogs/Dialog[@Id='UPDATE_CONFIRMATION_DESCRIPTION_STRING']").Replace("{Latest}", $"{latest}"),
-                NativeDialogButtons.Accept | NativeDialogButtons.Reject
-            );
+            vm.State = "Initializing HunterPie";
+            UpdateService service = new();
+            service.CleanupOldFiles();
 
-            if (result != NativeDialogResult.Accept)
+            vm.State = "Checking for latest version...";
+            Version latest = await service.GetLatestVersion();
+
+            if (latest is null || ClientInfo.IsVersionGreaterOrEq(latest))
                 return false;
-        }
 
-        vm.State = "Downloading package...";
-        await service.DownloadZip((_, args) =>
-        {
-            vm.DownloadedBytes = args.BytesDownloaded;
-            vm.TotalBytes = args.TotalBytes;
-        });
+            vm.State = "New version found";
 
-        vm.State = "Calculating file hashes...";
-        System.Collections.Generic.Dictionary<string, string> localFiles = await service.IndexAllFilesRecursively(ClientInfo.ClientPath);
-
-        vm.State = "Extracting package...";
-        if (!service.ExtractZip())
-        {
-            Log.Error("Failed to extract package");
-            return false;
-        }
-
-        System.Collections.Generic.Dictionary<string, string> remoteFiles = await service.IndexAllFilesRecursively(ClientInfo.GetPathFor(@"temp/HunterPie"));
-
-        vm.State = "Replacing old files";
-        try
-        {
-            _ = service.ReplaceOldFiles(localFiles, remoteFiles);
-        }
-        catch (Exception err)
-        {
-            RemoteCrashReporter.Send(err);
-
-            string dialogMessage = err switch
+            if (ClientConfig.Config.Client.EnableAutoUpdateConfirmation)
             {
-                IOException => "Failed to replace old files, make sure HunterPie has permissions to move files.",
-                UnauthorizedAccessException => "HunterPie is missing permissions to manage files.",
-                _ => null,
-            };
+                var result = DialogManager.Warn(
+                    Localization.QueryString("//Strings/Client/Dialogs/Dialog[@Id='UPDATE_TITLE_STRING']"),
+                    Localization.QueryString("//Strings/Client/Dialogs/Dialog[@Id='UPDATE_CONFIRMATION_DESCRIPTION_STRING']").Replace("{Latest}", $"{latest}"),
+                    NativeDialogButtons.Accept | NativeDialogButtons.Reject
+                );
 
-            if (dialogMessage is string message)
-                _ = DialogManager.Error("Update error", message, NativeDialogButtons.Accept);
+                if (result != NativeDialogResult.Accept)
+                    return false;
+            }
 
-            Log.Error(err.ToString());
+            vm.State = "Downloading package...";
+            await service.DownloadZip((_, args) =>
+            {
+                vm.DownloadedBytes = args.BytesDownloaded;
+                vm.TotalBytes = args.TotalBytes;
+            });
+
+            vm.State = "Calculating file hashes...";
+            var localFiles = await service.IndexAllFilesRecursively(ClientInfo.ClientPath);
+
+            vm.State = "Extracting package...";
+            if (!service.ExtractZip())
+            {
+                Log.Error("Failed to extract package");
+                return false;
+            }
+            var remoteFiles = await service.IndexAllFilesRecursively(ClientInfo.GetPathFor(@"temp/HunterPie"));
+
+            vm.State = "Replacing old files";
+            try
+            {
+                service.ReplaceOldFiles(localFiles, remoteFiles);
+            } catch(Exception err)
+            {
+                RemoteCrashReporter.Send(err);
+
+                string dialogMessage = err switch
+                {
+                    IOException => "Failed to replace old files, make sure HunterPie has permissions to move files.",
+                    UnauthorizedAccessException => "HunterPie is missing permissions to manage files.",
+                    _ => null,
+                };
+
+                if (dialogMessage is string message)
+                    DialogManager.Error("Update error", message, NativeDialogButtons.Accept);
+
+                Log.Error(err.ToString());
+            }
+
+            return true;
         }
-
-        return true;
     }
 }

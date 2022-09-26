@@ -4,30 +4,34 @@ using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System.Windows.Media;
 
-namespace HunterPie.UI.Architecture.Graphs;
-
-public class LinearSeriesCollectionBuilder
+namespace HunterPie.UI.Architecture.Graphs
 {
-    private readonly SeriesCollection _instance = new();
-
-    public LinearSeriesCollectionBuilder AddSeries(ChartValues<ObservablePoint> points, string title, Color color)
+    public class LinearSeriesCollectionBuilder
     {
-        var series = new LineSeries
+        private readonly SeriesCollection _instance = new();
+
+        public LinearSeriesCollectionBuilder AddSeries(ChartValues<ObservablePoint> points, string title, Color color)
         {
-            Title = title,
-            Stroke = new SolidColorBrush(color),
-            Fill = ColorFadeGradient.FromColor(color),
-            PointGeometrySize = 0,
-            StrokeThickness = 2,
-            LineSmoothness = 0.7,
-            Values = points
-        };
+            var series = new LineSeries()
+            {
+                Title = title,
+                Stroke = new SolidColorBrush(color),
+                Fill = ColorFadeGradient.FromColor(color),
+                PointGeometrySize = 0,
+                StrokeThickness = 2,
+                LineSmoothness = 0.7
+            };
+            series.Values = points;
 
-        _instance.Add(series);
+            _instance.Add(series);
 
-        return this;
+            return this;
+        }
+
+        public SeriesCollection Build()
+        {
+            return _instance;
+        }
+
     }
-
-    public SeriesCollection Build() => _instance;
-
 }

@@ -3,24 +3,24 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text;
 
-namespace HunterPie.Core.Tests.Address.Map;
-
-[TestClass]
-public class AddressMapTokenizerTest
+namespace HunterPie.Core.Tests.Address.Map
 {
-    [TestMethod]
-    public void ConsumeUntilCharTest()
+    [TestClass]
+    public class AddressMapTokenizerTest
     {
-        string testCase = "# this is a commentary, and I'm trying to make it as long as possible to also test the speed\nAddress TEST_OFFSET 0x123456\n";
+        [TestMethod]
+        public void ConsumeUntilCharTest()
+        {
+            string testCase = "# this is a commentary, and I'm trying to make it as long as possible to also test the speed\nAddress TEST_OFFSET 0x123456\n";
+            StreamReader stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(testCase)));
 
-        using var stream = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(testCase)));
+            string result = AddressMapTokenizer.ConsumeUntilChar(stream, '\n');
 
-        string result = AddressMapTokenizer.ConsumeUntilChar(stream, '\n');
-
-        Assert.AreEqual(
-            "# this is a commentary, and I'm trying to make it as long as possible to also test the speed",
-            result,
-            "Result was different from the expected."
-        );
+            Assert.AreEqual(
+                "# this is a commentary, and I'm trying to make it as long as possible to also test the speed",
+                result, 
+                "Result was different from the expected."
+            );
+        }
     }
 }

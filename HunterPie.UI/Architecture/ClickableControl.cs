@@ -3,63 +3,64 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace HunterPie.UI.Architecture;
-
-public class ClickableControl : UserControl
+namespace HunterPie.UI.Architecture
 {
-    private bool _isMouseInside;
-    private bool _isMouseDown;
-
-    public event EventHandler<EventArgs> OnClick;
-
-    public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(ClickableControl));
-
-    public event RoutedEventHandler Click
+    public class ClickableControl : UserControl
     {
-        add => AddHandler(ClickEvent, value);
-        remove => RemoveHandler(ClickEvent, value);
-    }
+        private bool _isMouseInside;
+        private bool _isMouseDown;
 
-    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-    {
-        base.OnMouseLeftButtonDown(e);
+        public event EventHandler<EventArgs> OnClick;
 
-        _isMouseDown = true;
-        e.Handled = true;
-    }
+        public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(ClickableControl));
 
-    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
-    {
-        base.OnMouseLeftButtonUp(e);
-
-        // Was a click!
-        if (_isMouseDown && _isMouseInside)
+        public event RoutedEventHandler Click
         {
-            OnClickEvent();
-            OnClick?.Invoke(this, e);
-            RaiseEvent(new RoutedEventArgs(ClickEvent, this));
+            add { AddHandler(ClickEvent, value); }
+            remove { RemoveHandler(ClickEvent, value); }
         }
 
-        _isMouseDown = false;
-    }
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
 
-    protected override void OnMouseEnter(MouseEventArgs e)
-    {
-        base.OnMouseEnter(e);
+            _isMouseDown = true;
+            e.Handled = true;
+        }
 
-        _isMouseInside = true;
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
 
-    }
-    protected override void OnMouseLeave(MouseEventArgs e)
-    {
-        base.OnMouseLeave(e);
+            // Was a click!
+            if (_isMouseDown && _isMouseInside)
+            {
+                OnClickEvent();
+                OnClick?.Invoke(this, e);
+                RaiseEvent(new RoutedEventArgs(ClickEvent, this));
+            }
 
-        _isMouseInside = false;
-        _isMouseDown = false;
-    }
+            _isMouseDown = false;
+        }
 
-    protected virtual void OnClickEvent()
-    {
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
 
+            _isMouseInside = true;
+
+        }
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+
+            _isMouseInside = false;
+            _isMouseDown = false;
+        }
+
+        protected virtual void OnClickEvent()
+        {
+
+        }
     }
 }

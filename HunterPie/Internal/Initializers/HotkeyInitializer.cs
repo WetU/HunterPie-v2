@@ -3,28 +3,29 @@ using HunterPie.Domain.Interfaces;
 using System;
 using System.Windows.Interop;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class HotkeyInitializer : IInitializer, IDisposable
+namespace HunterPie.Internal.Initializers
 {
-    private static HwndSource source;
-    private static IntPtr hWnd;
-
-    public void Init()
+    internal class HotkeyInitializer : IInitializer, IDisposable
     {
-        hWnd = new WindowInteropHelper(App.UI)
-            .EnsureHandle();
+        private static HwndSource source;
+        private static IntPtr hWnd;
 
-        source = HwndSource.FromHwnd(hWnd);
+        public void Init()
+        {
+            hWnd = new WindowInteropHelper(App.UI)
+                .EnsureHandle();
 
-        source.AddHook(Hotkey.HwndHook);
-        Hotkey.hWnd = hWnd;
-    }
+            source = HwndSource.FromHwnd(hWnd);
 
-    public void Dispose()
-    {
-        source.RemoveHook(Hotkey.HwndHook);
-        source.Dispose();
-        hWnd = IntPtr.Zero;
+            source.AddHook(Hotkey.HwndHook);
+            Hotkey.hWnd = hWnd;
+        }
+
+        public void Dispose()
+        {
+            source.RemoveHook(Hotkey.HwndHook);
+            source.Dispose();
+            hWnd = IntPtr.Zero;
+        }
     }
 }

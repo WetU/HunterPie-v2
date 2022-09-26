@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace HunterPie.Core.Native.IPC.Handlers.Internal.Initialiaze.Models;
-
-[StructLayout(LayoutKind.Sequential)]
-public struct ResponseInitMHHooksMessage
+namespace HunterPie.Core.Native.IPC.Handlers.Internal.Initialiaze.Models
 {
-    public HookStatus Status;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ResponseInitMHHooksMessage
+    {
+        public HookStatus Status;
+    }
 }

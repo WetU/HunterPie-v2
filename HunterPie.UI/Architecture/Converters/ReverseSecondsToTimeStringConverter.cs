@@ -2,29 +2,33 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class ReverseSecondsToTimeStringConverter : IMultiValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    public class ReverseSecondsToTimeStringConverter : IMultiValueConverter
     {
-        string timeFormat = "mm\\:ss";
-        if (values[0] is double val)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            double maxVal = (double)values[1];
-            if (maxVal - val > TimeSpan.MaxValue.TotalSeconds)
-                return string.Empty;
+            string timeFormat = "mm\\:ss";
+            if (values[0] is double val)
+            {
+                double maxVal = (double)values[1];
+                if (maxVal - val > TimeSpan.MaxValue.TotalSeconds)
+                    return string.Empty;
 
-            var span = TimeSpan.FromSeconds(maxVal - val);
+                TimeSpan span = TimeSpan.FromSeconds(maxVal - val);
 
-            if (parameter is string format)
-                timeFormat = format;
+                if (parameter is string format)
+                    timeFormat = format;
 
-            return span.ToString(timeFormat);
+                return span.ToString(timeFormat);
+            }
+
+            return string.Empty;
         }
 
-        return string.Empty;
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

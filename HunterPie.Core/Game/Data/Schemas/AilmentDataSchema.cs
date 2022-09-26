@@ -1,7 +1,8 @@
-﻿namespace HunterPie.Core.Game.Data.Schemas;
-
-public struct AilmentDataSchema
+﻿namespace HunterPie.Core.Game.Data.Schemas
 {
-    public string String { get; set; }
-    public bool IsUnknown { get; set; }
+    public struct AilmentDataSchema
+    {
+        public string String { get; set; }
+        public bool IsUnknown { get; set; }
+    }
 }

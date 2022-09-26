@@ -1,31 +1,32 @@
-﻿using HunterPie.Core.Extensions;
-using HunterPie.Core.Settings.Types;
-using System;
-using System.Windows.Controls;
+﻿using System;
 using ColorDialog = System.Windows.Forms.ColorDialog;
 using DialogResult = System.Windows.Forms.DialogResult;
+using System.Windows.Controls;
+using HunterPie.Core.Settings.Types;
+using HunterPie.Core.Extensions;
 
-namespace HunterPie.UI.Controls.Buttons;
-
-/// <summary>
-/// Interaction logic for ColorPicker.xaml
-/// </summary>
-public partial class ColorPicker : UserControl
+namespace HunterPie.UI.Controls.Buttons
 {
-    public ColorPicker()
+    /// <summary>
+    /// Interaction logic for ColorPicker.xaml
+    /// </summary>
+    public partial class ColorPicker : UserControl
     {
-        InitializeComponent();
-    }
-
-    private void OnButtonClick(object sender, EventArgs e)
-    {
-        using ColorDialog colorDialog = new();
-
-        if (colorDialog.ShowDialog() == DialogResult.OK)
+        public ColorPicker()
         {
-            if (DataContext is Color color)
+            InitializeComponent();
+        }
+
+        private void OnButtonClick(object sender, EventArgs e)
+        {
+            ColorDialog colorDialog = new ColorDialog();
+
+            if (colorDialog.ShowDialog() == DialogResult.OK)
             {
-                color.Value = colorDialog.Color.ToHexString();
+                if (DataContext is Color color)
+                {
+                    color.Value = colorDialog.Color.ToHexString();
+                }
             }
         }
     }

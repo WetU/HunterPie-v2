@@ -2,18 +2,19 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace HunterPie.Core.Architecture;
-
-public class Bindable : INotifyPropertyChanged
+namespace HunterPie.Core.Architecture
 {
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void SetValue<T>(ref T property, T value, [CallerMemberName] string propertyName = "")
+    public class Bindable : INotifyPropertyChanged
     {
-        if (EqualityComparer<T>.Default.Equals(property, value))
-            return;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        property = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void SetValue<T>(ref T property, T value, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(property, value))
+                return;
+
+            property = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

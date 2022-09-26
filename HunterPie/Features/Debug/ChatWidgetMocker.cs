@@ -4,22 +4,21 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Chat.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Chat.Views;
 
-namespace HunterPie.Features.Debug;
-
-internal class ChatWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class ChatWidgetMocker : IWidgetMocker
     {
-        Core.Client.Configuration.OverlayConfig mockConfig = ClientConfig.Config.Rise.Overlay;
-
-        if (ClientConfig.Config.Development.MockChatWidget)
+        public void Mock()
         {
-            _ = WidgetManager.Register<ChatView, ChatWidgetConfig>(
-                new ChatView(mockConfig.ChatWidget)
-                {
-                    DataContext = new MockChatViewModel()
-                }
-            );
+            var mockConfig = ClientConfig.Config.Rise.Overlay;
+
+            if (ClientConfig.Config.Development.MockChatWidget)
+                WidgetManager.Register<ChatView, ChatWidgetConfig>(
+                    new ChatView(mockConfig.ChatWidget)
+                    {
+                        DataContext = new MockChatViewModel()
+                    }
+                );
         }
     }
 }

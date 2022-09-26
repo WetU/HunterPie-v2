@@ -1,29 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using Range = HunterPie.Core.Settings.Types.Range;
+using Newtonsoft.Json;
 using System;
-using Range = HunterPie.Core.Settings.Types.Range;
 
-namespace HunterPie.Core.Converters;
-
-internal class RangeConverter : JsonConverter
+namespace HunterPie.Core.Converters
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(Range);
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    class RangeConverter : JsonConverter
     {
-        object value = Convert.ChangeType(reader.Value, typeof(double));
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Range);
+        }
 
-        objectType.GetProperty(nameof(Range.Current))
-            .SetValue(existingValue, value);
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            object value = Convert.ChangeType(reader.Value, typeof(double));
 
-        return existingValue;
-    }
+            objectType.GetProperty(nameof(Range.Current))
+                .SetValue(existingValue, value);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        object prop = value.GetType()
-                .GetProperty(nameof(Range.Current))
-                .GetValue(value);
+            return existingValue;
+        }
 
-        serializer.Serialize(writer, prop);
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var prop = value.GetType()
+                    .GetProperty(nameof(Range.Current))
+                    .GetValue(value);
+
+            serializer.Serialize(writer, prop);
+        }
     }
 }

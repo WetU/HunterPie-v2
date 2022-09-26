@@ -4,22 +4,21 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Damage.View;
 using HunterPie.UI.Overlay.Widgets.Damage.ViewModels;
 
-namespace HunterPie.Features.Debug;
-
-internal class DamageWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class DamageWidgetMocker : IWidgetMocker
     {
-        Core.Client.Configuration.OverlayConfig mockConfig = ClientConfig.Config.World.Overlay;
-
-        if (ClientConfig.Config.Development.MockDamageWidget)
+        public void Mock()
         {
-            _ = WidgetManager.Register<MeterView, DamageMeterWidgetConfig>(
-                new MeterView(mockConfig.DamageMeterWidget)
-                {
-                    DataContext = new MockMeterViewModel()
-                }
-            );
+            var mockConfig = ClientConfig.Config.World.Overlay;
+
+            if (ClientConfig.Config.Development.MockDamageWidget)
+                WidgetManager.Register<MeterView, DamageMeterWidgetConfig>(
+                    new MeterView(mockConfig.DamageMeterWidget)
+                    {
+                        DataContext = new MockMeterViewModel()
+                    }
+                );
         }
     }
 }

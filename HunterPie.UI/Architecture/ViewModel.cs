@@ -1,7 +1,8 @@
 ﻿using HunterPie.Core.Architecture;
 
-namespace HunterPie.UI.Architecture;
-
-public class ViewModel : Bindable
+namespace HunterPie.UI.Architecture
 {
+    public class ViewModel : Bindable
+    {
+    }
 }

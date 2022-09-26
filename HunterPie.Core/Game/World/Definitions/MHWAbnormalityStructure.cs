@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace HunterPie.Core.Game.World.Definitions;
-
-[StructLayout(LayoutKind.Sequential)]
-public struct MHWAbnormalityStructure
+namespace HunterPie.Core.Game.World.Definitions
 {
-    public float Timer;
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MHWAbnormalityStructure
+    {
+        public float Timer;
+    }
 }

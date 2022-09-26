@@ -2,21 +2,25 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class TimerToSizeConverter : IMultiValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    public class TimerToSizeConverter : IMultiValueConverter
     {
-        if (values.Length < 2)
-            throw new Exception("Expected at least 2 arguments");
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length < 2)
+                throw new Exception("Expected at least 2 arguments");
 
-        double timer = (double)values[0];
-        double maxTimer = (double)values[1];
-        double maxSize = (double)values[2];
+            double timer = (double)values[0];
+            double maxTimer = (double)values[1];
+            double maxSize = (double)values[2];
 
-        return maxSize * (timer / maxTimer);
+            return maxSize * (timer / maxTimer);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

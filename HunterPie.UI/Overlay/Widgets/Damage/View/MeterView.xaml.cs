@@ -5,30 +5,33 @@ using HunterPie.UI.Overlay.Enums;
 using HunterPie.UI.Overlay.Widgets.Damage.ViewModels;
 using System;
 
-namespace HunterPie.UI.Overlay.Widgets.Damage.View;
-
-/// <summary>
-/// Interaction logic for MeterView.xaml
-/// </summary>
-public partial class MeterView : View<MeterViewModel>, IWidget<DamageMeterWidgetConfig>, IWidgetWindow
+namespace HunterPie.UI.Overlay.Widgets.Damage.View
 {
-    public MeterView(DamageMeterWidgetConfig config) : base(config)
+    /// <summary>
+    /// Interaction logic for MeterView.xaml
+    /// </summary>
+    public partial class MeterView : View<MeterViewModel>, IWidget<DamageMeterWidgetConfig>, IWidgetWindow
     {
-        Settings = config;
+        private readonly DamageMeterWidgetConfig _config;
 
-        InitializeComponent();
+        public MeterView(DamageMeterWidgetConfig config) : base(config)
+        {
+            _config = config;
+
+            InitializeComponent();
+        }
+
+        public DamageMeterWidgetConfig Settings => _config;
+
+        public string Title => "Damage Meter";
+
+        public WidgetType Type => WidgetType.ClickThrough;
+
+        IWidgetSettings IWidgetWindow.Settings => Settings;
+
+        public event EventHandler<WidgetType> OnWidgetTypeChange;
+
+        private void OnPlayerHighlightToggle(object sender, EventArgs e) => ViewModel.ToggleHighlight();
+        private void OnPlayerBlurToggle(object sender, EventArgs e) => ViewModel.ToggleBlur();
     }
-
-    public DamageMeterWidgetConfig Settings { get; }
-
-    public string Title => "Damage Meter";
-
-    public WidgetType Type => WidgetType.ClickThrough;
-
-    IWidgetSettings IWidgetWindow.Settings => Settings;
-
-    public event EventHandler<WidgetType> OnWidgetTypeChange;
-
-    private void OnPlayerHighlightToggle(object sender, EventArgs e) => ViewModel.ToggleHighlight();
-    private void OnPlayerBlurToggle(object sender, EventArgs e) => ViewModel.ToggleBlur();
 }

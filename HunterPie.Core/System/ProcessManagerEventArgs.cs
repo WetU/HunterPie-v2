@@ -1,18 +1,19 @@
 ﻿using HunterPie.Core.Domain.Process;
 using System;
 
-namespace HunterPie.Core.System;
-
-public class ProcessManagerEventArgs : EventArgs
+namespace HunterPie.Core.System
 {
-
-    public IProcessManager Process { get; }
-
-    public string ProcessName { get; }
-
-    public ProcessManagerEventArgs(IProcessManager process, string processName)
+    public class ProcessManagerEventArgs : EventArgs
     {
-        Process = process;
-        ProcessName = processName;
+
+        public IProcessManager Process { get; }
+        public string ProcessName { get; }
+
+        public ProcessManagerEventArgs(IProcessManager process, string processName)
+        {
+            Process = process;
+            ProcessName = processName;
+        }
+
     }
 }

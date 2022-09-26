@@ -1,13 +1,14 @@
 ﻿using System;
 
-namespace HunterPie.Core.Client.Localization;
-
-public class LocalizationAttribute : Attribute
+namespace HunterPie.Core.Client.Localization
 {
-    public string XPath { get; }
-
-    public LocalizationAttribute(string xpath)
+    public class LocalizationAttribute : Attribute
     {
-        XPath = xpath;
+        public string XPath { get; }
+
+        public LocalizationAttribute(string xpath)
+        {
+            XPath = xpath;
+        }
     }
 }

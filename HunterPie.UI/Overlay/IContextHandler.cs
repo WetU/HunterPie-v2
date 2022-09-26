@@ -1,7 +1,8 @@
-﻿namespace HunterPie.UI.Overlay;
-
-public interface IContextHandler
+﻿namespace HunterPie.UI.Overlay
 {
-    public void HookEvents();
-    public void UnhookEvents();
+    public interface IContextHandler
+    {
+        public void HookEvents();
+        public void UnhookEvents();
+    }
 }

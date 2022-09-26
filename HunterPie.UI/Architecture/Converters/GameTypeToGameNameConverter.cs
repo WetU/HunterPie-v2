@@ -3,19 +3,23 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class GameTypeToGameNameConverter : IValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class GameTypeToGameNameConverter : IValueConverter
     {
-        return (GameType)value switch
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            GameType.Rise => "Monster Hunter Rise",
-            GameType.World => "Monster Hunter: World",
-            _ => "unknown"
-        };
-    }
+            return (GameType)value switch
+            {
+                GameType.Rise => "Monster Hunter Rise",
+                GameType.World => "Monster Hunter: World",
+                _ => "unknown"
+            };
+        }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

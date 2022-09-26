@@ -1,11 +1,12 @@
-﻿namespace HunterPie.Core.Game.Enums;
-
-public enum ActivityType
+﻿namespace HunterPie.Core.Game.Enums
 {
-    HarvestBox,
-    Argosy,
-    Submarine,
-    Meowcenaries,
-    TrainingDojo,
-    Cohoot
+    public enum ActivityType
+    {
+        HarvestBox,
+        Argosy,
+        Submarine,
+        Meowcenaries,
+        TrainingDojo,
+        Cohoot
+    }
 }

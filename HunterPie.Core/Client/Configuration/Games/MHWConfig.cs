@@ -1,3 +1,4 @@
-﻿namespace HunterPie.Core.Client.Configuration.Games;
-
-public class MHWConfig : GameConfig { }
+﻿namespace HunterPie.Core.Client.Configuration.Games
+{
+    public class MHWConfig : GameConfig { }
+}

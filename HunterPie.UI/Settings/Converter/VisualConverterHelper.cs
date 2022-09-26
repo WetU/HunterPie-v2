@@ -1,18 +1,19 @@
 ﻿using HunterPie.Core.Architecture;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Settings.Converter;
-
-public static class VisualConverterHelper
+namespace HunterPie.UI.Settings.Converter
 {
-    public static Binding CreateBinding(object parent, string path = nameof(Observable<bool>.Value))
+    public static class VisualConverterHelper
     {
-        var binding = new Binding(path)
+        public static Binding CreateBinding(object parent, string path = nameof(Observable<bool>.Value))
         {
-            Mode = BindingMode.TwoWay,
-            Source = parent,
-        };
+            var binding = new Binding(path)
+            {
+                Mode = BindingMode.TwoWay,
+                Source = parent,
+            };
 
-        return binding;
+            return binding;
+        }
     }
 }

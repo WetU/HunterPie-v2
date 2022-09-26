@@ -1,10 +1,11 @@
-﻿namespace HunterPie.Core.Game.Enums;
-
-public enum Element
+﻿namespace HunterPie.Core.Game.Enums
 {
-    Fire,
-    Water,
-    Ice,
-    Thunder,
-    Dragon
+    public enum Element
+    {
+        Fire,
+        Water,
+        Ice,
+        Thunder,
+        Dragon
+    }
 }

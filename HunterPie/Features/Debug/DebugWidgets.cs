@@ -1,21 +1,22 @@
-﻿namespace HunterPie.Features.Debug;
-
-internal static class DebugWidgets
+﻿namespace HunterPie.Features.Debug
 {
-    private static readonly IWidgetMocker[] mockers = new IWidgetMocker[]
+    internal static class DebugWidgets
     {
-        new MonsterWidgetMocker(),
-        new AbnormalityWidgetMocker(),
-        new ActivitiesWidgetMocker(),
-        new DamageWidgetMocker(),
-        new WirebugWidgetMocker(),
-        new ChatWidgetMocker(),
-        new SpecializedToolWidgetMocker(),
-    };
+        private readonly static IWidgetMocker[] mockers = new IWidgetMocker[]
+        {
+            new MonsterWidgetMocker(),
+            new AbnormalityWidgetMocker(),
+            new ActivitiesWidgetMocker(),
+            new DamageWidgetMocker(),
+            new WirebugWidgetMocker(),
+            new ChatWidgetMocker(),
+            new SpecializedToolWidgetMocker(),
+        };
 
-    public static void MockIfNeeded()
-    {
-        foreach (IWidgetMocker mocker in mockers)
-            mocker.Mock();
+        public static void MockIfNeeded()
+        {
+            foreach (var mocker in mockers)
+                mocker.Mock();
+        }
     }
 }

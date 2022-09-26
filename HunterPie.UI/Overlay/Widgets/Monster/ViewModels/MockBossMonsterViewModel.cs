@@ -3,147 +3,148 @@ using HunterPie.Core.Game.Enums;
 using HunterPie.UI.Architecture.Test;
 using System;
 
-namespace HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
-
-internal class MockBossMonsterViewModel : BossMonsterViewModel
+namespace HunterPie.UI.Overlay.Widgets.Monster.ViewModels
 {
-    private readonly MonsterWidgetConfig _mockConfig;
-
-    public MockBossMonsterViewModel(MonsterWidgetConfig config) : base(config)
+    internal class MockBossMonsterViewModel : BossMonsterViewModel
     {
-        _mockConfig = config;
-        InitMock();
-    }
+        private readonly MonsterWidgetConfig _mockConfig;
 
-    private void InitMock()
-    {
-        MockParts();
-        MockAilments();
-        MockWeakenesses();
-
-        MockBehavior.Run(() =>
+        public MockBossMonsterViewModel(MonsterWidgetConfig config) : base(config)
         {
-            for (int i = 0; i < Parts.Count / 2; i++)
+            _mockConfig = config;
+            InitMock();
+        }
+
+        private void InitMock()
+        {
+            MockParts();
+            MockAilments();
+            MockWeakenesses();
+
+            MockBehavior.Run(() =>
             {
-                MonsterPartViewModel part = Parts[i];
-
-                if (!part.IsPartBroken)
-                    part.Health -= Math.Min(20, part.MaxHealth);
-
-                part.Flinch -= Math.Min(20, part.MaxFlinch);
-
-                if (!part.IsPartSevered)
-                    part.Sever -= Math.Min(150, part.MaxSever);
-
-                if (part.Sever < 0)
+                for (int i = 0; i < Parts.Count / 2; i++)
                 {
-                    part.Sever = part.MaxSever;
-                    part.IsPartSevered = true;
-                }
+                    var part = Parts[i];
 
-                if (part.Health < 0)
-                {
-                    part.Health = part.MaxHealth;
-                    part.IsPartBroken = true;
-                }
+                    if (!part.IsPartBroken)
+                        part.Health -= Math.Min(20, part.MaxHealth);
 
-                if (part.Flinch < 0)
-                    part.Flinch = part.MaxFlinch;
+                    part.Flinch -= Math.Min(20, part.MaxFlinch);
+
+                    if (!part.IsPartSevered)
+                        part.Sever -= Math.Min(150, part.MaxSever);
+
+                    if (part.Sever < 0)
+                    {
+                        part.Sever = part.MaxSever;
+                        part.IsPartSevered = true;
+                    }
+
+                    if (part.Health < 0)
+                    {
+                        part.Health = part.MaxHealth;
+                        part.IsPartBroken = true;
+                    }
+
+                    if (part.Flinch < 0)
+                        part.Flinch = part.MaxFlinch;
+                }
+            });
+        }
+
+        private void MockParts()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Parts.Add(
+                    new MonsterPartViewModel(_mockConfig)
+                    {
+                        Name = $"Severable {i}",
+                        IsKnownPart = true,
+                        Health = 500.0,
+                        MaxHealth = 500.0,
+                        Sever = 2000.0,
+                        MaxSever = 2000.0,
+                        Flinch = 200.0,
+                        MaxFlinch = 200.0,
+                        Breaks = 0,
+                        MaxBreaks = 0,
+                        IsPartBroken = (i & 1) == 1,
+                        Type = PartType.Severable
+                    }
+                );
             }
-        });
-    }
 
-    private void MockParts()
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            Parts.Add(
-                new MonsterPartViewModel(_mockConfig)
-                {
-                    Name = $"Severable {i}",
-                    IsKnownPart = true,
-                    Health = 500.0,
-                    MaxHealth = 500.0,
-                    Sever = 2000.0,
-                    MaxSever = 2000.0,
-                    Flinch = 200.0,
-                    MaxFlinch = 200.0,
-                    Breaks = 0,
-                    MaxBreaks = 0,
-                    IsPartBroken = (i & 1) == 1,
-                    Type = PartType.Severable
-                }
-            );
+            for (int i = 0; i < 2; i++)
+            {
+                Parts.Add(
+                    new MonsterPartViewModel(_mockConfig)
+                    {
+                        Name = $"Breakable {i}",
+                        IsKnownPart = true,
+                        Health = 500.0,
+                        MaxHealth = 500.0,
+                        Flinch = 250.0,
+                        MaxFlinch = 250.0,
+                        Breaks = 0,
+                        MaxBreaks = 0,
+                        IsPartBroken = (i & 1) == 1,
+                        Type = PartType.Breakable
+                    }
+                );
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                Parts.Add(
+                    new MonsterPartViewModel(_mockConfig)
+                    {
+                        Name = $"Part {i}",
+                        IsKnownPart = true,
+                        Flinch = 250.0,
+                        MaxFlinch = 250.0,
+                        Breaks = 0,
+                        MaxBreaks = 0,
+                        Type = PartType.Flinch
+                    }
+                );
+            }
         }
 
-        for (int i = 0; i < 2; i++)
+        private void MockAilments()
         {
-            Parts.Add(
-                new MonsterPartViewModel(_mockConfig)
-                {
-                    Name = $"Breakable {i}",
-                    IsKnownPart = true,
-                    Health = 500.0,
-                    MaxHealth = 500.0,
-                    Flinch = 250.0,
-                    MaxFlinch = 250.0,
-                    Breaks = 0,
-                    MaxBreaks = 0,
-                    IsPartBroken = (i & 1) == 1,
-                    Type = PartType.Breakable
-                }
-            );
+            string[] ailmentNames =
+            {
+                "AILMENT_UNKNOWN", "AILMENT_PARALYSIS", "AILMENT_SLEEP", "AILMENT_STUN", "AILMENT_POISON",
+                "AILMENT_BLAST", "AILMENT_EXHAUST", "AILMENT_MOUNT", "AILMENT_FLASH", "AILMENT_WATER", "AILMENT_FIRE",
+                "AILMENT_ICE", "AILMENT_THUNDER", "AILMENT_DUNG", "STATUS_ENRAGE"
+            };
+            foreach (string name in ailmentNames)
+            {
+                Ailments.Add(
+                    new MonsterAilmentViewModel(_mockConfig)
+                    {
+                        Name = name,
+                        Timer = 100.0,
+                        MaxTimer = 100.0,
+                        Buildup = 100.0,
+                        MaxBuildup = 100.0
+                    }
+                );
+            }
         }
 
-        for (int i = 0; i < 10; i++)
+        private void MockWeakenesses()
         {
-            Parts.Add(
-                new MonsterPartViewModel(_mockConfig)
-                {
-                    Name = $"Part {i}",
-                    IsKnownPart = true,
-                    Flinch = 250.0,
-                    MaxFlinch = 250.0,
-                    Breaks = 0,
-                    MaxBreaks = 0,
-                    Type = PartType.Flinch
-                }
-            );
-        }
-    }
+            Random random = new();
 
-    private void MockAilments()
-    {
-        string[] ailmentNames =
-        {
-            "AILMENT_UNKNOWN", "AILMENT_PARALYSIS", "AILMENT_SLEEP", "AILMENT_STUN", "AILMENT_POISON",
-            "AILMENT_BLAST", "AILMENT_EXHAUST", "AILMENT_MOUNT", "AILMENT_FLASH", "AILMENT_WATER", "AILMENT_FIRE",
-            "AILMENT_ICE", "AILMENT_THUNDER", "AILMENT_DUNG", "STATUS_ENRAGE"
-        };
-        foreach (string name in ailmentNames)
-        {
-            Ailments.Add(
-                new MonsterAilmentViewModel(_mockConfig)
-                {
-                    Name = name,
-                    Timer = 100.0,
-                    MaxTimer = 100.0,
-                    Buildup = 100.0,
-                    MaxBuildup = 100.0
-                }
-            );
-        }
-    }
-
-    private void MockWeakenesses()
-    {
-        Random random = new();
-
-        for (int i = 0; i < 2; i++)
-        {
-            int maxElements = Enum.GetValues(typeof(Element)).Length - 1;
-            var randomElement = (Element)random.Next(maxElements);
-            Weaknesses.Add(randomElement);
+            for (int i = 0; i < 2; i++)
+            {
+                int maxElements = Enum.GetValues(typeof(Element)).Length - 1;
+                Element randomElement = (Element)random.Next(maxElements);
+                Weaknesses.Add(randomElement);
+            }
         }
     }
 }

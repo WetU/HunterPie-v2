@@ -5,39 +5,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HunterPie.Core.Game.Rise.Entities.Chat;
-
-public class MHRChat : IChat, IEventDispatcher
+namespace HunterPie.Core.Game.Rise.Entities.Chat
 {
-    private bool _isChatOpen;
-    private readonly Dictionary<long, MHRChatMessage> _messages = new();
-    public List<IChatMessage> Messages => _messages.Values.ToList<IChatMessage>();
-
-    public bool IsChatOpen
+    public class MHRChat : IChat, IEventDispatcher
     {
-        get => _isChatOpen;
-        internal set
+        private bool _isChatOpen;
+        private readonly Dictionary<long, MHRChatMessage> _messages = new();
+        public List<IChatMessage> Messages => _messages.Values.ToList<IChatMessage>();
+
+        public bool IsChatOpen
         {
-            if (value != _isChatOpen)
+            get => _isChatOpen;
+            internal set
             {
-                _isChatOpen = value;
-                this.Dispatch(OnChatOpen, this);
+                if (value != _isChatOpen)
+                {
+                    _isChatOpen = value;
+                    this.Dispatch(OnChatOpen, this);
+                }
             }
         }
-    }
 
-    public event EventHandler<IChatMessage> OnNewChatMessage;
-    public event EventHandler<IChat> OnChatOpen;
+        public event EventHandler<IChatMessage> OnNewChatMessage;
+        public event EventHandler<IChat> OnChatOpen;
 
-    internal bool ConstainsMessage(long messageAddress) => _messages.ContainsKey(messageAddress);
+        internal bool ConstainsMessage(long messageAddress) => _messages.ContainsKey(messageAddress);
 
-    internal void AddMessage(long messageAddress, MHRChatMessage message)
-    {
-        if (_messages.ContainsKey(messageAddress))
-            return;
+        internal void AddMessage(long messageAddress, MHRChatMessage message)
+        {
+            if (_messages.ContainsKey(messageAddress))
+                return;
 
-        _messages.Add(messageAddress, message);
+            _messages.Add(messageAddress, message);
 
-        this.Dispatch(OnNewChatMessage, message);
+            this.Dispatch(OnNewChatMessage, message);
+        }
     }
 }

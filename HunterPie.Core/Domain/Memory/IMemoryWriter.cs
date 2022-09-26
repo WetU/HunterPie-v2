@@ -1,9 +1,12 @@
-﻿namespace HunterPie.Core.Domain.Memory;
+﻿using System;
 
-public interface IMemoryWriter
+namespace HunterPie.Core.Domain.Memory
 {
-    public void Write<T>(long address, T data) where T : struct;
-    public void Write<T>(long address, T[] data) where T : struct;
-    public void InjectAsm(long address, byte[] asm);
-    public void Inject(string dll);
+    public interface IMemoryWriter
+    {
+        public bool Write<T>(long address, T data) where T : struct;
+        public bool Write<T>(long address, T[] data) where T : struct;
+        public bool InjectAsm(long address, byte[] asm);
+        public bool Inject(string dll);
+    }
 }

@@ -1,108 +1,121 @@
 ﻿using HunterPie.Core.Domain.Dialog;
 using HunterPie.UI.Architecture.Extensions;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
+using System;
 
-namespace HunterPie.UI.Dialog;
-
-/// <summary>
-/// Interaction logic for DialogView.xaml
-/// </summary>
-public partial class DialogView : Window, INativeDialog, INotifyPropertyChanged
+namespace HunterPie.UI.Dialog
 {
-    private NativeDialogButtons _buttons;
-
-    private string _description = "This is a default dialog text";
-    private string _dialogTitle;
-    public new NativeDialogResult DialogResult { get; private set; }
-    public NativeDialogButtons Buttons
+    /// <summary>
+    /// Interaction logic for DialogView.xaml
+    /// </summary>
+    public partial class DialogView : Window, INativeDialog, INotifyPropertyChanged
     {
-        get => _buttons;
-        set
+        private NativeDialogButtons _buttons;
+
+        private string _description = "This is a default dialog text";
+        private string _dialogTitle;
+        public new NativeDialogResult DialogResult { get; private set; }
+        public NativeDialogButtons Buttons
         {
-            if (value != _buttons)
+            get => _buttons;
+            set
             {
-                _buttons = value;
-                this.N(PropertyChanged);
+                if (value != _buttons)
+                {
+                    _buttons = value;
+                    this.N(PropertyChanged);
+                } 
             }
         }
-    }
 
-    public string DialogTitle
-    {
-        get => _dialogTitle;
-        set
+        public string DialogTitle
         {
-            if (value != _dialogTitle)
+            get => _dialogTitle;
+            set
             {
-                _dialogTitle = value;
-                this.N(PropertyChanged);
+                if (value != _dialogTitle)
+                {
+                    _dialogTitle = value;
+                    this.N(PropertyChanged);
+                }
             }
         }
-    }
 
-    public string Description
-    {
-        get => _description;
-        set
+        public string Description
         {
-            if (value != _description)
+            get => _description;
+            set
             {
-                _description = value;
-                this.N(PropertyChanged);
+                if (value != _description)
+                {
+                    _description = value;
+                    this.N(PropertyChanged);
+                }
             }
         }
-    }
 
-    public DialogView()
-    {
-        InitializeComponent();
-    }
+        public DialogView()
+        {
+            InitializeComponent();
+        }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    public void Warn(string title, string description, NativeDialogButtons buttons) => SetDialogInfo(title, description, "ICON_WARN", buttons);
+        public void Warn(string title, string description, NativeDialogButtons buttons)
+        {
+            SetDialogInfo(title, description, "ICON_WARN", buttons);
+        }
 
-    public void Info(string title, string description, NativeDialogButtons buttons) => SetDialogInfo(title, description, "ICON_INFO", buttons);
+        public void Info(string title, string description, NativeDialogButtons buttons)
+        {
+            SetDialogInfo(title, description, "ICON_INFO", buttons);
+        }
 
-    public void Error(string title, string description, NativeDialogButtons buttons) => SetDialogInfo(title, description, "ICON_ERROR", buttons);
+        public void Error(string title, string description, NativeDialogButtons buttons)
+        {
+            SetDialogInfo(title, description, "ICON_ERROR", buttons);
+        }
 
-    private void SetDialogInfo(string title, string description, string icon, NativeDialogButtons buttons)
-    {
-        DialogTitle = title;
-        Description = description;
-        Icon = FindResource(icon) as ImageSource;
-        Buttons = buttons;
-        _ = ShowDialog();
-    }
+        private void SetDialogInfo(string title, string description, string icon, NativeDialogButtons buttons)
+        {
+            DialogTitle = title;
+            Description = description;
+            Icon = FindResource(icon) as ImageSource;
+            Buttons = buttons;
+            ShowDialog();
+        }
 
-    NativeDialogResult INativeDialog.DialogResult() => DialogResult;
+        NativeDialogResult INativeDialog.DialogResult()
+        {
+            return DialogResult;
+        }
 
-    private void OnAccept(object sender, EventArgs e)
-    {
-        DialogResult = NativeDialogResult.Accept;
-        Close();
-    }
+        private void OnAccept(object sender, EventArgs e)
+        {
+            DialogResult = NativeDialogResult.Accept;
+            Close();
+        }
 
-    private void OnReject(object sender, EventArgs e)
-    {
-        DialogResult = NativeDialogResult.Reject;
-        Close();
-    }
+        private void OnReject(object sender, EventArgs e)
+        {
+            DialogResult = NativeDialogResult.Reject;
+            Close();
+        }
 
-    private void OnCancel(object sender, EventArgs e)
-    {
-        DialogResult = NativeDialogResult.Cancel;
-        Close();
-    }
-
-    protected override void OnClosing(CancelEventArgs e)
-    {
-        base.OnClosing(e);
-
-        if (DialogResult == NativeDialogResult.NotFinished)
+        private void OnCancel(object sender, EventArgs e)
+        {
             DialogResult = NativeDialogResult.Cancel;
+            Close();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            if (DialogResult == NativeDialogResult.NotFinished)
+                DialogResult = NativeDialogResult.Cancel;
+        }
     }
 }

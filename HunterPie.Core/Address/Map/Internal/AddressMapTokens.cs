@@ -1,9 +1,14 @@
-﻿namespace HunterPie.Core.Address.Map.Internal;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-internal enum AddressMapTokens
+namespace HunterPie.Core.Address.Map.Internal
 {
-    Comment = '#',
-    Equals = '=',
-    Space = ' ',
-    NewLine = '\n'
+    internal enum AddressMapTokens
+    {
+        Comment = '#',
+        Equals = '=',
+        Space = ' ',
+        NewLine = '\n'
+    }
 }

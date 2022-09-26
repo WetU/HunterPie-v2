@@ -1,8 +1,9 @@
 ﻿using HunterPie.GUI.Parts.Sidebar.ViewModels;
 
-namespace HunterPie.Domain.Sidebar;
-
-public interface ISideBar
+namespace HunterPie.Domain.Sidebar
 {
-    public ISideBarElement[] Menu { get; }
+    public interface ISideBar
+    {
+        public ISideBarElement[] Menu { get; }
+    }
 }

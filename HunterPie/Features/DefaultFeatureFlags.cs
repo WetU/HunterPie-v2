@@ -3,18 +3,19 @@ using HunterPie.Core.Domain.Features.Domain;
 using HunterPie.Internal.Logger;
 using System.Collections.Generic;
 
-namespace HunterPie.Features;
-
-internal class DefaultFeatureFlags
+namespace HunterPie.Features
 {
-    internal readonly Dictionary<string, IFeature> Flags = new()
+    internal class DefaultFeatureFlags
     {
-        { FeatureFlags.FEATURE_NATIVE_LOGGER, new NativeLoggerFeature() },
-        { FeatureFlags.FEATURE_METRICS_WIDGET, new Feature() },
-        { FeatureFlags.FEATURE_USER_ACCOUNT, new Feature() },
-        { FeatureFlags.FEATURE_ADVANCED_DEV, new Feature() },
-        { FeatureFlags.FEATURE_REDIRECT_POOGIE, new Feature() },
-    };
+        internal readonly Dictionary<string, IFeature> Flags = new()
+        {
+            { FeatureFlags.FEATURE_NATIVE_LOGGER, new NativeLoggerFeature() },
+            { FeatureFlags.FEATURE_METRICS_WIDGET, new Feature() },
+            { FeatureFlags.FEATURE_USER_ACCOUNT, new Feature() },
+            { FeatureFlags.FEATURE_ADVANCED_DEV, new Feature() },
+            { FeatureFlags.FEATURE_REDIRECT_POOGIE, new Feature() },
+        };
 
-    public IReadOnlyDictionary<string, IFeature> ReadOnlyFlags => Flags;
+        public IReadOnlyDictionary<string, IFeature> ReadOnlyFlags => Flags;
+    }
 }

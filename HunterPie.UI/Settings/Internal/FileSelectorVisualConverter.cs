@@ -1,26 +1,28 @@
-﻿using HunterPie.Core.Settings.Types;
+﻿using HunterPie.Core.Logger;
+using HunterPie.Core.Settings.Types;
 using HunterPie.UI.Settings.Converter;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace HunterPie.UI.Settings.Internal;
-
-internal class FileSelectorVisualConverter : IVisualConverter
+namespace HunterPie.UI.Settings.Internal
 {
-    public FrameworkElement Build(object parent, PropertyInfo childInfo)
+    internal class FileSelectorVisualConverter : IVisualConverter
     {
-        var child = (IFileSelector)childInfo.GetValue(parent);
-
-        Binding binding = VisualConverterHelper.CreateBinding(child, nameof(IFileSelector.Current));
-
-        ComboBox ui = new()
+        public FrameworkElement Build(object parent, PropertyInfo childInfo)
         {
-            ItemsSource = child.Elements
-        };
+            IFileSelector child = (IFileSelector)childInfo.GetValue(parent);
+            
+            Binding binding = VisualConverterHelper.CreateBinding(child, nameof(IFileSelector.Current));
 
-        _ = BindingOperations.SetBinding(ui, ComboBox.SelectedValueProperty, binding);
-        return ui;
+            ComboBox ui = new()
+            {
+                ItemsSource = child.Elements
+            };
+
+            BindingOperations.SetBinding(ui, ComboBox.SelectedValueProperty, binding);
+            return ui;
+        }
     }
 }

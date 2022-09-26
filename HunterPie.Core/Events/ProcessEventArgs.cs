@@ -1,14 +1,15 @@
 ﻿using System;
 
-namespace HunterPie.Core.Events;
-
-public class ProcessEventArgs : EventArgs
+namespace HunterPie.Core.Events
 {
-
-    public string ProcessName { get; }
-
-    public ProcessEventArgs(string name)
+    public class ProcessEventArgs : EventArgs
     {
-        ProcessName = name;
+
+        public string ProcessName { get; }
+
+        public ProcessEventArgs(string name)
+        {
+            ProcessName = name;
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using HunterPie.Core.API;
-using HunterPie.Core.API.Entities;
+using HunterPie.Core.API.Schemas;
 using HunterPie.Core.Architecture;
 using HunterPie.Core.Client;
 using System;
@@ -7,65 +7,70 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
 
-namespace HunterPie.GUI.Parts;
-
-public class HeaderBarViewModel : Bindable
+namespace HunterPie.GUI.Parts
 {
-
-    private bool _isSupporter;
-    private bool _isFetchingSupporter;
-    private bool _isNotificationsToggled;
-
-    public string Version
+    public class HeaderBarViewModel : Bindable
     {
-        get
+
+        private bool _isSupporter;
+        private bool _isFetchingSupporter;
+
+        public string Version
         {
-            Assembly self = typeof(App).Assembly;
-            AssemblyName name = self.GetName();
-            Version ver = name.Version;
+            get
+            {
+                Assembly self = typeof(App).Assembly;
+                AssemblyName name = self.GetName();
+                Version ver = name.Version;
 
-            return $"v{ver}";
+                return $"v{ver}";
+            }
         }
-    }
 
-    public bool IsSupporter { get => _isSupporter; set => SetValue(ref _isSupporter, value); }
-    public bool IsFetchingSupporter { get => _isFetchingSupporter; set => SetValue(ref _isFetchingSupporter, value); }
-    public bool IsNotificationsToggled { get => _isNotificationsToggled; set => SetValue(ref _isNotificationsToggled, value); }
+        public bool IsSupporter { get => _isSupporter; set { SetValue(ref _isSupporter, value); } }
+        public bool IsFetchingSupporter { get => _isFetchingSupporter; set { SetValue(ref _isFetchingSupporter, value); } }
 
-    public Visibility IsRunningAsAdmin => GetAdminState()
-                                          ? Visibility.Visible
-                                          : Visibility.Collapsed;
+        public Visibility IsRunningAsAdmin => GetAdminState()
+                                              ? Visibility.Visible
+                                              : Visibility.Collapsed;
 
-    public void MinimizeApplication()
-    {
-        Application.Current.MainWindow.WindowState = WindowState.Minimized;
-
-        if (ClientConfig.Config.Client.MinimizeToSystemTray)
+        public void MinimizeApplication()
         {
-            Application.Current.MainWindow.Hide();
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+
+            if (ClientConfig.Config.Client.MinimizeToSystemTray)
+            {
+                Application.Current.MainWindow.Hide();
+            }
         }
-    }
 
-    public async void FetchSupporterStatus()
-    {
-        IsFetchingSupporter = true;
+        public async void FetchSupporterStatus()
+        {
+            IsFetchingSupporter = true;
 
-        SupporterValidationResponse res = await PoogieApi.ValidateSupporterToken();
+            SupporterValidationResSchema res = await PoogieApi.ValidateSupporterToken();
 
-        IsSupporter = res?.IsValid ?? false;
+            IsSupporter = res?.IsValid ?? false;
 
-        IsFetchingSupporter = false;
-    }
+            IsFetchingSupporter = false;
+        }
 
-    public void CloseApplication() => Application.Current.MainWindow.Close();
+        public void CloseApplication()
+        {
+            Application.Current.MainWindow.Close();
+        }
+        
+        public void DragApplication()
+        {
+            Application.Current.MainWindow.DragMove();
+        }
 
-    public void DragApplication() => Application.Current.MainWindow.DragMove();
-
-    private bool GetAdminState()
-    {
-        var winIdentity = WindowsIdentity.GetCurrent();
-        var principal = new WindowsPrincipal(winIdentity);
-
-        return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        private bool GetAdminState()
+        {
+            WindowsIdentity winIdentity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(winIdentity);
+            
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
     }
 }

@@ -2,94 +2,98 @@
 using HunterPie.Core.Game.Environment;
 using HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
 
-namespace HunterPie.UI.Overlay.Widgets.Monster;
-
-public class MonsterPartContextHandler : MonsterPartViewModel
+namespace HunterPie.UI.Overlay.Widgets.Monster
 {
-    public readonly IMonsterPart Context;
-
-    public MonsterPartContextHandler(IMonsterPart context, MonsterWidgetConfig config) : base(config)
+    public class MonsterPartContextHandler : MonsterPartViewModel
     {
-        Context = context;
-        Type = Context.Type;
+        public readonly IMonsterPart Context;
 
-        HookEvents();
-        Update();
-    }
+        public MonsterPartContextHandler(IMonsterPart context, MonsterWidgetConfig config) : base(config)
+        {
+            Context = context;
+            Type = Context.Type;
 
-    ~MonsterPartContextHandler()
-    {
-        UnhookEvents();
-    }
+            HookEvents();
+            Update();
+        }
 
-    private void HookEvents()
-    {
-        Context.OnHealthUpdate += OnHealthUpdate;
-        Context.OnFlinchUpdate += OnFlinchUpdate;
-        Context.OnTenderizeUpdate += OnTenderizeUpdate;
-        Context.OnSeverUpdate += OnSeverUpdate;
-        Context.OnBreakCountUpdate += OnBreakCountUpdate;
-    }
+        ~MonsterPartContextHandler()
+        {
+            UnhookEvents();
+        }
 
-    private void UnhookEvents()
-    {
-        Context.OnHealthUpdate -= OnHealthUpdate;
-        Context.OnFlinchUpdate -= OnFlinchUpdate;
-        Context.OnTenderizeUpdate -= OnTenderizeUpdate;
-        Context.OnSeverUpdate -= OnSeverUpdate;
-        Context.OnBreakCountUpdate -= OnBreakCountUpdate;
-    }
+        private void HookEvents()
+        {
+            Context.OnHealthUpdate += OnHealthUpdate;
+            Context.OnFlinchUpdate += OnFlinchUpdate;
+            Context.OnTenderizeUpdate += OnTenderizeUpdate;
+            Context.OnSeverUpdate += OnSeverUpdate;
+            Context.OnBreakCountUpdate += OnBreakCountUpdate;
+        }
 
-    private void OnSeverUpdate(object sender, IMonsterPart e)
-    {
-        MaxSever = e.MaxSever;
-        Sever = e.Sever;
+        private void UnhookEvents()
+        {
+            Context.OnHealthUpdate -= OnHealthUpdate;
+            Context.OnFlinchUpdate -= OnFlinchUpdate;
+            Context.OnTenderizeUpdate -= OnTenderizeUpdate;
+            Context.OnSeverUpdate -= OnSeverUpdate;
+            Context.OnBreakCountUpdate -= OnBreakCountUpdate;
+        }
 
-        IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
-    }
+        private void OnSeverUpdate(object sender, IMonsterPart e)
+        {
+            MaxSever = e.MaxSever;
+            Sever = e.Sever;
 
-    private void OnTenderizeUpdate(object sender, IMonsterPart e)
-    {
-        Tenderize = e.MaxTenderize - e.Tenderize;
-        MaxTenderize = e.MaxTenderize;
-    }
+            IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
+        }
 
-    private void OnBreakCountUpdate(object sender, IMonsterPart e) => Breaks = e.Count;
+        private void OnTenderizeUpdate(object sender, IMonsterPart e)
+        {
+            Tenderize = e.MaxTenderize - e.Tenderize;
+            MaxTenderize = e.MaxTenderize;
+        }
 
-    private void OnFlinchUpdate(object sender, IMonsterPart e)
-    {
-        if (Flinch < e.Flinch && MaxFlinch > 0)
-            Breaks++;
+        private void OnBreakCountUpdate(object sender, IMonsterPart e)
+        {
+            Breaks = e.Count;
+        }
 
-        MaxFlinch = e.MaxFlinch;
-        Flinch = e.Flinch;
+        private void OnFlinchUpdate(object sender, IMonsterPart e)
+        {
+            if (Flinch < e.Flinch && MaxFlinch > 0)
+                Breaks++;
 
-        IsPartBroken = MaxHealth <= 0 || (Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch));
-        IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
-    }
+            MaxFlinch = e.MaxFlinch;
+            Flinch = e.Flinch;
 
-    private void OnHealthUpdate(object sender, IMonsterPart e)
-    {
-        MaxHealth = e.MaxHealth;
-        Health = e.Health;
+            IsPartBroken = MaxHealth <= 0 || Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch);
+            IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
+        }
 
-        IsPartBroken = MaxHealth <= 0 || (Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch));
-    }
+        private void OnHealthUpdate(object sender, IMonsterPart e)
+        {
+            MaxHealth = e.MaxHealth;
+            Health = e.Health;
 
-    private void Update()
-    {
-        Name = Context.Id;
-        IsKnownPart = Context.Id != "PART_UNKNOWN";
+            IsPartBroken = MaxHealth <= 0 || Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch);
+        }
 
-        MaxHealth = Context.MaxHealth;
-        Health = Context.Health;
-        MaxFlinch = Context.MaxFlinch;
-        Flinch = Context.Flinch;
-        MaxSever = Context.MaxSever;
-        Sever = Context.Sever;
+        private void Update()
+        {
+            Name = Context.Id;
+            IsKnownPart = Context.Id != "PART_UNKNOWN";
 
-        IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
-        IsPartBroken = MaxHealth <= 0 || (Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch));
+            MaxHealth = Context.MaxHealth;
+            Health = Context.Health;
+            MaxFlinch = Context.MaxFlinch;
+            Flinch = Context.Flinch;
+            MaxSever = Context.MaxSever;
+            Sever = Context.Sever;
 
+            IsPartSevered = MaxSever == Sever && (Breaks > 0 || Flinch != MaxFlinch);
+            IsPartBroken = MaxHealth <= 0 || (Health == MaxHealth && (Breaks > 0 || Flinch != MaxFlinch));
+
+        }
     }
 }

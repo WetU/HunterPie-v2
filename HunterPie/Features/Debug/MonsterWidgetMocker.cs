@@ -4,22 +4,21 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Monster.Views;
 
-namespace HunterPie.Features.Debug;
-
-internal class MonsterWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class MonsterWidgetMocker : IWidgetMocker
     {
-        Core.Client.Configuration.OverlayConfig mockConfig = ClientConfig.Config.Rise.Overlay;
-
-        if (ClientConfig.Config.Development.MockBossesWidget)
+        public void Mock()
         {
-            _ = WidgetManager.Register<MonstersView, MonsterWidgetConfig>(
-                new MonstersView(mockConfig.BossesWidget)
-                {
-                    DataContext = new MockMonstersViewModel(mockConfig.BossesWidget)
-                }
-            );
+            var mockConfig = ClientConfig.Config.Rise.Overlay;
+
+            if (ClientConfig.Config.Development.MockBossesWidget)
+                WidgetManager.Register<MonstersView, MonsterWidgetConfig>(
+                    new MonstersView(mockConfig.BossesWidget)
+                    {
+                        DataContext = new MockMonstersViewModel(mockConfig.BossesWidget)
+                    }
+                );
         }
     }
 }

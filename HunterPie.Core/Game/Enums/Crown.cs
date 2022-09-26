@@ -1,9 +1,10 @@
-﻿namespace HunterPie.Core.Game.Enums;
-
-public enum Crown
+﻿namespace HunterPie.Core.Game.Enums
 {
-    None,
-    Mini,
-    Silver,
-    Gold
+    public enum Crown
+    {
+        None,
+        Mini,
+        Silver,
+        Gold
+    }
 }

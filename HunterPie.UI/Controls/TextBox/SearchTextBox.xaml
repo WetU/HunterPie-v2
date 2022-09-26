@@ -13,7 +13,7 @@
         <converters:RelativeSizeRectConverter x:Key="RelativeSizeRectConverter"/>
     </UserControl.Resources>
     <Grid>
-        <TextBox Background="{Binding Background}"
+        <TextBox Background="{StaticResource GRAY_600}"
                  VerticalContentAlignment="Center"
                  HorizontalAlignment="Stretch"
                  Padding="10,0,30,0"
@@ -24,9 +24,8 @@
                  BorderThickness="0"
                  TextChanged="OnTextChanged"
                  KeyUp="OnKeyUp"
-                 GotKeyboardFocus="OnGotKeyboardFocus"
-                 LostKeyboardFocus="OnLostKeyboardFocus"
-                 CaretBrush="{StaticResource WHITE_200}">
+                 LostFocus="OnLostFocus"
+                 GotFocus="OnGotFocus">
             <TextBox.Clip>
                 <RectangleGeometry RadiusX="1"
                                    RadiusY="1">
@@ -42,7 +41,7 @@
                 <Style TargetType="TextBox">
                     <Setter Property="Foreground" Value="{StaticResource WHITE_100}"/>
                     <Style.Triggers>
-                        <Trigger Property="IsKeyboardFocused" Value="False">
+                        <Trigger Property="IsFocused" Value="False">
                             <Trigger.Setters>
                                 <Setter Property="Foreground" Value="{StaticResource WHITE_500}"/>
                             </Trigger.Setters>
@@ -53,7 +52,7 @@
         </TextBox>
         <buttons:Button Width="30"
                         HorizontalAlignment="Right"
-                        Background="{Binding Background}"
+                        Background="{StaticResource HUNTERPIE_BACKGROUND_DARK_OPACITY}"
                         OnClick="OnSearchClick">
             <Image Source="{StaticResource ICON_SEARCH}"/>
         </buttons:Button>

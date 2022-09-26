@@ -2,67 +2,71 @@
 using HunterPie.Core.Game.Environment;
 using HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
 
-namespace HunterPie.UI.Overlay.Widgets.Monster;
-
-public class MonsterAilmentContextHandler : MonsterAilmentViewModel
+namespace HunterPie.UI.Overlay.Widgets.Monster
 {
-
-    public readonly IMonsterAilment Context;
-
-    public MonsterAilmentContextHandler(IMonsterAilment context, MonsterWidgetConfig config) : base(config)
+    public class MonsterAilmentContextHandler: MonsterAilmentViewModel
     {
-        Context = context;
 
-        Update();
-        HookEvents();
-    }
+        public readonly IMonsterAilment Context;
 
-    ~MonsterAilmentContextHandler()
-    {
-        UnhookEvents();
-    }
+        public MonsterAilmentContextHandler(IMonsterAilment context, MonsterWidgetConfig config) : base(config)
+        {
+            Context = context;
 
-    private void HookEvents()
-    {
-        Context.OnTimerUpdate += OnTimerUpdate;
-        Context.OnBuildUpUpdate += OnBuildUpUpdate;
-        Context.OnCounterUpdate += OnCounterUpdate;
-    }
+            Update();
+            HookEvents();
+        }
 
-    private void UnhookEvents()
-    {
-        Context.OnTimerUpdate -= OnTimerUpdate;
-        Context.OnBuildUpUpdate -= OnBuildUpUpdate;
-        Context.OnCounterUpdate -= OnCounterUpdate;
-    }
+        ~MonsterAilmentContextHandler()
+        {
+            UnhookEvents();
+        }
 
-    private void OnCounterUpdate(object sender, IMonsterAilment e) => Count = e.Counter;
+        private void HookEvents()
+        {
+            Context.OnTimerUpdate += OnTimerUpdate;
+            Context.OnBuildUpUpdate += OnBuildUpUpdate;
+            Context.OnCounterUpdate += OnCounterUpdate;
+        }
 
-    private void OnBuildUpUpdate(object sender, IMonsterAilment e)
-    {
-        if (e.MaxBuildUp <= 0)
-            return;
+        private void UnhookEvents()
+        {
+            Context.OnTimerUpdate -= OnTimerUpdate;
+            Context.OnBuildUpUpdate -= OnBuildUpUpdate;
+            Context.OnCounterUpdate -= OnCounterUpdate;
+        }
 
-        MaxBuildup = e.MaxBuildUp;
-        Buildup = e.BuildUp;
-    }
+        private void OnCounterUpdate(object sender, IMonsterAilment e)
+        {
+            Count = e.Counter;
+        }
 
-    private void OnTimerUpdate(object sender, IMonsterAilment e)
-    {
-        if (e.MaxTimer <= 0)
-            return;
+        private void OnBuildUpUpdate(object sender, IMonsterAilment e)
+        {
+            if (e.MaxBuildUp <= 0)
+                return;
 
-        MaxTimer = e.MaxTimer;
-        Timer = e.Timer;
-    }
+            MaxBuildup = e.MaxBuildUp;
+            Buildup = e.BuildUp;
+        }
 
-    private void Update()
-    {
-        Name = Context.Id;
-        Count = Context.Counter;
-        MaxBuildup = Context.MaxBuildUp;
-        Buildup = Context.BuildUp;
-        MaxTimer = Context.MaxTimer;
-        Timer = Context.Timer;
+        private void OnTimerUpdate(object sender, IMonsterAilment e)
+        {
+            if (e.MaxTimer <= 0)
+                return;
+
+            MaxTimer = e.MaxTimer;
+            Timer = e.Timer;
+        }
+
+        private void Update()
+        {
+            Name = Context.Id;
+            Count = Context.Counter;
+            MaxBuildup = Context.MaxBuildUp;
+            Buildup = Context.BuildUp;
+            MaxTimer = Context.MaxTimer;
+            Timer = Context.Timer;
+        }
     }
 }

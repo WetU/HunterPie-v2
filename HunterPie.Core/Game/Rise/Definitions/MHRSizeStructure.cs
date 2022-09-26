@@ -1,7 +1,8 @@
-﻿namespace HunterPie.Core.Game.Rise.Definitions;
-
-public struct MHRSizeStructure
+﻿namespace HunterPie.Core.Game.Rise.Definitions
 {
-    public float SizeMultiplier;
-    public float UnkMultiplier;
+    public struct MHRSizeStructure
+    {
+        public float SizeMultiplier;
+        public float UnkMultiplier;
+    }
 }

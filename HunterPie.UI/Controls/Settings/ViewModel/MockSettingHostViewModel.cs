@@ -5,37 +5,38 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
-namespace HunterPie.UI.Controls.Settings.ViewModel;
-
-internal class MockSettingHostViewModel
+namespace HunterPie.UI.Controls.Settings.ViewModel
 {
-    public class MockSettingElement : ISettingElement
+    internal class MockSettingHostViewModel
     {
-        public string Title => "Mock";
-        public string Description => "Mock";
-        public ImageSource Icon => Resources.Icon("ICON_BUG");
-        public string Mock = "Mock";
-
-        public ObservableCollection<ISettingElementType> Elements { get; } = new();
-        public ObservableCollection<GameProcess> Games { get; } = new();
-
-        public Observable<GameProcess> SelectedGame => GameProcess.MonsterHunterWorld;
-
-        public void Add(ISettingElementType element) { }
-
-        public MockSettingElement()
+        public class MockSettingElement : ISettingElement
         {
-            for (int i = 0; i < 15; i++)
-                Elements.Add(new SettingElementType("Mock", "Mock", this, GetType().GetProperty(nameof(Mock)), false));
+            public string Title => "Mock";
+            public string Description => "Mock";
+            public ImageSource Icon => Resources.Icon("ICON_BUG");
+            public string Mock = "Mock";
 
-            foreach (GameProcess gameProcess in Enum.GetValues<GameProcess>())
-                Games.Add(gameProcess);
+            public ObservableCollection<ISettingElementType> Elements { get; } = new();
+            public ObservableCollection<GameProcess> Games { get; } = new();
+
+            public Observable<GameProcess> SelectedGame => GameProcess.MonsterHunterWorld;
+
+            public void Add(ISettingElementType element) { }
+
+            public MockSettingElement()
+            {
+                for (int i = 0; i < 15; i++)
+                    Elements.Add(new SettingElementType("Mock", "Mock", this, GetType().GetProperty(nameof(Mock)), false));
+
+                foreach (GameProcess gameProcess in Enum.GetValues<GameProcess>())
+                    Games.Add(gameProcess);
+            }
         }
-    }
 
-    public ObservableCollection<ISettingElement> Elements { get; } = new()
-    {
-        new MockSettingElement(),
-        new MockSettingElement(),
-    };
+        public ObservableCollection<ISettingElement> Elements { get; } = new()
+        {
+            new MockSettingElement(),
+            new MockSettingElement(),
+        };
+    }
 }

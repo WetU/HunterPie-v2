@@ -1,6 +1,7 @@
-﻿namespace HunterPie.Core.Domain.DTO.Monster;
-
-public struct MonsterAddressData
+﻿namespace HunterPie.Core.Domain.DTO.Monster
 {
-    public long Address;
+    public struct MonsterAddressData
+    {
+        public long Address;
+    }
 }

@@ -3,66 +3,67 @@ using HunterPie.Core.Native.IPC.Models;
 using HunterPie.Core.Native.IPC.Utils;
 using System;
 
-namespace HunterPie.Core.Native.IPC.Handlers.Internal.Damage;
-
-public class DamageMessageHandler : MessageDispatcher<ResponseDamageMessage>, IMessageHandler
+namespace HunterPie.Core.Native.IPC.Handlers.Internal.Damage
 {
-    public int Version => 1;
-
-    public IPCMessageType Type => IPCMessageType.GET_HUNT_STATISTICS;
-
-    public void Handle(byte[] message)
+    public class DamageMessageHandler : MessageDispatcher<ResponseDamageMessage>, IMessageHandler
     {
-        ResponseDamageMessage response = MessageHelper.Deserialize<ResponseDamageMessage>(message);
-        DispatchMessage(response);
-    }
+        public int Version => 1;
 
-    public static async void RequestHuntStatistics(long target)
-    {
-        var request = new RequestDamageMessage
+        public IPCMessageType Type => IPCMessageType.GET_HUNT_STATISTICS;
+
+        public void Handle(byte[] message)
         {
-            Header = new IPCMessage
-            {
-                Type = IPCMessageType.GET_HUNT_STATISTICS,
-                Version = 1,
-            },
-            Target = target
-        };
+            ResponseDamageMessage response = MessageHelper.Deserialize<ResponseDamageMessage>(message);
+            DispatchMessage(response);
+        }
 
-        _ = await IPCService.Send(request);
-    }
-
-    public static async void DeleteHuntStatisticsBy(long target)
-    {
-        var request = new RequestDeleteHuntStatisticsMessage
+        public static async void RequestHuntStatistics(long target)
         {
-            Header = new IPCMessage
+            RequestDamageMessage request = new RequestDamageMessage
             {
-                Type = IPCMessageType.DELETE_HUNT_STATISTICS,
-                Version = 1
-            },
-            Target = target
-        };
+                Header = new IPCMessage
+                {
+                    Type = IPCMessageType.GET_HUNT_STATISTICS,
+                    Version = 1,
+                },
+                Target = target
+            };
 
-        _ = await IPCService.Send(request);
-    }
+            await IPCService.Send(request);
+        }
 
-    public static async void ClearAllHuntStatisticsExcept(long[] targets)
-    {
-        long[] buffer = new long[10];
-
-        Buffer.BlockCopy(targets, 0, buffer, 0, targets.Length * sizeof(long));
-
-        var request = new RequestClearHuntStatisticsMessage
+        public static async void DeleteHuntStatisticsBy(long target)
         {
-            Header = new IPCMessage
+            RequestDeleteHuntStatisticsMessage request = new RequestDeleteHuntStatisticsMessage
             {
-                Type = IPCMessageType.CLEAR_HUNT_STATISTICS,
-                Version = 1
-            },
-            TargetsToKeep = buffer
-        };
+                Header = new IPCMessage
+                {
+                    Type = IPCMessageType.DELETE_HUNT_STATISTICS,
+                    Version = 1
+                },
+                Target = target
+            };
 
-        _ = await IPCService.Send(request);
+            await IPCService.Send(request);
+        }
+
+        public static async void ClearAllHuntStatisticsExcept(long[] targets)
+        {
+            long[] buffer = new long[10];
+
+            Buffer.BlockCopy(targets, 0, buffer, 0, targets.Length * sizeof(long));
+
+            RequestClearHuntStatisticsMessage request = new RequestClearHuntStatisticsMessage
+            {
+                Header = new IPCMessage
+                {
+                    Type = IPCMessageType.CLEAR_HUNT_STATISTICS,
+                    Version = 1
+                },
+                TargetsToKeep = buffer
+            };
+
+            await IPCService.Send(request);
+        }
     }
 }

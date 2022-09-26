@@ -1,34 +1,35 @@
 ﻿using HunterPie.Core.Game.Enums;
 using HunterPie.UI.Architecture.Test;
 
-namespace HunterPie.UI.Overlay.Widgets.SpecializedTools.ViewModels;
-
-public class MockSpecializedToolViewModel : SpecializedToolViewModel
+namespace HunterPie.UI.Overlay.Widgets.SpecializedTools.ViewModels
 {
-    private const double MAX_TIMER = 20;
-    private const double MAX_COOLDOWN = 20;
-
-    public MockSpecializedToolViewModel()
+    public class MockSpecializedToolViewModel : SpecializedToolViewModel
     {
-        Id = SpecializedToolType.ChallengerMantle;
-        MaxCooldown = MAX_COOLDOWN;
-        Timer = MaxTimer = MAX_TIMER;
+        const double MAX_TIMER = 20;
+        const double MAX_COOLDOWN = 20;
 
-        MockBehavior.Run(() =>
+        public MockSpecializedToolViewModel()
         {
+            Id = SpecializedToolType.ChallengerMantle;
+            MaxCooldown = MAX_COOLDOWN;
+            Timer = MaxTimer = MAX_TIMER;
 
-            if (IsRecharging)
+            MockBehavior.Run(() =>
             {
-                Cooldown++;
-                Timer = 120;
-                IsRecharging = Cooldown != MaxCooldown;
-            }
-            else
-            {
-                Timer--;
-                Cooldown = 0;
-                IsRecharging = Timer <= 0;
-            }
-        });
+                
+                if (IsRecharging)
+                {
+                    Cooldown++;
+                    Timer = 120;
+                    IsRecharging = Cooldown != MaxCooldown;
+                } else
+                {
+                    Timer--;
+                    Cooldown = 0;
+                    IsRecharging = Timer <= 0;
+                }
+            });
+        }
+
     }
 }

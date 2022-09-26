@@ -1,14 +1,15 @@
 ﻿using System.Windows.Controls;
 
-namespace HunterPie.UI.Overlay.Controls;
-
-/// <summary>
-/// Interaction logic for Abnormality.xaml
-/// </summary>
-public partial class Abnormality : UserControl
+namespace HunterPie.UI.Overlay.Controls
 {
-    public Abnormality()
+    /// <summary>
+    /// Interaction logic for Abnormality.xaml
+    /// </summary>
+    public partial class Abnormality : UserControl
     {
-        InitializeComponent();
+        public Abnormality()
+        {
+            InitializeComponent();
+        }
     }
 }

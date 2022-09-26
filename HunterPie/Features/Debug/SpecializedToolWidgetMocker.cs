@@ -4,22 +4,21 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.SpecializedTools.ViewModels;
 using HunterPie.UI.Overlay.Widgets.SpecializedTools.Views;
 
-namespace HunterPie.Features.Debug;
-
-internal class SpecializedToolWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class SpecializedToolWidgetMocker : IWidgetMocker
     {
-        Core.Client.Configuration.OverlayConfig mockConfig = ClientConfig.Config.World.Overlay;
-
-        if (ClientConfig.Config.Development.MockSpecializedToolWidget)
+        public void Mock()
         {
-            _ = WidgetManager.Register<SpecializedToolView, SpecializedToolWidgetConfig>(
-                new SpecializedToolView(mockConfig.PrimarySpecializedToolWidget)
-                {
-                    DataContext = new MockSpecializedToolViewModel()
-                }
-            );
+            var mockConfig = ClientConfig.Config.World.Overlay;
+
+            if (ClientConfig.Config.Development.MockSpecializedToolWidget)
+                WidgetManager.Register<SpecializedToolView, SpecializedToolWidgetConfig>(
+                    new SpecializedToolView(mockConfig.PrimarySpecializedToolWidget)
+                    {
+                        DataContext = new MockSpecializedToolViewModel()
+                    }
+                );
         }
     }
 }

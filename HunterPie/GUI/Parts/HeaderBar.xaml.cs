@@ -2,23 +2,23 @@
 using System;
 using System.Windows.Input;
 
-namespace HunterPie.GUI.Parts;
-
-/// <summary>
-/// Interaction logic for HeaderBar.xaml
-/// </summary>
-public partial class HeaderBar : View<HeaderBarViewModel>
+namespace HunterPie.GUI.Parts
 {
-
-    public HeaderBar()
+    /// <summary>
+    /// Interaction logic for HeaderBar.xaml
+    /// </summary>
+    public partial class HeaderBar : View<HeaderBarViewModel>
     {
-        InitializeComponent();
 
-        ViewModel.FetchSupporterStatus();
+        public HeaderBar()
+        {
+            InitializeComponent();
+
+            ViewModel.FetchSupporterStatus();
+        }
+
+        private void OnCloseButtonClick(object sender, EventArgs e) => ViewModel.CloseApplication();
+        private void OnMinimizeButtonClick(object sender, EventArgs e) => ViewModel.MinimizeApplication();
+        private void OnLeftMouseDown(object sender, MouseButtonEventArgs e) => ViewModel.DragApplication();
     }
-
-    private void OnCloseButtonClick(object sender, EventArgs e) => ViewModel.CloseApplication();
-    private void OnMinimizeButtonClick(object sender, EventArgs e) => ViewModel.MinimizeApplication();
-    private void OnLeftMouseDown(object sender, MouseButtonEventArgs e) => ViewModel.DragApplication();
-    private void OnNotificationsClick(object sender, EventArgs e) => ViewModel.IsNotificationsToggled = !ViewModel.IsNotificationsToggled;
 }

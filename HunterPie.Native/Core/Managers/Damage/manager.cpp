@@ -22,19 +22,17 @@ DamageTrackManager* DamageTrackManager::GetInstance()
     return m_Instance;
 }
 
-void DamageTrackManager::UpdateDamage(const EntityDamageData& damageData)
+void DamageTrackManager::UpdateDamage(EntityDamageData damageData)
 {
-    intptr_t target = damageData.target;
+    intptr_t& target = damageData.target;
 
     if (m_Trackings.find(target) == m_Trackings.end())
         m_Trackings.insert({ target, new HuntStatistics() });
 
     HuntStatistics*& statistics = m_Trackings.at(target);
 
-    if (damageData.source.index >= std::size(statistics->entities) || damageData.source.index < 0) {
-        LOG("Invalid source entity index: %d.", damageData.source.index);
+    if (damageData.source.index >= std::size(statistics->entities) || damageData.source.index < 0)
         return;
-    }
 
     EntityDamageData& entityData = statistics->entities[damageData.source.index];
     EntityDamageData& totalEntityData = m_AllTargetsTotal.entities[damageData.source.index];

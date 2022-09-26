@@ -1,13 +1,14 @@
-﻿namespace HunterPie.Core.Game.Enums;
-
-public enum AbnormalityType
+﻿namespace HunterPie.Core.Game.Enums
 {
-    Song,
-    Consumable,
-    Skill,
-    Environment,
-    Debuff,
-    Orchestra,
-    Gear,
-    Food
+    public enum AbnormalityType
+    {
+        Song,
+        Consumable,
+        Skill,
+        Environment,
+        Debuff,
+        Orchestra,
+        Gear,
+        Food
+    }
 }

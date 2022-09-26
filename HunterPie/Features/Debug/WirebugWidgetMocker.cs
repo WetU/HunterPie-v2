@@ -4,22 +4,21 @@ using HunterPie.UI.Overlay;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 using HunterPie.UI.Overlay.Widgets.Wirebug.Views;
 
-namespace HunterPie.Features.Debug;
-
-internal class WirebugWidgetMocker : IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock()
+    internal class WirebugWidgetMocker : IWidgetMocker
     {
-        Core.Client.Configuration.OverlayConfig mockConfig = ClientConfig.Config.Rise.Overlay;
-
-        if (ClientConfig.Config.Development.MockWirebugWidget)
+        public void Mock()
         {
-            _ = WidgetManager.Register<WirebugsView, WirebugWidgetConfig>(
-                new WirebugsView(mockConfig.WirebugWidget)
-                {
-                    DataContext = new MockWirebugsViewModel()
-                }
-            );
+            var mockConfig = ClientConfig.Config.Rise.Overlay;
+
+            if (ClientConfig.Config.Development.MockWirebugWidget)
+                WidgetManager.Register<WirebugsView, WirebugWidgetConfig>(
+                    new WirebugsView(mockConfig.WirebugWidget)
+                    {
+                        DataContext = new MockWirebugsViewModel()
+                    }
+                );
         }
     }
 }

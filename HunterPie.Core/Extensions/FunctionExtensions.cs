@@ -2,23 +2,24 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HunterPie.Core.Extensions;
-
-public static class FunctionExtensions
+namespace HunterPie.Core.Extensions
 {
-    public static Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
+    public static class FunctionExtensions
     {
-        int last = 0;
-        return (T param) =>
+        public static Action<T> Debounce<T>(this Action<T> func, int milliseconds = 300)
         {
-            int current = Interlocked.Increment(ref last);
-            _ = Task.Delay(milliseconds).ContinueWith(task =>
+            var last = 0;
+            return (T param) =>
             {
-                if (current == last)
-                    func(param);
+                var current = Interlocked.Increment(ref last);
+                Task.Delay(milliseconds).ContinueWith(task =>
+                {
+                    if (current == last) 
+                        func(param);
 
-                task.Dispose();
-            });
-        };
+                    task.Dispose();
+                });
+            };
+        }
     }
 }

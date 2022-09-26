@@ -8,105 +8,109 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HunterPie.Core.Domain;
-
-public static class ScanManager
+namespace HunterPie.Core.Domain
 {
-    private static Thread thread;
-    private static CancellationTokenSource token = new();
-    private static readonly HashSet<Scannable> scannables = new();
-
-    // Metrics
-
-    public static readonly Observable<long> ScanTime = 0;
-
-    internal static void Start()
+    public static class ScanManager
     {
-        if (thread is null)
+        private static Thread thread;
+        private static CancellationTokenSource token = new CancellationTokenSource();
+        private readonly static HashSet<Scannable> scannables = new HashSet<Scannable>();
+        
+        // Metrics
+
+        public readonly static Observable<long> ScanTime = 0;
+        
+        internal static void Start()
         {
-            thread = new Thread(() =>
+            if (thread is null)
             {
-                do
+                thread = new Thread(async () =>
                 {
-                    try
+                    do
                     {
-                        var sw = Stopwatch.StartNew();
-                        Scan();
-                        sw.Stop();
-                        ScanTime.Value = sw.ElapsedMilliseconds;
+                        try
+                        {
+                            Stopwatch sw = Stopwatch.StartNew();
+                            Scan();
+                            sw.Stop();
+                            ScanTime.Value = sw.ElapsedMilliseconds;
+                            
+                            if (token.IsCancellationRequested)
+                                break;
 
-                        if (token.IsCancellationRequested)
-                            break;
+                            Thread.Sleep((int)ClientConfig.Config.Client.PollingRate.Current);
+                        }
+                        catch (Exception err)
+                        {
+                            // Logs the error if it came from a generic exception instead of a
+                            // cancel request
+                            Log.Error(err.ToString());
+                            continue;
+                        }
 
-                        Thread.Sleep((int)ClientConfig.Config.Client.PollingRate.Current);
-                    }
-                    catch (Exception err)
-                    {
-                        // Logs the error if it came from a generic exception instead of a
-                        // cancel request
-                        Log.Error(err.ToString());
-                        continue;
-                    }
-                } while (true);
+                    } while (true);
 
-                token = new();
-            })
+                    token = new();
+                })
+                {
+                    Name = "ScanManager",
+                    IsBackground = true,
+                    Priority = ThreadPriority.AboveNormal
+                };
+                thread.Start();
+            }
+                
+        }
+
+        internal static void Stop()
+        {
+            if (thread is not null)
             {
-                Name = "ScanManager",
-                IsBackground = true,
-                Priority = ThreadPriority.AboveNormal
-            };
-            thread.Start();
+                scannables.Clear();
+                token.Cancel();
+                thread = null;
+            }
         }
-    }
 
-    internal static void Stop()
-    {
-        if (thread is not null)
+        private static void Scan()
         {
-            scannables.Clear();
-            token.Cancel();
-            thread = null;
+
+            Scannable[] readOnlyScannables = scannables.ToArray();
+            Task[] tasks = new Task[readOnlyScannables.Length];
+
+            for (int i = 0; i < readOnlyScannables.Length; i++)
+                tasks[i] = Task.Run(readOnlyScannables[i].Scan);
+
+            Task.WaitAll(tasks);
         }
-    }
 
-    private static void Scan()
-    {
-
-        Scannable[] readOnlyScannables = scannables.ToArray();
-        var tasks = new Task[readOnlyScannables.Length];
-
-        for (int i = 0; i < readOnlyScannables.Length; i++)
-            tasks[i] = Task.Run(readOnlyScannables[i].Scan);
-
-        Task.WaitAll(tasks);
-    }
-
-    public static void Add(params Scannable[] scannableList)
-    {
-        foreach (Scannable scannable in scannableList)
-            Add(scannable);
-    }
-
-    public static void Add(Scannable scannable)
-    {
-        lock (scannables)
+        public static void Add(params Scannable[] scannableList)
         {
-            if (scannables.Contains(scannable))
-                return;
-
-            _ = scannables.Add(scannable);
+            foreach (Scannable scannable in scannableList)
+                Add(scannable);
         }
-    }
 
-    public static void Remove(Scannable scannable)
-    {
-        lock (scannables)
+        public static void Add(Scannable scannable)
         {
-            if (!scannables.Contains(scannable))
-                return;
+            lock (scannables)
+            {
+                if (scannables.Contains(scannable))
+                    return;
 
-            _ = scannables.Remove(scannable);
+                scannables.Add(scannable);
+            }
         }
+
+        public static void Remove(Scannable scannable)
+        {
+            lock (scannables)
+            {
+                if (!scannables.Contains(scannable))
+                    return;
+
+                scannables.Remove(scannable);
+            }
+        }
+
     }
 }

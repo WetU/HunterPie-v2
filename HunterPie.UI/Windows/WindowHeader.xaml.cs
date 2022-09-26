@@ -1,64 +1,68 @@
-﻿using HunterPie.UI.Architecture.Extensions;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using HunterPie.UI.Architecture.Extensions;
 
-namespace HunterPie.UI.Windows;
-
-/// <summary>
-/// Interaction logic for WindowHeader.xaml
-/// </summary>
-public partial class WindowHeader : UserControl, INotifyPropertyChanged
+namespace HunterPie.UI.Windows
 {
-    private Window _owner;
-    private bool _isMouseDown;
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public bool IsMouseDown
+    /// <summary>
+    /// Interaction logic for WindowHeader.xaml
+    /// </summary>
+    public partial class WindowHeader : UserControl, INotifyPropertyChanged
     {
-        get => _isMouseDown;
-        private set
+        private Window _owner;
+        private bool _isMouseDown;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsMouseDown
         {
-            if (value != _isMouseDown)
+            get => _isMouseDown;
+            private set
             {
-                _isMouseDown = value;
-                this.N(PropertyChanged);
+                if (value != _isMouseDown)
+                {
+                    _isMouseDown = value;
+                    this.N(PropertyChanged);
+                }
             }
         }
-    }
 
-    public Window Owner
-    {
-        get => _owner;
-        private set
+        public Window Owner
         {
-            if (value != _owner)
+            get => _owner;
+            private set
             {
-                _owner = value;
-                this.N(PropertyChanged);
+                if (value != _owner)
+                {
+                    _owner = value;
+                    this.N(PropertyChanged);
+                }
             }
         }
+
+        public WindowHeader()
+        {
+            InitializeComponent();
+            DataContext = this;
+        }
+
+        private void OnCloseButtonClick(object sender, EventArgs e) => Owner.Close();
+
+        private void OnMinimizeButtonClick(object sender, EventArgs e) => Owner.WindowState = WindowState.Minimized;
+
+        private void OnLeftMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            IsMouseDown = true;
+            Owner.DragMove();
+            IsMouseDown = false;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Owner = Window.GetWindow(this);
+        }
     }
-
-    public WindowHeader()
-    {
-        InitializeComponent();
-        DataContext = this;
-    }
-
-    private void OnCloseButtonClick(object sender, EventArgs e) => Owner.Close();
-
-    private void OnMinimizeButtonClick(object sender, EventArgs e) => Owner.WindowState = WindowState.Minimized;
-
-    private void OnLeftMouseDown(object sender, MouseButtonEventArgs e)
-    {
-        IsMouseDown = true;
-        Owner.DragMove();
-        IsMouseDown = false;
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e) => Owner = Window.GetWindow(this);
 }

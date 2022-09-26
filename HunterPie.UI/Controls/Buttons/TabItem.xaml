@@ -50,6 +50,7 @@
                    Margin="10,0,0,0"
                    FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
                    FontWeight="Medium"
-                   VerticalAlignment="Center"/>
+                   VerticalAlignment="Center" 
+                   Height="14"/>
     </Grid>
 </UserControl>

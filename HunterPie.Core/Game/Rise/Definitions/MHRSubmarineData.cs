@@ -1,7 +1,8 @@
-﻿namespace HunterPie.Core.Game.Rise.Definitions;
-
-public struct MHRSubmarineData
+﻿namespace HunterPie.Core.Game.Rise.Definitions
 {
-    public MHRSubmarineStructure Data;
-    public MHRSubmarineItemStructure[] Items;
+    public struct MHRSubmarineData
+    {
+        public MHRSubmarineStructure Data;
+        public MHRSubmarineItemStructure[] Items;
+    }
 }

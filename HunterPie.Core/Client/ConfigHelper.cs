@@ -4,25 +4,25 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace HunterPie.Core.Client;
-
-public static class ConfigHelper
+namespace HunterPie.Core.Client
 {
-
-    public static void WriteObject(string path, object obj)
+    public static class ConfigHelper
     {
-        try
-        {
 
-            string serialized = JsonProvider.Serialize(obj);
-            ReadOnlySpan<byte> buffer = Encoding.UTF8.GetBytes(serialized);
-            using FileStream stream = File.OpenWrite(path);
-            stream.SetLength(0);
-            stream.Write(buffer);
-        }
-        catch (Exception err)
+        public static void WriteObject(string path, object obj)
         {
-            Log.Error(err.ToString());
+            try
+            {
+
+                string serialized = JsonProvider.Serialize(obj);
+                ReadOnlySpan<byte> buffer = Encoding.UTF8.GetBytes(serialized);
+                using (FileStream stream = File.OpenWrite(path))
+                {
+                    stream.SetLength(0);
+                    stream.Write(buffer);
+                }
+            } catch (Exception err) { Log.Error(err.ToString()); }
         }
+
     }
 }

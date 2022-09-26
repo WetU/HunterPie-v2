@@ -1,9 +1,13 @@
 ﻿using HunterPie.Core.Client.Localization;
 using HunterPie.Domain.Interfaces;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class ClientLocalizationInitializer : IInitializer
+namespace HunterPie.Internal.Initializers
 {
-    public void Init() => _ = Localization.Instance;
+    internal class ClientLocalizationInitializer : IInitializer
+    {
+        public void Init()
+        {
+            _ = Localization.Instance;
+        }
+    }
 }

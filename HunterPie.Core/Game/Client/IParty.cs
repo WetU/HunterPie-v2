@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HunterPie.Core.Game.Client;
-
-public interface IParty
+namespace HunterPie.Core.Game.Client
 {
-    public int Size { get; }
-    public int MaxSize { get; }
-    public List<IPartyMember> Members { get; }
+    public interface IParty
+    {
+        public int Size { get; }
+        public int MaxSize { get; }
+        public List<IPartyMember> Members { get; }
 
-    public event EventHandler<IPartyMember> OnMemberJoin;
-    public event EventHandler<IPartyMember> OnMemberLeave;
+        public event EventHandler<IPartyMember> OnMemberJoin;
+        public event EventHandler<IPartyMember> OnMemberLeave;
+    }
 }

@@ -2,24 +2,25 @@
 using HunterPie.Core.Settings;
 using System;
 
-namespace HunterPie.Core.Plugins;
-
-public interface IPlugin
+namespace HunterPie.Core.Plugins
 {
-    public string Name { get; }
-    public string Description { get; }
-    public string Author { get; }
-    public Version Version { get; }
-    public ISettings Config { get; }
+    public interface IPlugin
+    {
+        public string Name { get; }
+        public string Description { get; }
+        public string Author { get; }
+        public Version Version { get; }
+        public ISettings Config { get; }
+        
+        internal Context Context { get; set; }
 
-    internal Context Context { get; set; }
+        public void Initialize();
 
-    public void Initialize();
+        public void OnLoad();
+        public void OnUnload();
+        
+        public void OnEnable();
+        public void OnDisable();
 
-    public void OnLoad();
-    public void OnUnload();
-
-    public void OnEnable();
-    public void OnDisable();
-
+    }
 }

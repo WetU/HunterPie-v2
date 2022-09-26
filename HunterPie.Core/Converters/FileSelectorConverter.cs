@@ -3,30 +3,34 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace HunterPie.Core.Converters;
-
-public class FileSelectorConverter : JsonConverter
+namespace HunterPie.Core.Converters
 {
-    public override bool CanConvert(Type objectType) => objectType.GetInterfaces().Contains(typeof(IFileSelector));
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public class FileSelectorConverter : JsonConverter
     {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType.GetInterfaces().Contains(typeof(IFileSelector));
+        }
 
-        object value = reader.Value != null
-            ? Convert.ChangeType(reader.Value, typeof(string))
-            : null;
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
 
-        objectType.GetProperty(nameof(IFileSelector.Current)).SetValue(existingValue, value);
+            var value = reader.Value != null
+                ? Convert.ChangeType(reader.Value, typeof(string))
+                : null;
 
-        return existingValue;
-    }
+            objectType.GetProperty(nameof(IFileSelector.Current)).SetValue(existingValue, value);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        object prop = value.GetType()
-                    .GetProperty(nameof(IFileSelector.Current))
-                    .GetValue(value);
+            return existingValue;
+        }
 
-        serializer.Serialize(writer, prop);
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var prop = value.GetType()
+                        .GetProperty(nameof(IFileSelector.Current))
+                        .GetValue(value);
+
+            serializer.Serialize(writer, prop);
+        }
     }
 }

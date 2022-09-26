@@ -5,67 +5,68 @@ using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.World.Definitions;
 using System;
 
-namespace HunterPie.Core.Game.World.Entities.Player;
-
-public class MHWSpecializedTool : ISpecializedTool, IEventDispatcher, IUpdatable<MHWSpecializedToolStructure>
+namespace HunterPie.Core.Game.World.Entities.Player
 {
-    private SpecializedToolType _id;
-    private float _cooldown;
-    private float _timer;
-
-    public SpecializedToolType Id
+    public class MHWSpecializedTool : ISpecializedTool, IEventDispatcher, IUpdatable<MHWSpecializedToolStructure>
     {
-        get => _id;
-        set
+        private SpecializedToolType _id;
+        private float _cooldown;
+        private float _timer;
+
+        public SpecializedToolType Id
         {
-            if (value != _id)
+            get => _id;
+            set
             {
-                _id = value;
-                this.Dispatch(OnChange, this);
+                if (value != _id)
+                {
+                    _id = value;
+                    this.Dispatch(OnChange, this);
+                }
             }
         }
-    }
 
-    public float Cooldown
-    {
-        get => _cooldown;
-        set
+        public float Cooldown
         {
-            if (value != _cooldown)
+            get => _cooldown;
+            set
             {
-                _cooldown = value;
-                this.Dispatch(OnCooldownUpdate, this);
+                if (value != _cooldown)
+                {
+                    _cooldown = value;
+                    this.Dispatch(OnCooldownUpdate, this);
+                }
             }
         }
-    }
 
-    public float MaxCooldown { get; private set; }
+        public float MaxCooldown { get; private set; }
 
-    public float Timer
-    {
-        get => _timer;
-        set
+        public float Timer
         {
-            if (value != _timer)
+            get => _timer;
+            set
             {
-                _timer = value;
-                this.Dispatch(OnTimerUpdate, this);
+                if (value != _timer)
+                {
+                    _timer = value;
+                    this.Dispatch(OnTimerUpdate, this);
+                }
             }
         }
-    }
 
-    public float MaxTimer { get; private set; }
+        public float MaxTimer { get; private set; }
 
-    public event EventHandler<ISpecializedTool> OnCooldownUpdate;
-    public event EventHandler<ISpecializedTool> OnTimerUpdate;
-    public event EventHandler<ISpecializedTool> OnChange;
+        public event EventHandler<ISpecializedTool> OnCooldownUpdate;
+        public event EventHandler<ISpecializedTool> OnTimerUpdate;
+        public event EventHandler<ISpecializedTool> OnChange;
 
-    void IUpdatable<MHWSpecializedToolStructure>.Update(MHWSpecializedToolStructure data)
-    {
-        Id = data.Id;
-        MaxTimer = data.MaxTimer;
-        Timer = data.Timer;
-        MaxCooldown = data.MaxCooldown;
-        Cooldown = data.Cooldown;
+        void IUpdatable<MHWSpecializedToolStructure>.Update(MHWSpecializedToolStructure data)
+        {
+            Id = data.Id;
+            MaxTimer = data.MaxTimer;
+            Timer = data.Timer;
+            MaxCooldown = data.MaxCooldown;
+            Cooldown = data.Cooldown;
+        }
     }
 }

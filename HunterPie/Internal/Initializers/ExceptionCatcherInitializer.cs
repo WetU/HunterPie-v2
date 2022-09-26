@@ -3,17 +3,18 @@ using HunterPie.Domain.Interfaces;
 using HunterPie.Internal.Poogie;
 using System;
 
-namespace HunterPie.Internal.Initializers;
-
-internal class ExceptionCatcherInitializer : IInitializer
+namespace HunterPie.Internal.Initializers
 {
-    public void Init()
+    internal class ExceptionCatcherInitializer : IInitializer
     {
-        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        public void Init()
         {
-            Log.Error(args.ExceptionObject.ToString());
+            AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            {
+                Log.Error(args.ExceptionObject.ToString());
 
-            RemoteCrashReporter.Send(args.ExceptionObject as Exception);
-        };
+                RemoteCrashReporter.Send(args.ExceptionObject as Exception);
+            };
+        }
     }
 }

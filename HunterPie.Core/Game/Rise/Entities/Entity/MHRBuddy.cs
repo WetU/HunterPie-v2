@@ -3,45 +3,46 @@ using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Rise.Definitions;
 using System;
 
-namespace HunterPie.Core.Game.Rise.Entities.Entity;
-
-public class MHRBuddy : IEventDispatcher, IUpdatable<MHRBuddyData>
+namespace HunterPie.Core.Game.Rise.Entities.Entity
 {
-    public string _name;
-    public int _level;
-
-    public string Name
+    public class MHRBuddy : IEventDispatcher, IUpdatable<MHRBuddyData>
     {
-        get => _name;
-        private set
+        public string _name;
+        public int _level;
+
+        public string Name
         {
-            if (value != _name)
+            get => _name;
+            private set
             {
-                _name = value;
-                this.Dispatch(OnNameChange, this);
+                if (value != _name)
+                {
+                    _name = value;
+                    this.Dispatch(OnNameChange, this);
+                }
             }
         }
-    }
 
-    public int Level
-    {
-        get => _level;
-        private set
+        public int Level
         {
-            if (value != _level)
+            get => _level;
+            private set
             {
-                _level = value;
-                this.Dispatch(OnLevelChange, this);
+                if (value != _level)
+                {
+                    _level = value;
+                    this.Dispatch(OnLevelChange, this);
+                }
             }
         }
-    }
 
-    public event EventHandler<MHRBuddy> OnNameChange;
-    public event EventHandler<MHRBuddy> OnLevelChange;
+        public event EventHandler<MHRBuddy> OnNameChange;
+        public event EventHandler<MHRBuddy> OnLevelChange;
 
-    void IUpdatable<MHRBuddyData>.Update(MHRBuddyData data)
-    {
-        Name = data.Name;
-        Level = data.Level;
+        void IUpdatable<MHRBuddyData>.Update(MHRBuddyData data)
+        {
+            Name = data.Name;
+            Level = data.Level;
+        }
     }
 }

@@ -3,27 +3,34 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace HunterPie.UI.Overlay.Components;
-
-/// <summary>
-/// Interaction logic for WidgetHeader.xaml
-/// </summary>
-public partial class WidgetHeader : UserControl
+namespace HunterPie.UI.Overlay.Components
 {
-    public WidgetBase Owner { get; private set; }
-
-    public WidgetHeader()
+    /// <summary>
+    /// Interaction logic for WidgetHeader.xaml
+    /// </summary>
+    public partial class WidgetHeader : UserControl
     {
-        InitializeComponent();
-    }
+        public WidgetBase Owner { get; private set; }
 
-    private void OnCloseButtonClick(object sender, EventArgs e) => Owner.Widget.Settings.Enabled.Value = false;
+        public WidgetHeader()
+        {
+            InitializeComponent();
+        }
 
-    private void OnLoaded(object sender, RoutedEventArgs e) => Owner = (WidgetBase)Window.GetWindow(this);
+        private void OnCloseButtonClick(object sender, EventArgs e)
+        {
+            Owner.Widget.Settings.Enabled.Value = false;
+        }
 
-    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-    {
-        base.OnMouseLeftButtonDown(e);
-        Owner.DragMove();
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Owner = (WidgetBase)Window.GetWindow(this);
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+            Owner.DragMove();
+        }
     }
 }

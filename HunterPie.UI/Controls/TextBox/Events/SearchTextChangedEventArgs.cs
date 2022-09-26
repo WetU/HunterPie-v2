@@ -1,13 +1,14 @@
 ﻿using System;
 
-namespace HunterPie.UI.Controls.TextBox.Events;
-
-public class SearchTextChangedEventArgs : EventArgs
+namespace HunterPie.UI.Controls.TextBox.Events
 {
-    public string Text { get; }
-
-    public SearchTextChangedEventArgs(string text)
+    public class SearchTextChangedEventArgs : EventArgs
     {
-        Text = text;
+        public string Text { get; }
+
+        public SearchTextChangedEventArgs(string text)
+        {
+            Text = text;
+        }
     }
 }

@@ -1,8 +1,15 @@
-﻿namespace HunterPie.Core.Domain.Dialog;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public enum NativeDialogType
+namespace HunterPie.Core.Domain.Dialog
 {
-    Warn,
-    Error,
-    Info
+    public enum NativeDialogType
+    {
+        Warn,
+        Error,
+        Info
+    }
 }

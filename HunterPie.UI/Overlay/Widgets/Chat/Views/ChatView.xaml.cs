@@ -8,52 +8,54 @@ using HunterPie.UI.Overlay.Widgets.Chat.ViewModels;
 using System;
 using System.Windows.Controls;
 
-namespace HunterPie.UI.Overlay.Widgets.Chat.Views;
-
-/// <summary>
-/// Interaction logic for ChatView.xaml
-/// </summary>
-public partial class ChatView : View<ChatViewModel>, IWidget<ChatWidgetConfig>, IWidgetWindow, IEventDispatcher
+namespace HunterPie.UI.Overlay.Widgets.Chat.Views
 {
-    private WidgetType _widgetType = WidgetType.ClickThrough;
-
-    public ChatView(ChatWidgetConfig config)
+    /// <summary>
+    /// Interaction logic for ChatView.xaml
+    /// </summary>
+    public partial class ChatView : View<ChatViewModel>, IWidget<ChatWidgetConfig>, IWidgetWindow, IEventDispatcher
     {
-        Settings = config;
-        InitializeComponent();
-    }
+        private readonly ChatWidgetConfig _config;
+        private WidgetType _widgetType = WidgetType.ClickThrough;
 
-    public ChatWidgetConfig Settings { get; }
-
-    public string Title => "Chat Widget";
-
-    public WidgetType Type
-    {
-        get => _widgetType;
-        internal set
+        public ChatView(ChatWidgetConfig config)
         {
-            if (value != _widgetType)
+            _config = config;
+            InitializeComponent();
+        }
+
+        public ChatWidgetConfig Settings => _config;
+
+        public string Title => "Chat Widget";
+
+        public WidgetType Type
+        {
+            get => _widgetType;
+            internal set
             {
-                _widgetType = value;
-                this.Dispatch(OnWidgetTypeChange, _widgetType);
+                if (value != _widgetType)
+                {
+                    _widgetType = value;
+                    this.Dispatch(OnWidgetTypeChange, _widgetType);
+                }
             }
         }
-    }
 
-    IWidgetSettings IWidgetWindow.Settings => Settings;
+        IWidgetSettings IWidgetWindow.Settings => Settings;
 
-    public event EventHandler<WidgetType> OnWidgetTypeChange;
+        public event EventHandler<WidgetType> OnWidgetTypeChange;
 
-    private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
-    {
-        if (sender is ScrollViewer scrollViewer)
+        private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double scrollableSize = scrollViewer.ViewportHeight;
-            double scrollPosition = scrollViewer.VerticalOffset;
-            double extentHeight = scrollViewer.ExtentHeight;
+            if (sender is ScrollViewer scrollViewer)
+            {
+                double scrollableSize = scrollViewer.ViewportHeight;
+                double scrollPosition = scrollViewer.VerticalOffset;
+                double extentHeight = scrollViewer.ExtentHeight;
 
-            if (scrollableSize + scrollPosition == extentHeight || extentHeight < scrollableSize)
-                scrollViewer.ScrollToEnd();
+                if (scrollableSize + scrollPosition == extentHeight || extentHeight < scrollableSize)
+                    scrollViewer.ScrollToEnd();
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿namespace HunterPie.Core.Domain.Features.Domain;
-
-public interface IFeatureFlagRepository
+﻿namespace HunterPie.Core.Domain.Features.Domain
 {
-    public IFeature GetFeature(string feature);
-    public bool IsEnabled(string feature);
+    public interface IFeatureFlagRepository
+    {
+        public IFeature GetFeature(string feature);
+        public bool IsEnabled(string feature);
+    }
 }

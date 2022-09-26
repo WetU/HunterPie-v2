@@ -1,20 +1,22 @@
 ﻿using HunterPie.GUI.Parts.Sidebar.ViewModels;
-using System;
+using HunterPie.UI.Architecture;
 using System.Windows.Controls;
+using System;
 
-namespace HunterPie.GUI.Parts.Sidebar;
-
-/// <summary>
-/// Interaction logic for SideBarElement.xaml
-/// </summary>
-public partial class SideBarElement : UserControl
+namespace HunterPie.GUI.Parts.Sidebar
 {
-    public ISideBarElement Model => (ISideBarElement)DataContext;
-
-    public SideBarElement()
+    /// <summary>
+    /// Interaction logic for SideBarElement.xaml
+    /// </summary>
+    public partial class SideBarElement : UserControl
     {
-        InitializeComponent();
-    }
+        public ISideBarElement Model => (ISideBarElement)DataContext;
 
-    private void OnButtonClick(object sender, EventArgs e) => Model.ExecuteOnClick();
+        public SideBarElement()
+        {
+            InitializeComponent();
+        }
+
+        private void OnButtonClick(object sender, EventArgs e) => Model.ExecuteOnClick();
+    }
 }

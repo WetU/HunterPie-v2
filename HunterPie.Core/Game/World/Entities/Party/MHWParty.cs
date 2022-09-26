@@ -1,86 +1,55 @@
-using HunterPie.Core.Domain.Interfaces;
+﻿using HunterPie.Core.Domain.Interfaces;
 using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Client;
 using HunterPie.Core.Game.World.Definitions;
-using HunterPie.Core.Native.IPC.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HunterPie.Core.Game.World.Entities.Party;
-
-public class MHWParty : IParty, IEventDispatcher
+namespace HunterPie.Core.Game.World.Entities.Party
 {
-    public const int MAXIMUM_SIZE = 4;
-
-    private readonly Dictionary<long, MHWPartyMember> _partyMembers = new(MAXIMUM_SIZE);
-
-    public int Size
+    public class MHWParty : IParty, IEventDispatcher
     {
-        get
+        public const int MAXIMUM_SIZE = 4;
+
+        private readonly Dictionary<long, MHWPartyMember> _partyMembers = new(MAXIMUM_SIZE);
+
+        public int Size => _partyMembers.Count;
+
+        public int MaxSize => MAXIMUM_SIZE;
+
+        public List<IPartyMember> Members => _partyMembers.Values.ToList<IPartyMember>();
+
+        public event EventHandler<IPartyMember> OnMemberJoin;
+        public event EventHandler<IPartyMember> OnMemberLeave;
+
+        public void Update(long memberAddress, MHWPartyMemberData data)
         {
-            lock (_partyMembers)
-                return _partyMembers.Count;
-        }
-    }
-
-    public int MaxSize => MAXIMUM_SIZE;
-
-    public List<IPartyMember> Members
-    {
-        get
-        {
-            lock (_partyMembers)
-                return _partyMembers.Values.ToList<IPartyMember>();
-        }
-    }
-
-    public event EventHandler<IPartyMember> OnMemberJoin;
-    public event EventHandler<IPartyMember> OnMemberLeave;
-
-    public void Update(long memberAddress, MHWPartyMemberData data)
-    {
-        lock (_partyMembers)
-        {
-            if (!_partyMembers.TryGetValue(memberAddress, out MHWPartyMember member))
-            {
+            if (!_partyMembers.ContainsKey(memberAddress))
                 Add(memberAddress, data);
-                return;
-            }
 
-            ((IUpdatable<MHWPartyMemberData>)member).Update(data);
+            IUpdatable<MHWPartyMemberData> updatable = _partyMembers[memberAddress];
+            updatable.Update(data);
         }
-    }
 
-    public void Update(long memberAddress, EntityDamageData data)
-    {
-        lock (_partyMembers)
+        public void Add(long memberAddress, MHWPartyMemberData data)
         {
-            if (!_partyMembers.TryGetValue(memberAddress, out MHWPartyMember member))
-                return;
+            _partyMembers.Add(memberAddress, new());
+            
+            IUpdatable<MHWPartyMemberData> updatable = _partyMembers[memberAddress];
+            updatable.Update(data);
 
-            ((IUpdatable<EntityDamageData>)member).Update(data);
+            this.Dispatch(OnMemberJoin, _partyMembers[memberAddress]);
         }
-    }
 
-    public void Add(long memberAddress, MHWPartyMemberData data)
-    {
-        var member = new MHWPartyMember();
-        ((IUpdatable<MHWPartyMemberData>)member).Update(data);
-        _partyMembers.Add(memberAddress, member);
-
-        this.Dispatch(OnMemberJoin, member);
-    }
-
-    public void Remove(long memberAddress)
-    {
-        MHWPartyMember member;
-        lock (_partyMembers)
+        public void Remove(long memberAddress)
         {
-            if (!_partyMembers.Remove(memberAddress, out member))
+            if (!_partyMembers.ContainsKey(memberAddress))
                 return;
-        }
 
-        this.Dispatch(OnMemberLeave, member);
+            IPartyMember member = _partyMembers[memberAddress];
+            _partyMembers.Remove(memberAddress);
+            this.Dispatch(OnMemberLeave, member);
+        }
     }
 }

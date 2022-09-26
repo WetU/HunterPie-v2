@@ -2,32 +2,32 @@
 using System;
 using System.IO;
 
-namespace HunterPie.Core.System;
-
-public static class ExplorerService
+namespace HunterPie.Core.System
 {
-
-    public static void Delete(string path, bool recursively)
+    public static class ExplorerService
     {
-        try
-        {
-            Directory.Delete(path, recursively);
-        }
-        catch (Exception err)
-        {
-            Log.Error(err.ToString());
-        }
-    }
 
-    public static void DeleteFile(string path)
-    {
-        try
+        public static void Delete(string path, bool recursively)
         {
-            File.Delete(path);
+            try
+            {
+                Directory.Delete(path, recursively);
+            } catch(Exception err)
+            {
+                Log.Error(err.ToString());
+            }
         }
-        catch (Exception err)
+
+        public static void DeleteFile(string path)
         {
-            Log.Error(err.ToString());
+            try
+            {
+                File.Delete(path);
+            } catch(Exception err)
+            {
+                Log.Error(err.ToString());
+            }
         }
+
     }
 }

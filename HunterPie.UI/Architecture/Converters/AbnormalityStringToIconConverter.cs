@@ -4,18 +4,22 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace HunterPie.UI.Architecture.Converters;
-
-public class AbnormalityStringToIconConverter : IValueConverter
+namespace HunterPie.UI.Architecture.Converters
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class AbnormalityStringToIconConverter : IValueConverter
     {
-        object icon = Application.Current.TryFindResource(value);
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            object icon = Application.Current.TryFindResource(value);
 
-        return icon is null
-                ? null
-                : (ImageSource)icon;
+            return icon is null 
+                    ? null 
+                    : (ImageSource)icon;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

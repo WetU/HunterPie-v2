@@ -1,23 +1,24 @@
 ﻿using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Enums;
 
-namespace HunterPie.Core.Game.Rise.Definitions;
-
-public struct MHRPartyMemberData
+namespace HunterPie.Core.Game.Rise.Definitions
 {
-    public int Index;
-    public string Name;
-    public Weapon WeaponId;
-    public int HighRank;
-    public int MasterRank;
-    public bool IsMyself;
-    public MemberType MemberType;
-
-    public MHRPartyMemberData ToPetData()
+    public struct MHRPartyMemberData
     {
-        MHRPartyMemberData copy = this.Copy();
-        copy.Index = copy.Index.ToPetId();
-        copy.MemberType = MemberType.Pet;
-        return copy;
+        public int Index;
+        public string Name;
+        public Weapon WeaponId;
+        public int HighRank;
+        public int MasterRank;
+        public bool IsMyself;
+        public MemberType MemberType;
+
+        public MHRPartyMemberData ToPetData()
+        {
+            MHRPartyMemberData copy = this.Copy();
+            copy.Index = copy.Index.ToPetId();
+            copy.MemberType = MemberType.Pet;
+            return copy;
+        }
     }
 }

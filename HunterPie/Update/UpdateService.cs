@@ -10,155 +10,152 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HunterPie.Update;
-
-internal class UpdateService
+namespace HunterPie.Update
 {
-    private readonly UpdateApi api = new();
-    private string latest;
-
-    public async Task<Version> GetLatestVersion()
+    internal class UpdateService
     {
-        latest = await api.GetLatestVersion();
+        private readonly UpdateApi api = new();
+        string latest;
 
-        if (latest is null)
-            return null;
-
-        var parsed = new Version(latest);
-
-        return parsed;
-    }
-
-    public async Task DownloadZip(EventHandler<PoogieDownloadEventArgs> callback) => await api.DownloadVersion(latest, callback);
-
-    public bool ExtractZip()
-    {
-        string filePath = ClientInfo.GetPathFor(@"temp/HunterPie.zip");
-        string extractPath = ClientInfo.GetPathFor(@"temp/HunterPie");
-
-        try
+        public async Task<Version> GetLatestVersion()
         {
-            ZipFile.ExtractToDirectory(filePath, extractPath);
-        }
-        catch (Exception err)
-        {
-            Log.Error(err.ToString());
-            Directory.Delete(ClientInfo.GetPathFor("temp"), true);
-            return false;
+            latest = await api.GetLatestVersion();
+
+            if (latest is null)
+                return null;
+
+            Version parsed = new Version(latest);
+
+            return parsed;
         }
 
-        return true;
-    }
-
-    private static string ComputeSHA256Checksum(string filename)
-    {
-        using var sha256 = SHA256.Create();
-        using FileStream stream = File.OpenRead(filename);
-        Span<byte> buffer = stackalloc byte[256];
-        buffer = sha256.ComputeHash(stream);
-
-        StringBuilder builder = new(256 * 2);
-
-        foreach (byte b in buffer)
-            _ = builder.Append($"{b:x2}");
-
-        return builder.ToString();
-    }
-
-    public async Task<Dictionary<string, string>> IndexAllFilesRecursively(string basePath, string relativePath = "", Dictionary<string, string> files = null)
-    {
-        if (files is null)
-            files = new Dictionary<string, string>();
-
-        foreach (string entry in Directory.GetFileSystemEntries(basePath))
+        public async Task DownloadZip(EventHandler<PoogieDownloadEventArgs> callback)
         {
-            FileAttributes attrib = File.GetAttributes(entry);
-            string absolute = Path.Combine(basePath, entry);
-            string relative = Path.Combine(relativePath, Path.GetRelativePath(basePath, entry));
-
-            if ((attrib & FileAttributes.Directory) == FileAttributes.Directory)
-                _ = await IndexAllFilesRecursively(absolute, relative, files);
-            else
-                files.Add(relative, ComputeSHA256Checksum(absolute));
-
+            await api.DownloadVersion(latest, callback);
         }
 
-        return files;
-    }
-
-    public bool ReplaceOldFiles(Dictionary<string, string> local, Dictionary<string, string> remote)
-    {
-        List<string> files = new();
-        foreach ((string path, string hash) in remote)
+        public bool ExtractZip()
         {
-            if (!local.ContainsKey(path))
+            string filePath = ClientInfo.GetPathFor(@"temp/HunterPie.zip");
+            string extractPath = ClientInfo.GetPathFor(@"temp/HunterPie");
+
+            try
             {
-                files.Add(path);
-                continue;
+                ZipFile.ExtractToDirectory(filePath, extractPath);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err.ToString());
+                Directory.Delete(ClientInfo.GetPathFor("temp"), true);
+                return false;
             }
 
-            string localHash = local[path];
+            return true;
+        }
 
-            if (localHash != hash)
+        private static string ComputeSHA256Checksum(string filename)
+        {
+            using (SHA256 sha256 = SHA256.Create())
             {
-                string oldFile = ClientInfo.GetPathFor(path) + ".old";
-                File.Move(ClientInfo.GetPathFor(path), oldFile);
-                files.Add(path);
+                using (FileStream stream = File.OpenRead(filename))
+                {
+                    Span<byte> buffer = stackalloc byte[256];
+                    buffer = sha256.ComputeHash(stream);
+
+                    StringBuilder builder = new(256 * 2);
+
+                    foreach (byte b in buffer)
+                        builder.Append($"{b:x2}");
+
+                    return builder.ToString();
+                }
             }
         }
 
-        foreach (string file in files)
+        public async Task<Dictionary<string, string>> IndexAllFilesRecursively(string basePath, string relativePath = "", Dictionary<string, string> files = null)
         {
-            string updatedFile = Path.Combine(ClientInfo.ClientPath, @"temp/HunterPie", file);
-            string localFile = ClientInfo.GetPathFor(file);
+            if (files is null)
+                files = new Dictionary<string, string>();
 
-            if (!File.Exists(localFile))
-            {
-                _ = Directory.CreateDirectory(
-                    Path.GetDirectoryName(localFile)
-                );
-            }
-
-            File.Move(updatedFile, localFile);
-        }
-
-        // Cleanup
-        Directory.Delete(ClientInfo.GetPathFor("temp"), true);
-
-        return true;
-    }
-
-    public bool CleanupOldFiles()
-    {
-        Stack<string> directories = new();
-
-        directories.Push(ClientInfo.ClientPath);
-
-        while (directories.Count > 0)
-        {
-            foreach (string entry in Directory.GetFileSystemEntries(directories.Pop()))
+            foreach (string entry in Directory.GetFileSystemEntries(basePath))
             {
                 FileAttributes attrib = File.GetAttributes(entry);
+                string absolute = Path.Combine(basePath, entry);
+                string relative = Path.Combine(relativePath, Path.GetRelativePath(basePath, entry));
 
-                if (attrib.HasFlag(FileAttributes.Directory))
-                {
-                    directories.Push(entry);
-                }
+                if ((attrib & FileAttributes.Directory) == FileAttributes.Directory)
+                    await IndexAllFilesRecursively(absolute, relative, files);
                 else
-                    if (entry.EndsWith(".old"))
-                {
-                    try
-                    {
-                        File.Delete(entry);
-                    }
-                    catch (Exception err)
-                    {
-                        Log.Error(err.ToString());
-                    }
-                }
+                    files.Add(relative, ComputeSHA256Checksum(absolute));
+
             }
+
+            return files;
         }
 
-        return true;
+        public bool ReplaceOldFiles(Dictionary<string, string> local, Dictionary<string, string> remote)
+        {
+            List<string> files = new();
+            foreach (var (path, hash) in remote)
+            {
+                if (!local.ContainsKey(path))
+                {
+                    files.Add(path);
+                    continue;
+                }
+
+                string localHash = local[path];
+
+                if (localHash != hash)
+                {
+                    string oldFile = ClientInfo.GetPathFor(path) + ".old";
+                    File.Move(ClientInfo.GetPathFor(path), oldFile);
+                    files.Add(path);
+                }
+            }
+
+            foreach (string file in files)
+            {
+                string updatedFile = Path.Combine(ClientInfo.ClientPath, @"temp/HunterPie", file);
+                string localFile = ClientInfo.GetPathFor(file);
+
+                if (!File.Exists(localFile))
+                    Directory.CreateDirectory(
+                        Path.GetDirectoryName(localFile)
+                    );
+                
+                File.Move(updatedFile, localFile);
+            }
+
+            // Cleanup
+            Directory.Delete(ClientInfo.GetPathFor("temp"), true);
+
+            return true;
+        }
+
+        public bool CleanupOldFiles()
+        {
+            Stack<string> directories = new();
+
+            directories.Push(ClientInfo.ClientPath);
+
+            while (directories.Count > 0)
+            {
+                foreach (string entry in Directory.GetFileSystemEntries(directories.Pop()))
+                {
+                    FileAttributes attrib = File.GetAttributes(entry);
+
+                    if (attrib.HasFlag(FileAttributes.Directory))
+                        directories.Push(entry);
+                    else
+                        if (entry.EndsWith(".old"))
+                            try { File.Delete(entry); }
+                            catch(Exception err) { Log.Error(err.ToString()); }
+
+                }
+            }
+
+            return true;
+        }
     }
 }

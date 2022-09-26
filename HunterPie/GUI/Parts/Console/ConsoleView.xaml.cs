@@ -1,15 +1,20 @@
-﻿using System.Windows.Controls;
+﻿using HunterPie.UI.Logger;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
-namespace HunterPie.GUI.Parts.Console;
-
-/// <summary>
-/// Interaction logic for ConsoleView.xaml
-/// </summary>
-public partial class ConsoleView : UserControl
+namespace HunterPie.GUI.Parts.Console
 {
-
-    public ConsoleView()
+    /// <summary>
+    /// Interaction logic for ConsoleView.xaml
+    /// </summary>
+    public partial class ConsoleView : UserControl
     {
-        InitializeComponent();
+
+        public ConsoleView()
+        {
+            InitializeComponent();
+        }
+
+        
     }
 }

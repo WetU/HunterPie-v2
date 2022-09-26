@@ -1,26 +1,24 @@
-namespace HunterPie.Core.Extensions;
-
-public static class UIntExtensions
+﻿namespace HunterPie.Core.Extensions
 {
-    /// <summary>
-    /// Finds the nearest value that is also larger than the specified value.
-    /// </summary>
-    public static uint ApproximateHigh(this uint self, uint[] values)
+    public static class UIntExtensions
     {
-        uint closest = self;
-
-        for (int i = 0; i < values.Length; i++)
+        public static uint ApproximateHigh(this uint self, uint[] values)
         {
-            if (values[i] < closest)
-                continue;
+            var closest = self;
 
-            if (values[i] >= closest)
+            for (var i = 0; i < values.Length; i++)
             {
-                closest = values[i];
-                break;
-            }
-        }
+                if (values[i] < closest)
+                    continue;
 
-        return closest;
+                if (values[i] >= closest)
+                {
+                    closest = values[i];
+                    break;
+                }
+            }
+
+            return closest;
+        }
     }
 }

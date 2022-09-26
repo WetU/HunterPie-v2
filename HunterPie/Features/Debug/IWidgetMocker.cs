@@ -1,6 +1,13 @@
-﻿namespace HunterPie.Features.Debug;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-internal interface IWidgetMocker
+namespace HunterPie.Features.Debug
 {
-    public void Mock();
+    internal interface IWidgetMocker
+    {
+        public void Mock();
+    }
 }

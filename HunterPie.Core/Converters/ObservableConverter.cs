@@ -2,38 +2,49 @@
 using Newtonsoft.Json;
 using System;
 
-namespace HunterPie.Core.Converters;
-
-internal class ObservableConverter : JsonConverter
+namespace HunterPie.Core.Converters
 {
-    public override bool CanConvert(Type objectType) => objectType == typeof(Observable<object>);
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    class ObservableConverter : JsonConverter
     {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(Observable<object>);
+        }
 
-        Type T = objectType.GetGenericArguments()[0];
-        object value = T.IsEnum
-            ? Enum.Parse(T, reader.Value.ToString())
-            : reader.Value != null
-                ? Convert.ChangeType(reader.Value, T)
-                : null;
-        object observable = Activator.CreateInstance(objectType, value);
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            
+            var T = objectType.GetGenericArguments()[0];
+            object value;
+            if (T.IsEnum)
+            {
+                value = Enum.Parse(T, reader.Value.ToString());
+            } else
+            {
+                value = reader.Value != null
+                    ? Convert.ChangeType(reader.Value, T)
+                    : null;
+            }
+             
 
-        if (value is null)
-            return observable;
+            var observable = Activator.CreateInstance(objectType, value);
 
-        objectType.GetProperty(nameof(Observable<object>.Value))
-            .SetValue(existingValue, value);
+            if (value is null)
+                return observable;
 
-        return existingValue;
-    }
+            objectType.GetProperty(nameof(Observable<object>.Value))
+                .SetValue(existingValue, value);
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-    {
-        object prop = value.GetType()
-                    .GetProperty(nameof(Observable<object>.Value))
-                    .GetValue(value);
+            return existingValue;
+        }
 
-        serializer.Serialize(writer, prop);
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var prop = value.GetType()
+                        .GetProperty(nameof(Observable<object>.Value))
+                        .GetValue(value);
+
+            serializer.Serialize(writer, prop);
+        }
     }
 }

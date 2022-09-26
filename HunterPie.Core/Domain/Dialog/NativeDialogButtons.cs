@@ -1,8 +1,9 @@
-﻿namespace HunterPie.Core.Domain.Dialog;
-
-public enum NativeDialogButtons
+﻿namespace HunterPie.Core.Domain.Dialog
 {
-    Accept = 1 << 0,
-    Reject = 1 << 1,
-    Cancel = 1 << 2
+    public enum NativeDialogButtons
+    {
+        Accept = 1 << 0,
+        Reject = 1 << 1,
+        Cancel = 1 << 2
+    }
 }

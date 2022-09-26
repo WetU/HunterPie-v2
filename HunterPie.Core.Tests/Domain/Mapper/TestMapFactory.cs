@@ -2,62 +2,69 @@
 using HunterPie.Core.Domain.Mapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HunterPie.Core.Tests.Domain.Mapper;
-
-public class TestData
+namespace HunterPie.Core.Tests.Domain.Mapper
 {
-    public float a;
-    public float b;
-    public float c;
-}
 
-public class TestDataAlt
-{
-    public int d;
-    public float e;
-    public float f;
-}
-
-public class TestDataToAltMapper : IMapper<TestData, TestDataAlt>
-{
-    public TestDataAlt Map(TestData data)
+    public class TestData
     {
-        return new()
-        {
-            d = (int)data.a,
-            e = Math.Max(data.b, data.c),
-            f = data.c
-        };
+        public float a;
+        public float b;
+        public float c;
     }
-}
 
-[TestClass]
-public class TestMapFactory
-{
-    [TestMethod]
-    public void TestMapFactoryParser()
+    public class TestDataAlt
     {
-        MapFactory.Add(new TestDataToAltMapper());
+        public int d;
+        public float e;
+        public float f;
+    }
 
-        TestData input = new()
+    public class TestDataToAltMapper : IMapper<TestData, TestDataAlt>
+    {
+        public TestDataAlt Map(TestData data)
         {
-            a = 421.123f,
-            b = 500.123f,
-            c = 1.0f
-        };
+            return new()
+            {
+                d = (int)data.a,
+                e = Math.Max(data.b, data.c),
+                f = data.c
+            };
+        }
+    }
 
-        TestDataAlt correct = new()
+    [TestClass]
+    public class TestMapFactory
+    {
+        [TestMethod]
+        public void TestMapFactoryParser()
         {
-            d = 421,
-            e = 500.123f,
-            f = 1.0f
-        };
+            MapFactory.Add(new TestDataToAltMapper());
 
-        TestDataAlt output = MapFactory.Map<TestData, TestDataAlt>(input);
+            TestData input = new()
+            {
+                a = 421.123f,
+                b = 500.123f,
+                c = 1.0f
+            };
 
-        Assert.AreEqual(correct.d, output.d);
-        Assert.AreEqual(correct.e, output.e);
-        Assert.AreEqual(correct.f, output.f);
+            TestDataAlt correct = new()
+            {
+                d = 421,
+                e = 500.123f,
+                f = 1.0f
+            };
+
+            TestDataAlt output = MapFactory.Map<TestData, TestDataAlt>(input); 
+
+            Assert.AreEqual(correct.d, output.d);
+            Assert.AreEqual(correct.e, output.e);
+            Assert.AreEqual(correct.f, output.f);
+        }
+
     }
 }

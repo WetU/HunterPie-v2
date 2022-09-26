@@ -1,19 +1,33 @@
 ﻿using HunterPie.Core.Domain.Features.Domain;
 using System.Collections.Generic;
 
-namespace HunterPie.Core.Domain.Features.Data;
-
-internal class LocalFeatureFlagRepository : IFeatureFlagRepository
+namespace HunterPie.Core.Domain.Features.Data
 {
-
-    public readonly IReadOnlyDictionary<string, IFeature> _features;
-
-    public LocalFeatureFlagRepository(IReadOnlyDictionary<string, IFeature> source)
+    
+    internal class LocalFeatureFlagRepository : IFeatureFlagRepository
     {
-        _features = source;
+
+        public readonly IReadOnlyDictionary<string, IFeature> _features;
+
+        public LocalFeatureFlagRepository(IReadOnlyDictionary<string, IFeature> source)
+        {
+            _features = source;
+        }
+
+        public IFeature GetFeature(string feature)
+        {
+            if (!_features.ContainsKey(feature))
+                return null;
+
+            return _features[feature];
+        }
+
+        public bool IsEnabled(string feature)
+        {
+            if (!_features.ContainsKey(feature))
+                return false;
+
+            return _features[feature].IsEnabled;
+        }
     }
-
-    public IFeature GetFeature(string feature) => !_features.ContainsKey(feature) ? null : _features[feature];
-
-    public bool IsEnabled(string feature) => _features.ContainsKey(feature) && (bool)_features[feature].IsEnabled;
 }
