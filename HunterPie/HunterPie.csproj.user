@@ -57,6 +57,9 @@
     <Compile Update="GUI\Parts\Console\LogView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="GUI\Parts\Debug\Views\EventTrackerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="GUI\Parts\HeaderBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -128,6 +131,9 @@
     <Page Update="GUI\Parts\Console\LogView.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="GUI\Parts\Debug\Views\EventTrackerView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="GUI\Parts\HeaderBar.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -155,6 +161,9 @@
     <None Update="Themes\Minimal\MonsterWidget.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Resources\Styles\Client.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Update\Presentation\UpdateView.xaml">
       <SubType>Designer</SubType>
     </Page>
