@@ -82,7 +82,7 @@ public partial class Bar : UserControl
         if (double.IsNaN(newValue))
             return;
 
-        if (double.IsInfinity(owner.ActualValue))
+        if (double.IsInfinity(owner.ActualValue) || double.IsInfinity(newValue))
             return;
 
         DoubleAnimation animation = owner._cachedAnimation;
@@ -99,7 +99,7 @@ public partial class Bar : UserControl
 
         value = Math.Max(1.0, value);
 
-        if (double.IsNaN(value))
+        if (double.IsNaN(value) || double.IsInfinity(value))
         {
             InvalidateVisual();
             return;
