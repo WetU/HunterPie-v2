@@ -45,7 +45,7 @@ public sealed class MHRConsumableAbnormality : CommonAbnormality, IUpdatable<MHR
 
         if (IsBuildup)
             MaxTimer = data.MaxBuildup;
-        else if (data.IsReverseTImer)
+        else if (data.IsReverseTimer)
             MaxTimer = data.MaxTimer;
     }
 

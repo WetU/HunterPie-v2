@@ -402,7 +402,7 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
             };
 
-            bool isConditionValid = schema.CompareOperator Switch
+            bool isConditionValid = schema.CompareOperator switch
             {
                 AbnormalityCompareType.WithValue => abnormSubId == schema.WithValue,
                 AbnormalityCompareType.WithValueNot => abnormSubId != schema.WithValueNot,
@@ -659,7 +659,7 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerCombatStatus()
     {
         if (!InHuntingZone)
-            retrurn;
+            return;
 
         CombatStatus = (CombatStatus)Memory.Deref<int>(
             AddressMap.GetAbsolute("UI_ADDRESS"),
