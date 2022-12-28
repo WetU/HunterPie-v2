@@ -15,7 +15,6 @@ public sealed class MHRSongAbnormality : CommonAbnormality, IUpdatable<MHRHHAbno
     public override string Id { get; protected set; }
     public override string Name { get; protected set; }
     public override string Icon { get; protected set; }
-
     public override AbnormalityType Type
     {
         get => AbnormalityType.Song;
@@ -43,7 +42,13 @@ public sealed class MHRSongAbnormality : CommonAbnormality, IUpdatable<MHRHHAbno
         Id = schema.Id;
         Name = schema.Name;
         Icon = schema.Icon;
+        IsInfinite = schema.IsInfinite;
         IsBuildup = schema.IsBuildup;
+        
+        if (IsBuildup)
+            MaxTimer = schema.MaxBuildup;
+        else if (schema.IsReverseTimer)
+            MaxTimer = schema.MaxTimer;
     }
 
     void IUpdatable<MHRHHAbnormality>.Update(MHRHHAbnormality data)

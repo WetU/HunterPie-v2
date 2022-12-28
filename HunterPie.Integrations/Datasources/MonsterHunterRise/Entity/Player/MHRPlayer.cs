@@ -45,6 +45,7 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private Weapon _weaponId = WeaponType.None;
+    private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
     #endregion
 
@@ -149,6 +150,19 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     public Scroll SwitchScroll { get; private set; }
+
+    public override CombatStatus CombatStatus
+    {
+        get => _combatStatus;
+        protected set
+        {
+            if(value != _combatStatus)
+            {
+                _combatStatus = value;
+                this.Dispatch(_onCombatStatusChange);
+            }
+        }
+    }
 
     #region Events
 
@@ -388,14 +402,25 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
             };
 
+            bool isConditionValid = schema.CompareOperator Switch
+            {
+                AbnormalityCompareType.WithValue => abnormSubId == schema.WithValue,
+                AbnormalityCompareType.WithValueNot => abnormSubId != schema.WithValueNot,
+                _ => false
+            };
+
             MHRConsumableStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
-            else if (abnormSubId == schema.WithValue)
+                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+            else if (isConditionValid)
                 abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
-            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+            if (schema.IsReverseTimer && abnormality.Timer > 0)
+                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -446,7 +471,11 @@ public sealed class MHRPlayer : CommonPlayer
             else if (isConditionValid)
                 abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
 
-            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+            if (schema.IsReverseTimer && abnormality.Timer >0)
+                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
@@ -624,6 +653,18 @@ public sealed class MHRPlayer : CommonPlayer
         };
 
         _stamina.Update(staminaData);
+    }
+
+    [ScannableMethod]
+    private void GetPlayerCombatStatus()
+    {
+        if (!InHuntingZone)
+            retrurn;
+
+        CombatStatus = (CombatStatus)Memory.Deref<int>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_COMBAT_STATUS_OFFSETS")
+        );
     }
 
     [ScannableMethod(typeof(MHRWirebugData))]
