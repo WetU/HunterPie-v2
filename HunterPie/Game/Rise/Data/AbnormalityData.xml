@@ -219,7 +219,7 @@
                      Offset="7AC"
                      Name="ABNORMALITY_BLOOD"
                      Icon="ICON_BLOODBLIGHT"/>
-		<Abnormality Id="ABN_PRE_SLEEP"
+        <Abnormality Id="ABN_PRE_SLEEP"
                      Offset="7E0"
                      Name="ABNORMALITY_PRE_SLEEP"
                      Icon="ICON_SLEEP"/>
@@ -333,7 +333,7 @@
                      Name="ABNORMALITY_OFFENSIVE_GUARD"
                      Icon="ICON_ARMORSKILL_PURPLE"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_AGITATOR"
+        <Abnormality Id="ABN_AGITATOR"
                      Offset="108"
                      DependsOn="108"
                      WithValue="1127481344"
@@ -371,7 +371,7 @@
                      Name="ABNORMALITY_GRINDER_S"
                      Icon="ICON_GRINDER_S"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_DEFIANCE"
+        <Abnormality Id="ABN_DEFIANCE"
                      Offset="1A8"
                      DependsOn="1A8"
                      WithValue="1127481344"
