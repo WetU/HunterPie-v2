@@ -460,6 +460,9 @@ public sealed class MHRPlayer : CommonPlayer
         if (debuffsPtr == 0)
             return;
 
+        int marionetteMonsterId = Process.Memory.Read<int>(debuffsPtr + 0x938);
+        IsMarionette = marionetteMonsterId != -1;
+
         AbnormalitySchema[] debuffSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Debuffs);
 
         foreach (AbnormalitySchema schema in debuffSchemas)
@@ -679,23 +682,6 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_COMBAT_STATUS_OFFSETS")
         );
-    }
-
-    [ScannableMethod]
-    private void GetPlayerRideStatus()
-    {
-        if (!InHuntingZone)
-            return;
-
-        long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
-            AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
-        );
-
-        if (debuffsPtr == 0)
-            return;
-
-        IsMarionette = Process.Memory.Read<int>(debuffsPtr + 0x938) != -1;
     }
 
     [ScannableMethod(typeof(MHRWirebugData))]

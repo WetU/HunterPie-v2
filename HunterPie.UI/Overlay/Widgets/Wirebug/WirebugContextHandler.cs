@@ -7,12 +7,10 @@ namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 {
     public readonly MHRWirebug Context;
-    public readonly MHRPlayer Player;
 
-    public WirebugContextHandler(MHRWirebug context, MHRPlayer player)
+    public WirebugContextHandler(MHRWirebug context)
     {
         Context = context;
-        Player = player;
         
         UpdateData();
         HookEvents();
@@ -24,7 +22,6 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate += OnTimerUpdate;
         Context.OnAvailable += OnAvailable;
         Context.OnBlockedStateChange += OnBlockedStateChange;
-        Player.OnPlayerRideOn += OnPlayerRideOn;
     }
 
     public void UnhookEvents()
@@ -33,7 +30,6 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate -= OnTimerUpdate;
         Context.OnAvailable -= OnAvailable;
         Context.OnBlockedStateChange -= OnBlockedStateChange;
-        Player.OnPlayerRideOn -= OnPlayerRideOn;
     }
 
     private void OnBlockedStateChange(object sender, MHRWirebug e) => IsBlocked = e.IsBlocked;
@@ -45,7 +41,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         IsTemporary = Context.Timer > 0;
     }
 
-    private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable && !Player.IsMarionette;
+    private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable;
 
     private void OnCooldownUpdate(object sender, MHRWirebug e)
     {
@@ -53,8 +49,6 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Cooldown = e.Cooldown;
         OnCooldown = Cooldown > 0;
     }
-
-    private void OnPlayerRideOn(object sender, EventArgs e) => IsMarionette = Player.IsMarionette;
 
     private void UpdateData()
     {
@@ -66,6 +60,5 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         MaxTimer = Context.MaxTimer;
         Timer = Context.Timer;
         IsTemporary = Context.Timer > 0;
-        IsMarionette= Player.IsMarionette;
     }
 }

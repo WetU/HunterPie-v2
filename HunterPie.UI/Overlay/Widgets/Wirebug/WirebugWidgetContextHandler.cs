@@ -32,17 +32,19 @@ public class WirebugWidgetContextHandler : IContextHandler
         HookEvents();
         UpdateData();
     }
-
+                                            
     public void HookEvents()
     {
         Player.OnStageUpdate += OnStageUpdate;
         Player.OnWirebugsRefresh += OnWirebugsRefresh;
+        Player.OnPlayerRideOn += OnPlayerRideOn;
     }
 
     public void UnhookEvents()
     {
         Player.OnStageUpdate -= OnStageUpdate;
         Player.OnWirebugsRefresh -= OnWirebugsRefresh;
+        Player.OnPlayerRideOn -= OnPlayerRideOn;
 
         foreach (WirebugViewModel vm in _viewModel.Elements)
             if (vm is WirebugContextHandler model)
@@ -53,7 +55,7 @@ public class WirebugWidgetContextHandler : IContextHandler
         _ = WidgetManager.Unregister<WirebugsView, WirebugWidgetConfig>(_view);
     }
 
-    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId) && !Player.IsMarionette;
+    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
 
     private void OnWirebugsRefresh(object sender, MHRWirebug[] e)
     {
@@ -66,15 +68,17 @@ public class WirebugWidgetContextHandler : IContextHandler
             _viewModel.Elements.Clear();
 
             foreach (MHRWirebug wirebug in e)
-                _viewModel.Elements.Add(new WirebugContextHandler(wirebug, Player));
+                _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
         });
     }
 
+    private void OnPlayerRideOn(object sender, EventArgs e) => _viewModel.IsAvailable = !Player.IsMarionette;
+
     private void UpdateData()
     {
-        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
+        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId) && !Player.IsMarionette;
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
-            _viewModel.Elements.Add(new WirebugContextHandler(wirebug, Player));
+            _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
     }
 }
