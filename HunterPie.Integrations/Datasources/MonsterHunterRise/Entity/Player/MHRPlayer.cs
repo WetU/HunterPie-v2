@@ -47,6 +47,7 @@ public sealed class MHRPlayer : CommonPlayer
     private Weapon _weaponId = WeaponType.None;
     private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
+    private bool _isMarionette;
     #endregion
 
     public override string Name
@@ -160,6 +161,19 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 _combatStatus = value;
                 this.Dispatch(_onCombatStatusChange);
+            }
+        }
+    }
+
+    public override bool IsMarionette
+    {
+        get => _isMarionette;
+        protected set
+        {
+            if (value != _isMarionette)
+            {
+                _isMarionette = value;
+                this.Dispatch(_onPlayerRideOn);
             }
         }
     }
@@ -667,6 +681,23 @@ public sealed class MHRPlayer : CommonPlayer
         );
     }
 
+    [ScannableMethod]
+    private void GetPlayerRideStatus()
+    {
+        if (!InHuntingZone)
+            return;
+
+        long debuffsPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
+        );
+
+        if (debuffsPtr == 0)
+            return;
+
+        IsMarionette = Process.Memory.Read<int>(debuffsPtr + 0x938) != -1;
+    }
+
     [ScannableMethod(typeof(MHRWirebugData))]
     private void GetPlayerWirebugs()
     {
@@ -697,6 +728,7 @@ public sealed class MHRPlayer : CommonPlayer
                 ) != 0,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
+
             data.Structure.Cooldown /= AbnormalityData.TIMER_MULTIPLIER;
             data.Structure.MaxCooldown /= AbnormalityData.TIMER_MULTIPLIER;
 

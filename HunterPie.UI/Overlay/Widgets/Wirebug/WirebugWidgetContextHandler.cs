@@ -66,7 +66,7 @@ public class WirebugWidgetContextHandler : IContextHandler
             _viewModel.Elements.Clear();
 
             foreach (MHRWirebug wirebug in e)
-                _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
+                _viewModel.Elements.Add(new WirebugContextHandler(wirebug, Player));
         });
     }
 
@@ -75,6 +75,6 @@ public class WirebugWidgetContextHandler : IContextHandler
         _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
-            _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
+            _viewModel.Elements.Add(new WirebugContextHandler(wirebug, Player));
     }
 }

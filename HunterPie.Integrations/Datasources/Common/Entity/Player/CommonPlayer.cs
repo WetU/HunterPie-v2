@@ -27,7 +27,7 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
     public abstract IStaminaComponent Stamina { get; }
     public abstract IWeapon Weapon { get; protected set; }
     public abstract CombatStatus CombatStatus { get; protected set; }
-
+    public abstract bool IsMarionette { get; protected set; }
 
     protected readonly SmartEvent<EventArgs> _onLogin = new();
     public event EventHandler<EventArgs> OnLogin
@@ -120,6 +120,13 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
         remove => _onCombatStatusChange.Unhook(value);
     }
 
+    protected readonly SmartEvent<EventArgs> _onPlayerRideOn = new();
+    public event EventHandler<EventArgs> OnPlayerRideOn
+    {
+        add => _onPlayerRideOn.Hook(value);
+        remove => _onPlayerRideOn.Unhook(value);
+    }
+
     protected CommonPlayer(IProcessManager process) : base(process) { }
 
     protected void HandleAbnormality<T, S>(Dictionary<string, IAbnormality> abnormalities, AbnormalitySchema schema, float timer, S newData)
@@ -180,7 +187,7 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
         IDisposable[] events =
         {
             _onLogin, _onLogout, _onDeath, _onActionUpdate, _onStageUpdate, _onVillageEnter, _onVillageLeave, _onCombatStatusChange,
-            _onAilmentUpdate, _onWeaponChange, _onAbnormalityStart, _onAbnormalityEnd, _onLevelChange
+            _onAilmentUpdate, _onWeaponChange, _onAbnormalityStart, _onAbnormalityEnd, _onLevelChange, _onPlayerRideOn
         };
 
         if (Health is IDisposable health)

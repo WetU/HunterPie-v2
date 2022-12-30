@@ -1,16 +1,19 @@
 ﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
+using System;
 
 namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 
 internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 {
     public readonly MHRWirebug Context;
+    public readonly MHRPlayer Player;
 
-    public WirebugContextHandler(MHRWirebug context)
+    public WirebugContextHandler(MHRWirebug context, MHRPlayer player)
     {
         Context = context;
-
+        Player = player;
+        
         UpdateData();
         HookEvents();
     }
@@ -21,6 +24,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate += OnTimerUpdate;
         Context.OnAvailable += OnAvailable;
         Context.OnBlockedStateChange += OnBlockedStateChange;
+        Player.OnPlayerRideOn += OnPlayerRideOn;
     }
 
     public void UnhookEvents()
@@ -29,6 +33,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate -= OnTimerUpdate;
         Context.OnAvailable -= OnAvailable;
         Context.OnBlockedStateChange -= OnBlockedStateChange;
+        Player.OnPlayerRideOn -= OnPlayerRideOn;
     }
 
     private void OnBlockedStateChange(object sender, MHRWirebug e) => IsBlocked = e.IsBlocked;
@@ -49,6 +54,8 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         OnCooldown = Cooldown > 0;
     }
 
+    private void OnPlayerRideOn(object sender, EventArgs e) => IsMarionette = Player.IsMarionette;
+
     private void UpdateData()
     {
         IsBlocked = Context.IsBlocked;
@@ -59,5 +66,6 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         MaxTimer = Context.MaxTimer;
         Timer = Context.Timer;
         IsTemporary = Context.Timer > 0;
+        IsMarionette= Player.IsMarionette;
     }
 }

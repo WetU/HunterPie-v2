@@ -74,6 +74,12 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
         protected set => throw new NotSupportedException();
     }
 
+    public override bool IsMarionette
+    {
+        get => false;
+        protected set => throw new NotSupportedException();
+    }
+
     public MHRSunbreakDemoPlayer(IProcessManager process) : base(process) { }
 
     [ScannableMethod]
