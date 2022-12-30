@@ -45,7 +45,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         IsTemporary = Context.Timer > 0;
     }
 
-    private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable;
+    private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable && !Player.IsMarionette;
 
     private void OnCooldownUpdate(object sender, MHRWirebug e)
     {

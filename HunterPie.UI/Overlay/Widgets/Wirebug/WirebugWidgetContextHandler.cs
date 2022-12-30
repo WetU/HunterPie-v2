@@ -53,7 +53,7 @@ public class WirebugWidgetContextHandler : IContextHandler
         _ = WidgetManager.Unregister<WirebugsView, WirebugWidgetConfig>(_view);
     }
 
-    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
+    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId) && !Player.IsMarionette;
 
     private void OnWirebugsRefresh(object sender, MHRWirebug[] e)
     {
