@@ -460,9 +460,6 @@ public sealed class MHRPlayer : CommonPlayer
         if (debuffsPtr == 0)
             return;
 
-        int marionetteMonsterId = Process.Memory.Read<int>(debuffsPtr + 0x938);
-        IsMarionette = marionetteMonsterId != -1;
-
         AbnormalitySchema[] debuffSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Debuffs);
 
         foreach (AbnormalitySchema schema in debuffSchemas)
@@ -501,6 +498,17 @@ public sealed class MHRPlayer : CommonPlayer
                 abnormality
             );
         }
+    }
+
+    [ScannableMethod]
+    private void GetPlayerMarionetteHUD()
+    {
+        long marionetteHudPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_MARIONETTE_HUD_OFFSETS")
+        );
+
+        IsMarionette = marionetteHudPtr != 0 ? true : false;
     }
 
     [ScannableMethod]
