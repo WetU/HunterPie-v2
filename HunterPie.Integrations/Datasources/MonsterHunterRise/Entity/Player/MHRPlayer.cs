@@ -474,7 +474,7 @@ public sealed class MHRPlayer : CommonPlayer
             if (!schema.IsBuildup)
                 abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
-            if (schema.IsReverseTimer && abnormality.Timer >0)
+            if (schema.IsReverseTimer && abnormality.Timer > 0)
                 abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
@@ -695,10 +695,6 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
-                IsMarionette = Process.Memory.Deref<int>(
-                    AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
-                    AddressMap.Get<int[]>("PLAYER_MARIONETTE_STATE_OFFSETS")
-                ) != 2 ? false : true,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 
