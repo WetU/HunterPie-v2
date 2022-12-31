@@ -47,7 +47,6 @@ public sealed class MHRPlayer : CommonPlayer
     private Weapon _weaponId = WeaponType.None;
     private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
-    private bool _isMarionette;
     #endregion
 
     public override string Name
@@ -161,19 +160,6 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 _combatStatus = value;
                 this.Dispatch(_onCombatStatusChange);
-            }
-        }
-    }
-
-    public override bool IsMarionette
-    {
-        get => _isMarionette;
-        protected set
-        {
-            if (value != _isMarionette)
-            {
-                _isMarionette = value;
-                this.Dispatch(_onPlayerRideOn);
             }
         }
     }
@@ -501,17 +487,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     [ScannableMethod]
-    private void GetPlayerMarionetteHUD()
-    {
-        long marionetteHudPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("UI_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_MARIONETTE_HUD_OFFSETS")
-        );
-
-        IsMarionette = marionetteHudPtr != 0 ? true : false;
-    }
-
-    [ScannableMethod]
     private void GetSessionPlayers()
     {
         int questState = Process.Memory.Deref<int>(
@@ -720,6 +695,10 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
+                IsMarionette = Process.Memory.Deref<int>(
+                    AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+                    AddressMap.Get<int[]>("PLAYER_MARIONETTE_STATE_OFFSETS")
+                ) != 2 ? false : true,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 

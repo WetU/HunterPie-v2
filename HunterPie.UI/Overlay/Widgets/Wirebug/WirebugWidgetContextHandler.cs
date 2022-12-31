@@ -32,19 +32,17 @@ public class WirebugWidgetContextHandler : IContextHandler
         HookEvents();
         UpdateData();
     }
-                                            
+
     public void HookEvents()
     {
         Player.OnStageUpdate += OnStageUpdate;
         Player.OnWirebugsRefresh += OnWirebugsRefresh;
-        Player.OnPlayerRideOn += OnPlayerRideOn;
     }
 
     public void UnhookEvents()
     {
         Player.OnStageUpdate -= OnStageUpdate;
         Player.OnWirebugsRefresh -= OnWirebugsRefresh;
-        Player.OnPlayerRideOn -= OnPlayerRideOn;
 
         foreach (WirebugViewModel vm in _viewModel.Elements)
             if (vm is WirebugContextHandler model)
@@ -72,11 +70,9 @@ public class WirebugWidgetContextHandler : IContextHandler
         });
     }
 
-    private void OnPlayerRideOn(object sender, EventArgs e) => _viewModel.IsAvailable = !Player.IsMarionette;
-
     private void UpdateData()
     {
-        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId) && !Player.IsMarionette;
+        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
             _viewModel.Elements.Add(new WirebugContextHandler(wirebug));

@@ -11,6 +11,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     private double _cooldown;
     private bool _isAvailable = true;
     private bool _isBlocked;
+    private bool _isMarionette;
 
     public long Address { get; internal set; }
     public double Timer
@@ -67,6 +68,19 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         }
     }
 
+    public bool IsMarionette
+    {
+        get => _isMarionette;
+        private set
+        {
+            if (value != _isMarionette)
+            {
+                _isMarionette = value;
+                this.Dispatch(_onMarionetteStateChange, this);
+            }
+        }
+    }
+
     private readonly SmartEvent<MHRWirebug> _onTimerUpdate = new();
     public event EventHandler<MHRWirebug> OnTimerUpdate
     {
@@ -95,6 +109,13 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         remove => _onBlockedStateChange.Unhook(value);
     }
 
+    private readonly SmartEvent<MHRWirebug> _onMarionetteStateChange = new();
+    public event EventHandler<MHRWirebug> OnMarionetteStateChange
+    {
+        add => _onMarionetteStateChange.Hook(value);
+        remove => _onMarionetteStateChange.Unhook(value);
+    }
+
     void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
     {
         MaxTimer = Math.Max(MaxTimer, data.Timer);
@@ -105,13 +126,14 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     void IUpdatable<MHRWirebugData>.Update(MHRWirebugData data)
     {
         IsBlocked = data.IsBlocked;
+        IsMarionette = data.IsMarionette;
         MaxCooldown = data.Structure.MaxCooldown;
         Cooldown = data.Structure.Cooldown;
     }
 
     public void Dispose()
     {
-        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange };
+        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onMarionetteStateChange };
 
         events.DisposeAll();
     }

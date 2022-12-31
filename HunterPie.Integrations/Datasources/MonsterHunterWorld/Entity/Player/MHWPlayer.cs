@@ -171,13 +171,6 @@ public sealed class MHWPlayer : CommonPlayer
         get => CombatStatus.None;
         protected set => throw new NotSupportedException();
     }
-
-    public override bool IsMarionette
-    {
-        get => false;
-        protected set => throw new NotImplementedException();
-    }
-
     #endregion
 
     internal MHWPlayer(IProcessManager process) : base(process)
