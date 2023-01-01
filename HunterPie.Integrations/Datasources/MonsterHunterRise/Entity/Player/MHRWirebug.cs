@@ -11,6 +11,8 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     private double _cooldown;
     private bool _isAvailable = true;
     private bool _isBlocked;
+    private ulong _commonCondition;
+    private ulong _debuffCondition;
 
     public long Address { get; internal set; }
     public double Timer
@@ -67,6 +69,32 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         }
     }
 
+    public ulong CommonCondition
+    {
+        get => _commonCondition;
+        private set
+        {
+            if (value != _commonCondition)
+            {
+                _commonCondition = value;
+                this.Dispatch(_onCommonConditionChange, this);
+            }
+        }
+    }
+
+    public ulong DebuffCondition
+    {
+        get => _debuffCondition;
+        private set
+        {
+            if (value != _debuffCondition)
+            {
+                _debuffCondition = value;
+                this.Dispatch(_onDebuffConditionChange, this);
+            }
+        }
+    }
+
     private readonly SmartEvent<MHRWirebug> _onTimerUpdate = new();
     public event EventHandler<MHRWirebug> OnTimerUpdate
     {
@@ -95,6 +123,20 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         remove => _onBlockedStateChange.Unhook(value);
     }
 
+    private readonly SmartEvent<MHRWirebug> _onCommonConditionChange = new();
+    public event EventHandler<MHRWirebug> OnCommonConditionChange
+    {
+        add => _onCommonConditionChange.Hook(value);
+        remove => _onCommonConditionChange.Unhook(value);
+    }
+
+    private readonly SmartEvent<MHRWirebug> _onDebuffConditionChange = new();
+    public event EventHandler<MHRWirebug> OnDebuffConditionChange
+    {
+        add => _onDebuffConditionChange.Hook(value);
+        remove => _onDebuffConditionChange.Unhook(value);
+    }
+
     void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
     {
         MaxTimer = Math.Max(MaxTimer, data.Timer);
@@ -107,11 +149,13 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         IsBlocked = data.IsBlocked;
         MaxCooldown = data.Structure.MaxCooldown;
         Cooldown = data.Structure.Cooldown;
+        CommonCondition = data.CommonCondition;
+        DebuffCondition = data.DebuffCondition;
     }
 
     public void Dispose()
     {
-        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange };
+        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onCommonConditionChange, _onDebuffConditionChange };
 
         events.DisposeAll();
     }

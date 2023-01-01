@@ -13,6 +13,7 @@ using HunterPie.Core.Game.Entity.Player.Vitals;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.Game.Utils;
+using HunterPie.Core.Logger;
 using HunterPie.Core.Native.IPC.Models.Common;
 using HunterPie.Integrations.Datasources.Common.Definition;
 using HunterPie.Integrations.Datasources.Common.Entity.Player;
@@ -163,7 +164,6 @@ public sealed class MHRPlayer : CommonPlayer
             }
         }
     }
-
     #region Events
 
     private readonly SmartEvent<MHRWirebug[]> _onWirebugsRefresh = new();
@@ -181,7 +181,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     // TODO: Add DTOs for middlewares
-
     [ScannableMethod]
     private void GetStageData()
     {
@@ -684,6 +683,11 @@ public sealed class MHRPlayer : CommonPlayer
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
         long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
 
+        long conditionPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
+        );
+
         bool shouldDispatchEvent = false;
         for (int i = 0; i < wirebugsArrayLength; i++)
         {
@@ -695,6 +699,8 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
+                CommonCondition = Process.Memory.Read<ulong>(conditionPtr + 0x10),
+                DebuffCondition = Process.Memory.Read<ulong>(conditionPtr + 0x38),
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 

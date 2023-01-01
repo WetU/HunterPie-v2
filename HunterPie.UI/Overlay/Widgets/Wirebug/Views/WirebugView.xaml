@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HunterPie.UI.Overlay.Widgets.Wirebug.Views"
              xmlns:vm="clr-namespace:HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel"
              xmlns:controls="clr-namespace:HunterPie.UI.Overlay.Controls"
              xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters"
@@ -116,7 +115,43 @@
             </controls:Arc.Percentage>
         </controls:Arc>
         <Image Margin="5,10,8,10"
-               Source="{StaticResource ICON_WIREBUG}">
+               d:Source="{StaticResource ICON_WIREBUG_RED}">
+            <Image.Style>
+                <Style TargetType="Image">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PlayerCondition}" Value="1">
+                            <DataTrigger.Setters>
+                                <Setter Property="Source"
+                                        Value="{StaticResource ICON_WIREBUG_GREEN}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding PlayerCondition}" Value="2">
+                            <DataTrigger.Setters>
+                                <Setter Property="Source"
+                                        Value="{StaticResource ICON_WIREBUG_YELLOW}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding PlayerCondition}" Value="3">
+                            <DataTrigger.Setters>
+                                <Setter Property="Source"
+                                        Value="{StaticResource ICON_WIREBUG_RED}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding PlayerCondition}" Value="4">
+                            <DataTrigger.Setters>
+                                <Setter Property="Source"
+                                        Value="{StaticResource ICON_WIREBUG_LIGHTBLUE}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding PlayerCondition}" Value="0">
+                            <DataTrigger.Setters>
+                                <Setter Property="Source"
+                                        Value="{StaticResource ICON_WIREBUG}"/>
+                            </DataTrigger.Setters>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Image.Style>
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0" 
                                   BlurRadius="10" 
@@ -159,9 +194,11 @@
         </Grid>
 
         <Ellipse Fill="{StaticResource RED_600}"
+                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                  Opacity="1"/>
         <Ellipse Fill="{StaticResource RED_LIGHT_300}"
+                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Ellipse.OpacityMask>
                 <ImageBrush ImageSource="{StaticResource ICON_ERROR_MASK}"/>
