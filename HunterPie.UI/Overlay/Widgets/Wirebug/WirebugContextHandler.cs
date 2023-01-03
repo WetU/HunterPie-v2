@@ -73,29 +73,21 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
             return;
         }
 
-        ulong result;
-
         if (_commonCondition != 0)
         {
-            result = _commonCondition & windmantle;
-
-            if (result == windmantle)
+            if ((_commonCondition & windmantle) == windmantle)
             {
                 PlayerCondition = 1;
                 return;
             }
 
-            result = _commonCondition & gold;
-            
-            if (result == gold)
+            if ((_commonCondition & gold) == gold)
             {
                 PlayerCondition = 2;
                 return;
             }
 
-            result = _commonCondition & ruby;
-
-            if (result == ruby)
+            if ((_commonCondition & ruby) == ruby)
             {
                 PlayerCondition = 3;
                 return;
@@ -108,9 +100,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 
             if (_debuffCondition != 0)
             {
-                result = _debuffCondition & iceL;
-
-                if (result == iceL)
+                if ((_debuffCondition & iceL) == iceL)
                 {
                     PlayerCondition = 4;
                     return;
@@ -138,9 +128,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 
         if (_debuffCondition != 0)
         {
-            ulong result = _debuffCondition & iceL;
-
-            if (result == iceL)
+            if ((_debuffCondition & iceL) == iceL)
             {
                 PlayerCondition = 4;
                 return;
@@ -167,29 +155,21 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
             return;
         }
 
-        ulong result;
-
         if (Context.CommonCondition != 0)
         {
-            result = Context.CommonCondition & windmantle;
-
-            if (result == windmantle)
+            if ((Context.CommonCondition & windmantle) == windmantle)
             {
                 PlayerCondition = 1;
                 return;
             }
 
-            result = Context.CommonCondition & gold;
-
-            if (result == gold)
+            if ((Context.CommonCondition & gold) == gold)
             {
                 PlayerCondition = 2;
                 return;
             }
 
-            result = Context.CommonCondition & ruby;
-
-            if (result == ruby)
+            if ((Context.CommonCondition & ruby) == ruby)
             {
                 PlayerCondition = 3;
                 return;
@@ -202,9 +182,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 
             if (Context.DebuffCondition != 0)
             {
-                result = Context.DebuffCondition & iceL;
-
-                if (result == iceL)
+                if ((Context.DebuffCondition & iceL) == iceL)
                 {
                     PlayerCondition = 4;
                     return;

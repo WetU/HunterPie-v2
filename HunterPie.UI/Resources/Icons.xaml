@@ -311,7 +311,7 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <DrawingImage x:Key="ICON_WIREBUG_LIGHTBLUE">
+    <DrawingImage x:Key="ICON_WIREBUG_ICE">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                 <DrawingGroup Opacity="1" Transform="1,0,0,1,0,215" />
@@ -322,7 +322,7 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <DrawingImage x:Key="ICON_WIREBUG_RED">
+    <DrawingImage x:Key="ICON_WIREBUG_RUBY">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                 <DrawingGroup Opacity="1" Transform="1,0,0,1,0,215" />
@@ -333,7 +333,7 @@
         </DrawingImage.Drawing>
     </DrawingImage>
 
-    <DrawingImage x:Key="ICON_WIREBUG_YELLOW">
+    <DrawingImage x:Key="ICON_WIREBUG_GOLD">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                 <DrawingGroup Opacity="1" Transform="1,0,0,1,0,215" />

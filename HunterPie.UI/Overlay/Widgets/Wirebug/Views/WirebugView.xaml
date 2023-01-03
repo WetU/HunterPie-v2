@@ -15,6 +15,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:RatioConverter x:Key="RatioConverter"/>
         <converters:ReverseRatioConverter x:Key="ReverseRatioConverter"/>
+        <converters:PlayerConditionToWirebugIconConverter x:Key="PlayerConditionToIconConverter"/>
     </UserControl.Resources>
     <Grid>
         <Ellipse Width="1"
@@ -115,43 +116,8 @@
             </controls:Arc.Percentage>
         </controls:Arc>
         <Image Margin="5,10,8,10"
-               d:Source="{StaticResource ICON_WIREBUG_RED}">
-            <Image.Style>
-                <Style TargetType="Image">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding PlayerCondition}" Value="1">
-                            <DataTrigger.Setters>
-                                <Setter Property="Source"
-                                        Value="{StaticResource ICON_WIREBUG_GREEN}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding PlayerCondition}" Value="2">
-                            <DataTrigger.Setters>
-                                <Setter Property="Source"
-                                        Value="{StaticResource ICON_WIREBUG_YELLOW}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding PlayerCondition}" Value="3">
-                            <DataTrigger.Setters>
-                                <Setter Property="Source"
-                                        Value="{StaticResource ICON_WIREBUG_RED}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding PlayerCondition}" Value="4">
-                            <DataTrigger.Setters>
-                                <Setter Property="Source"
-                                        Value="{StaticResource ICON_WIREBUG_LIGHTBLUE}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding PlayerCondition}" Value="0">
-                            <DataTrigger.Setters>
-                                <Setter Property="Source"
-                                        Value="{StaticResource ICON_WIREBUG}"/>
-                            </DataTrigger.Setters>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Image.Style>
+               d:Source="{StaticResource ICON_WIREBUG_RUBY}"
+               Source="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToIconConverter}}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0" 
                                   BlurRadius="10" 
