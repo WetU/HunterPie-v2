@@ -17,7 +17,6 @@
            Style="{StaticResource STYLE_PLAYER_HUD_WIDGET}">
     <UserControl.Resources>
         <converters:PercentageToRelativeSizeConverter x:Key="PercentageToRelativeSizeConverter"/>
-        <converters:PercentageToLeftMargingDistanceConverter x:Key="PercentageToLeftMargingDistanceConverter"/>
         <converters:CombatStatusToIconConverter x:Key="CombatStatusToIconConverter"/>
         <converters:CombatStatusToVisibilityConverter x:Key="CombatStatusToVisibilityConverter"/>
         <converters:WeaponToIconConverter x:Key="WeaponToIconConverter"/>
