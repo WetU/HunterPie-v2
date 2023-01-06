@@ -1,5 +1,6 @@
 ﻿using HunterPie.Core.Game.Entity.Party;
 using HunterPie.Core.Game.Entity.Player.Vitals;
+using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,12 @@ public interface IPlayer
     public int MasterRank { get; }
     public int StageId { get; }
     public bool InHuntingZone { get; }
+    public CombatStatus CombatStatus { get; }
     public IParty Party { get; }
     public IReadOnlyCollection<IAbnormality> Abnormalities { get; }
     public IHealthComponent Health { get; }
     public IStaminaComponent Stamina { get; }
     public IWeapon Weapon { get; }
-
 
     public event EventHandler<EventArgs> OnLogin;
     public event EventHandler<EventArgs> OnLogout;
@@ -28,6 +29,7 @@ public interface IPlayer
     public event EventHandler<EventArgs> OnVillageEnter;
     public event EventHandler<EventArgs> OnVillageLeave;
     public event EventHandler<EventArgs> OnAilmentUpdate;
+    public event EventHandler<EventArgs> OnCombatStatusChange;
     public event EventHandler<WeaponChangeEventArgs> OnWeaponChange;
     public event EventHandler<IAbnormality> OnAbnormalityStart;
     public event EventHandler<IAbnormality> OnAbnormalityEnd;

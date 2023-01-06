@@ -16,4 +16,6 @@ public struct AbnormalitySchema
     public bool IsBuildup;
     public int MaxBuildup;
     public bool IsInfinite;
+    public bool IsReverseTimer;
+    public int MaxTimer;
 }

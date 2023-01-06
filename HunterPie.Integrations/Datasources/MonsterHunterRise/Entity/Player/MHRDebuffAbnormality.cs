@@ -46,6 +46,8 @@ public sealed class MHRDebuffAbnormality : CommonAbnormality, IUpdatable<MHRDebu
 
         if (IsBuildup)
             MaxTimer = data.MaxBuildup;
+        else if (data.IsReverseTimer)
+            MaxTimer = data.MaxTimer;
     }
 
     void IUpdatable<MHRDebuffStructure>.Update(MHRDebuffStructure structure)

@@ -45,6 +45,7 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private Weapon _weaponId = WeaponType.None;
+    private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
     #endregion
 
@@ -150,6 +151,18 @@ public sealed class MHRPlayer : CommonPlayer
 
     public Scroll SwitchScroll { get; private set; }
 
+    public override CombatStatus CombatStatus
+    {
+        get => _combatStatus;
+        protected set
+        {
+            if(value != _combatStatus)
+            {
+                _combatStatus = value;
+                this.Dispatch(_onCombatStatusChange);
+            }
+        }
+    }
     #region Events
 
     private readonly SmartEvent<MHRWirebug[]> _onWirebugsRefresh = new();
@@ -167,7 +180,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     // TODO: Add DTOs for middlewares
-
     [ScannableMethod]
     private void GetStageData()
     {
@@ -388,14 +400,25 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
             };
 
+            bool isConditionValid = schema.CompareOperator switch
+            {
+                AbnormalityCompareType.WithValue => abnormSubId == schema.WithValue,
+                AbnormalityCompareType.WithValueNot => abnormSubId != schema.WithValueNot,
+                _ => false
+            };
+
             MHRConsumableStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
-            else if (abnormSubId == schema.WithValue)
+                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+            else if (isConditionValid)
                 abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
-            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+            if (schema.IsReverseTimer && abnormality.Timer > 0)
+                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -446,7 +469,11 @@ public sealed class MHRPlayer : CommonPlayer
             else if (isConditionValid)
                 abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
 
-            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+            if (schema.IsReverseTimer && abnormality.Timer > 0)
+                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
@@ -626,6 +653,18 @@ public sealed class MHRPlayer : CommonPlayer
         _stamina.Update(staminaData);
     }
 
+    [ScannableMethod]
+    private void GetPlayerCombatStatus()
+    {
+        if (!InHuntingZone)
+            return;
+
+        CombatStatus = (CombatStatus)Memory.Deref<int>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_COMBAT_STATUS_OFFSETS")
+        );
+    }
+
     [ScannableMethod(typeof(MHRWirebugData))]
     private void GetPlayerWirebugs()
     {
@@ -643,6 +682,11 @@ public sealed class MHRPlayer : CommonPlayer
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
         long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
 
+        long conditionPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
+        );
+
         bool shouldDispatchEvent = false;
         for (int i = 0; i < wirebugsArrayLength; i++)
         {
@@ -654,8 +698,11 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
+                CommonCondition = Process.Memory.Read<ulong>(conditionPtr + 0x10),
+                DebuffCondition = Process.Memory.Read<ulong>(conditionPtr + 0x38),
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
+
             data.Structure.Cooldown /= AbnormalityData.TIMER_MULTIPLIER;
             data.Structure.MaxCooldown /= AbnormalityData.TIMER_MULTIPLIER;
 

@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:HunterPie.UI.Overlay.Widgets.Wirebug.Views"
              xmlns:vm="clr-namespace:HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel"
              xmlns:controls="clr-namespace:HunterPie.UI.Overlay.Controls"
              xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters"
@@ -16,6 +15,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:RatioConverter x:Key="RatioConverter"/>
         <converters:ReverseRatioConverter x:Key="ReverseRatioConverter"/>
+        <converters:PlayerConditionToWirebugIconConverter x:Key="PlayerConditionToIconConverter"/>
     </UserControl.Resources>
     <Grid>
         <Ellipse Width="1"
@@ -116,7 +116,8 @@
             </controls:Arc.Percentage>
         </controls:Arc>
         <Image Margin="5,10,8,10"
-               Source="{StaticResource ICON_WIREBUG}">
+               d:Source="{StaticResource ICON_WIREBUG_RUBY}"
+               Source="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToIconConverter}}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0" 
                                   BlurRadius="10" 
@@ -159,9 +160,11 @@
         </Grid>
 
         <Ellipse Fill="{StaticResource RED_600}"
+                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                  Opacity="1"/>
         <Ellipse Fill="{StaticResource RED_LIGHT_300}"
+                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Ellipse.OpacityMask>
                 <ImageBrush ImageSource="{StaticResource ICON_ERROR_MASK}"/>

@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyVersion>2.7.0.28</AssemblyVersion>
     <FileVersion>2.7.0.28</FileVersion>
-	<Authors>Haato</Authors>
+    <Authors>Haato</Authors>
     <Description></Description>
   </PropertyGroup>
 

@@ -8,6 +8,7 @@ using HunterPie.Core.Game.Entity;
 using HunterPie.Core.Game.Entity.Party;
 using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Entity.Player.Vitals;
+using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.Logger;
 using System.Runtime.CompilerServices;
@@ -25,6 +26,7 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
     public abstract IHealthComponent Health { get; }
     public abstract IStaminaComponent Stamina { get; }
     public abstract IWeapon Weapon { get; protected set; }
+    public abstract CombatStatus CombatStatus { get; protected set; }
 
     protected readonly SmartEvent<EventArgs> _onLogin = new();
     public event EventHandler<EventArgs> OnLogin
@@ -110,6 +112,13 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
         remove => _onLevelChange.Unhook(value);
     }
 
+    protected readonly SmartEvent<EventArgs> _onCombatStatusChange = new();
+    public event EventHandler<EventArgs> OnCombatStatusChange
+    {
+        add => _onCombatStatusChange.Hook(value);
+        remove => _onCombatStatusChange.Unhook(value);
+    }
+
     protected CommonPlayer(IProcessManager process) : base(process) { }
 
     protected void HandleAbnormality<T, S>(Dictionary<string, IAbnormality> abnormalities, AbnormalitySchema schema, float timer, S newData)
@@ -169,7 +178,7 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
     {
         IDisposable[] events =
         {
-            _onLogin, _onLogout, _onDeath, _onActionUpdate, _onStageUpdate, _onVillageEnter, _onVillageLeave,
+            _onLogin, _onLogout, _onDeath, _onActionUpdate, _onStageUpdate, _onVillageEnter, _onVillageLeave, _onCombatStatusChange,
             _onAilmentUpdate, _onWeaponChange, _onAbnormalityStart, _onAbnormalityEnd, _onLevelChange
         };
 

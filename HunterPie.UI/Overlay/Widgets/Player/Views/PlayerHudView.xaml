@@ -9,7 +9,6 @@
            xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters"
            xmlns:viewmodels="clr-namespace:HunterPie.UI.Overlay.Widgets.Player.ViewModels"
            xmlns:animations="clr-namespace:HunterPie.UI.Architecture.Animation"
-           xmlns:enums="clr-namespace:HunterPie.Core.Game.Enums;assembly=HunterPie.Core"
            xmlns:effects="clr-namespace:HunterPie.UI.Architecture.Effects"
            x:TypeArguments="viewmodels:PlayerHudViewModel"
            d:DataContext="{d:DesignInstance Type=viewmodels:PlayerHudViewModel}"
@@ -18,6 +17,8 @@
            Style="{StaticResource STYLE_PLAYER_HUD_WIDGET}">
     <UserControl.Resources>
         <converters:PercentageToRelativeSizeConverter x:Key="PercentageToRelativeSizeConverter"/>
+        <converters:CombatStatusToIconConverter x:Key="CombatStatusToIconConverter"/>
+        <converters:CombatStatusToVisibilityConverter x:Key="CombatStatusToVisibilityConverter"/>
         <converters:WeaponToIconConverter x:Key="WeaponToIconConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:WeaponToMeleeVisibility x:Key="WeaponToMeleeVisibility"/>
@@ -32,6 +33,15 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
+        <!-- Combat Status Icon -->
+        <Image d:Source="{StaticResource ICON_BATTLE_EYE}"
+               Source="{Binding CombatStatus, Mode=OneWay, Converter={StaticResource CombatStatusToIconConverter}}"
+               Height="24"
+               Width="24"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Right"
+               Visibility="{Binding CombatStatus, Mode=OneWay, Converter={StaticResource CombatStatusToVisibilityConverter}}"/>
+
         <!-- Player name -->
         <TextBlock FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
                    Foreground="{StaticResource WHITE_100}"

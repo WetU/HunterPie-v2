@@ -64,6 +64,8 @@ public class AbnormalityData
             string isBuildup = abnormality.Attributes["IsBuildup"]?.Value ?? "False";
             string maxBuildup = abnormality.Attributes["MaxBuildup"]?.Value ?? "0";
             string isInfinite = abnormality.Attributes["IsInfinite"]?.Value ?? "False";
+            string isReverseTimer = abnormality.Attributes["IsReverseTimer"]?.Value ?? "False";
+            string maxTimer = abnormality.Attributes["MaxTimer"]?.Value ?? "0";
 
             AbnormalitySchema schema = new()
             {
@@ -82,6 +84,8 @@ public class AbnormalityData
             _ = bool.TryParse(isBuildup, out schema.IsBuildup);
             _ = int.TryParse(maxBuildup, out schema.MaxBuildup);
             _ = bool.TryParse(isInfinite, out schema.IsInfinite);
+            _ = bool.TryParse(isReverseTimer, out schema.IsReverseTimer);
+            _ = int.TryParse(maxTimer, out schema.MaxTimer);
 
             Abnormalities.Add(schema.Id, schema);
         }
