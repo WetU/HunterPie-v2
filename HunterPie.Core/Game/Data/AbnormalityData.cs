@@ -61,6 +61,7 @@ public class AbnormalityData
             string withValueNot = abnormality.Attributes["WithValueNot"]?.Value;
             string group = abnormality.ParentNode.Name;
             string category = abnormality.Attributes["Category"]?.Value ?? group;
+            string dependsOnCategory = abnormality.Attributes["DependsOnCategory"]?.Value ?? category;
             string isBuildup = abnormality.Attributes["IsBuildup"]?.Value ?? "False";
             string maxBuildup = abnormality.Attributes["MaxBuildup"]?.Value ?? "0";
             string isInfinite = abnormality.Attributes["IsInfinite"]?.Value ?? "False";
@@ -74,6 +75,7 @@ public class AbnormalityData
                 Icon = icon,
                 CompareOperator = withValueNot != null ? AbnormalityCompareType.WithValueNot : AbnormalityCompareType.WithValue,
                 Category = category,
+                DependsOnCategory = dependsOnCategory,
                 Group = group
             };
 

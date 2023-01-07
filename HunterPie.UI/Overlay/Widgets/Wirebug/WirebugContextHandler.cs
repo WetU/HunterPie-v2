@@ -31,8 +31,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate += OnTimerUpdate;
         Context.OnAvailable += OnAvailable;
         Context.OnBlockedStateChange += OnBlockedStateChange;
-        Context.OnCommonConditionChange += OnCommonConditionChange;
-        Context.OnDebuffConditionChange += OnDebuffConditionChange;
+        Context.OnPlayerConditionChange += OnPlayerConditionChange;
     }
 
     public void UnhookEvents()
@@ -41,8 +40,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Context.OnTimerUpdate -= OnTimerUpdate;
         Context.OnAvailable -= OnAvailable;
         Context.OnBlockedStateChange -= OnBlockedStateChange;
-        Context.OnCommonConditionChange -= OnCommonConditionChange;
-        Context.OnDebuffConditionChange -= OnDebuffConditionChange;
+        Context.OnPlayerConditionChange -= OnPlayerConditionChange;
     }
 
     private void OnBlockedStateChange(object sender, MHRWirebug e) => IsBlocked = e.IsBlocked;
@@ -63,9 +61,10 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         OnCooldown = Cooldown > 0;
     }
 
-    private void OnCommonConditionChange(object sender, MHRWirebug e)
+    private void OnPlayerConditionChange(object sender, MHRWirebug e)
     {
         _commonCondition = e.CommonCondition;
+        _debuffCondition = e.DebuffCondition;
 
         if (_commonCondition == 0 && _debuffCondition == 0)
         {
@@ -92,50 +91,15 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
                 PlayerCondition = 3;
                 return;
             }
-
-            if (PlayerCondition > 0 && PlayerCondition < 4)
-            {
-                return;
-            }
-
-            if (_debuffCondition != 0)
-            {
-                if ((_debuffCondition & iceL) == iceL)
-                {
-                    PlayerCondition = 4;
-                    return;
-                }
-            }
         }
         
-        PlayerCondition = 0;
-    }
-
-    private void OnDebuffConditionChange(object sender, MHRWirebug e)
-    {
-        _debuffCondition = e.DebuffCondition;
-
-        if (_commonCondition == 0 && _debuffCondition == 0)
-        {
-            PlayerCondition = 0;
-            return;
-        }
-
-        if (PlayerCondition > 0 && PlayerCondition < 4)
-        {
-            return;
-        }
-
         if (_debuffCondition != 0)
         {
             if ((_debuffCondition & iceL) == iceL)
             {
                 PlayerCondition = 4;
-                return;
             }
         }
-
-        PlayerCondition = 0;
     }
 
     private void UpdateData()
@@ -174,22 +138,14 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
                 PlayerCondition = 3;
                 return;
             }
-
-            if (PlayerCondition > 0 && PlayerCondition < 4)
-            {
-                return;
-            }
-
-            if (Context.DebuffCondition != 0)
-            {
-                if ((Context.DebuffCondition & iceL) == iceL)
-                {
-                    PlayerCondition = 4;
-                    return;
-                }
-            }
         }
 
-        PlayerCondition = 0;
+        if (Context.DebuffCondition != 0)
+        {
+            if ((Context.DebuffCondition & iceL) == iceL)
+            {
+                PlayerCondition = 4;
+            }
+        }
     }
 }

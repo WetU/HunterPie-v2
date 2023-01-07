@@ -394,10 +394,16 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
+            long SubIdCategory = schema.DependsOnCategory switch
+            {
+                AbnormalityData.Debuffs => Process.Memory.Read(AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"), AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")),
+                _ => consumableBuffs
+            };
+
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
-                _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
+                _ => Process.Memory.Read<int>(SubIdCategory + schema.DependsOn)
             };
 
             bool isConditionValid = schema.CompareOperator switch
@@ -448,10 +454,16 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
+            long SubIdCategory = schema.DependsOnCategory switch
+            {
+                AbnormalityData.Consumables => Process.Memory.Read(AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"), AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")),
+                _ => debuffsPtr
+            };
+
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
-                _ => Process.Memory.Read<int>(debuffsPtr + schema.DependsOn)
+                _ => Process.Memory.Read<int>(SubIdCategory + schema.DependsOn)
             };
 
             bool isConditionValid = schema.CompareOperator switch

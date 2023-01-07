@@ -77,7 +77,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
             if (value != _commonCondition)
             {
                 _commonCondition = value;
-                this.Dispatch(_onCommonConditionChange, this);
+                this.Dispatch(_onPlayerConditionChange, this);
             }
         }
     }
@@ -90,7 +90,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
             if (value != _debuffCondition)
             {
                 _debuffCondition = value;
-                this.Dispatch(_onDebuffConditionChange, this);
+                this.Dispatch(_onPlayerConditionChange, this);
             }
         }
     }
@@ -123,18 +123,11 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         remove => _onBlockedStateChange.Unhook(value);
     }
 
-    private readonly SmartEvent<MHRWirebug> _onCommonConditionChange = new();
-    public event EventHandler<MHRWirebug> OnCommonConditionChange
+    private readonly SmartEvent<MHRWirebug> _onPlayerConditionChange = new();
+    public event EventHandler<MHRWirebug> OnPlayerConditionChange
     {
-        add => _onCommonConditionChange.Hook(value);
-        remove => _onCommonConditionChange.Unhook(value);
-    }
-
-    private readonly SmartEvent<MHRWirebug> _onDebuffConditionChange = new();
-    public event EventHandler<MHRWirebug> OnDebuffConditionChange
-    {
-        add => _onDebuffConditionChange.Hook(value);
-        remove => _onDebuffConditionChange.Unhook(value);
+        add => _onPlayerConditionChange.Hook(value);
+        remove => _onPlayerConditionChange.Unhook(value);
     }
 
     void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
@@ -155,7 +148,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
 
     public void Dispose()
     {
-        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onCommonConditionChange, _onDebuffConditionChange };
+        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onPlayerConditionChange };
 
         events.DisposeAll();
     }

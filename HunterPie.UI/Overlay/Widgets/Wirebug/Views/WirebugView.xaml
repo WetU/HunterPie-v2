@@ -16,6 +16,7 @@
         <converters:RatioConverter x:Key="RatioConverter"/>
         <converters:ReverseRatioConverter x:Key="ReverseRatioConverter"/>
         <converters:PlayerConditionToWirebugIconConverter x:Key="PlayerConditionToIconConverter"/>
+        <converters:PlayerConditionToWirebugColorConverter x:Key="PlayerConditionToColorConverter"/>
     </UserControl.Resources>
     <Grid>
         <Ellipse Width="1"
@@ -115,15 +116,18 @@
                 </MultiBinding>
             </controls:Arc.Percentage>
         </controls:Arc>
+
         <Image Margin="5,10,8,10"
-               d:Source="{StaticResource ICON_WIREBUG_RUBY}"
+               d:Source="{StaticResource ICON_WIREBUG_GREEN}"
                Source="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToIconConverter}}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0" 
                                   BlurRadius="10" 
-                                  Color="#FF00D6F7"/>
+                                  d:Color="#FF00D6F7"
+                                  Color="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToColorConverter}}"/>
             </Image.Effect>
         </Image>
+
         <Grid Visibility="{Binding OnCooldown, Converter={StaticResource BooleanToVisibilityConverter}}"
               d:Visibility="Visible">
             <controls:Arc Stroke="#80000000"
@@ -145,6 +149,7 @@
             <Ellipse Margin="5"
                      Fill="#80000000"/>
             <TextBlock Text="{Binding Cooldown, Mode=OneWay, StringFormat=\{0:F1\}}"
+                       d:Text="15"
                        Foreground="{StaticResource HUNTERPIE_FOREGROUND_PRIMARY}"
                        FontFamily="{StaticResource HUNTERPIE_DEFAULT_FONT}"
                        FontSize="15"

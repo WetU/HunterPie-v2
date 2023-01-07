@@ -5,34 +5,34 @@ using System.Windows.Data;
 
 namespace HunterPie.UI.Architecture.Converters;
 
-public class PlayerConditionToWirebugIconConverter : IValueConverter
+public class PlayerConditionToWirebugColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        string iconName;
+        string color;
 
         switch ((int)value)
         {
             case 0:
-                iconName = "ICON_WIREBUG";
+                color = "#FF00D6F7";
                 break;
             case 1:
-                iconName = "ICON_WIREBUG_GREEN";
+                color = "#FF00D600";
                 break;
             case 2:
-                iconName = "ICON_WIREBUG_GOLD";
+                color = "#FFF8A700";
                 break;
             case 3:
-                iconName = "ICON_WIREBUG_RUBY";
+                color = "#FFFE4A0D";
                 break;
             case 4:
-                iconName = "ICON_WIREBUG_ICE";
+                color = "#FF6A94BE";
                 break;
             default:
-                return Resources.Icon("ICON_WIREBUG");
+                return "#FF00D6F7";
         }
 
-        return Resources.Icon(iconName);
+        return color;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
