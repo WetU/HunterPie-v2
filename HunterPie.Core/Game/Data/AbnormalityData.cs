@@ -55,6 +55,7 @@ public class AbnormalityData
             string id = abnormality.Attributes["Id"].Value;
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
+            string ptroffset = abnormality.Attributes["PtrOffset"]?.Value ?? "0";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
             string dependsOn = abnormality.Attributes["DependsOn"]?.Value ?? "0";
             string withValue = abnormality.Attributes["WithValue"]?.Value ?? "0";
@@ -79,6 +80,7 @@ public class AbnormalityData
                 Group = group
             };
 
+            _ = int.TryParse(ptroffset, NumberStyles.HexNumber, null, out schema.PtrOffset);
             _ = int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);
             _ = int.TryParse(dependsOn, NumberStyles.HexNumber, null, out schema.DependsOn);
             _ = int.TryParse(withValue, out schema.WithValue);

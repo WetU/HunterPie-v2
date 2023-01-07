@@ -11,21 +11,21 @@ public class PlayerConditionToWirebugIconConverter : IValueConverter
     {
         string iconName;
 
-        switch ((int)value)
+        switch ((string)value)
         {
-            case 0:
+            case "None":
                 iconName = "ICON_WIREBUG";
                 break;
-            case 1:
+            case "WindMantle":
                 iconName = "ICON_WIREBUG_GREEN";
                 break;
-            case 2:
+            case "GoldBug":
                 iconName = "ICON_WIREBUG_GOLD";
                 break;
-            case 3:
+            case "RubyBug":
                 iconName = "ICON_WIREBUG_RUBY";
                 break;
-            case 4:
+            case "IceBlight":
                 iconName = "ICON_WIREBUG_ICE";
                 break;
             default:

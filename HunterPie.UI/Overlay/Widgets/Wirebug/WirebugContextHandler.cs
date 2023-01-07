@@ -7,14 +7,6 @@ namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 
 internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 {
-    private ulong _commonCondition = 0;
-    private ulong _debuffCondition = 0;
-
-    private readonly ulong windmantle = (ulong)CommonCondition.WindMantle;
-    private readonly ulong gold = (ulong)CommonCondition.MarionetteTypeGold;
-    private readonly ulong ruby = (ulong)CommonCondition.MarionetteTypeRuby;
-    private readonly ulong iceL = (ulong)DebuffCondition.IceL;
-
     public readonly MHRWirebug Context;
 
     public WirebugContextHandler(MHRWirebug context)
@@ -58,48 +50,36 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
     {
         MaxCooldown = e.MaxCooldown;
         Cooldown = e.Cooldown;
-        OnCooldown = Cooldown > 0;
+        OnCooldown = e.Cooldown > 0;
     }
 
     private void OnPlayerConditionChange(object sender, MHRWirebug e)
     {
-        _commonCondition = e.CommonCondition;
-        _debuffCondition = e.DebuffCondition;
-
-        if (_commonCondition == 0 && _debuffCondition == 0)
+        if ((e.CommonCondition & (ulong)CommonCondition.WindMantle) == (ulong)CommonCondition.WindMantle)
         {
-            PlayerCondition = 0;
+            PlayerCondition = "WindMantle";
             return;
         }
 
-        if (_commonCondition != 0)
+        if ((e.CommonCondition & (ulong)CommonCondition.MarionetteTypeGold) == (ulong)CommonCondition.MarionetteTypeGold)
         {
-            if ((_commonCondition & windmantle) == windmantle)
-            {
-                PlayerCondition = 1;
-                return;
-            }
-
-            if ((_commonCondition & gold) == gold)
-            {
-                PlayerCondition = 2;
-                return;
-            }
-
-            if ((_commonCondition & ruby) == ruby)
-            {
-                PlayerCondition = 3;
-                return;
-            }
+            PlayerCondition = "GoldBug";
+            return;
         }
-        
-        if (_debuffCondition != 0)
+
+        if ((e.CommonCondition & (ulong)CommonCondition.MarionetteTypeRuby) == (ulong)CommonCondition.MarionetteTypeRuby)
         {
-            if ((_debuffCondition & iceL) == iceL)
-            {
-                PlayerCondition = 4;
-            }
+            PlayerCondition = "RubyBug";
+            return;
         }
+
+        if ((e.DebuffCondition & (ulong)DebuffCondition.IceL) == (ulong)DebuffCondition.IceL)
+        {
+            PlayerCondition = "IceBlight";
+            return;
+        }
+
+        PlayerCondition = "None";
     }
 
     private void UpdateData()
@@ -107,45 +87,37 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         IsBlocked = Context.IsBlocked;
         MaxCooldown = Context.MaxCooldown == 0 ? 400 : Context.MaxCooldown;
         Cooldown = Context.Cooldown;
+        OnCooldown = Context.Cooldown > 0;
         IsAvailable = Context.IsAvailable;
 
         MaxTimer = Context.MaxTimer;
         Timer = Context.Timer;
         IsTemporary = Context.Timer > 0;
 
-        if (Context.CommonCondition == 0 && Context.DebuffCondition == 0)
+        if ((Context.CommonCondition & (ulong)CommonCondition.WindMantle) == (ulong)CommonCondition.WindMantle)
         {
-            PlayerCondition = 0;
+            PlayerCondition = "WindMantle";
             return;
         }
 
-        if (Context.CommonCondition != 0)
+        if ((Context.CommonCondition & (ulong)CommonCondition.MarionetteTypeGold) == (ulong)CommonCondition.MarionetteTypeGold)
         {
-            if ((Context.CommonCondition & windmantle) == windmantle)
-            {
-                PlayerCondition = 1;
-                return;
-            }
-
-            if ((Context.CommonCondition & gold) == gold)
-            {
-                PlayerCondition = 2;
-                return;
-            }
-
-            if ((Context.CommonCondition & ruby) == ruby)
-            {
-                PlayerCondition = 3;
-                return;
-            }
+            PlayerCondition = "GoldBug";
+            return;
         }
 
-        if (Context.DebuffCondition != 0)
+        if ((Context.CommonCondition & (ulong)CommonCondition.MarionetteTypeRuby) == (ulong)CommonCondition.MarionetteTypeRuby)
         {
-            if ((Context.DebuffCondition & iceL) == iceL)
-            {
-                PlayerCondition = 4;
-            }
+            PlayerCondition = "RubyBug";
+            return;
         }
+
+        if ((Context.DebuffCondition & (ulong)DebuffCondition.IceL) == (ulong)DebuffCondition.IceL)
+        {
+            PlayerCondition = "IceBlight";
+            return;
+        }
+
+        PlayerCondition = "None";
     }
 }

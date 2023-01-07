@@ -11,21 +11,21 @@ public class PlayerConditionToWirebugColorConverter : IValueConverter
     {
         string color;
 
-        switch ((int)value)
+        switch ((string)value)
         {
-            case 0:
+            case "None":
                 color = "#FF00D6F7";
                 break;
-            case 1:
+            case "WindMantle":
                 color = "#FF00D600";
                 break;
-            case 2:
+            case "GoldBug":
                 color = "#FFF8A700";
                 break;
-            case 3:
+            case "RubyBug":
                 color = "#FFFE4A0D";
                 break;
-            case 4:
+            case "IceBlight":
                 color = "#FF6A94BE";
                 break;
             default:

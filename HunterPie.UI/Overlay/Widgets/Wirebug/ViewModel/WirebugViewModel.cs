@@ -12,7 +12,7 @@ public class WirebugViewModel : Bindable
     private bool _isAvailable;
     private bool _isTemporary;
     private bool _isBlocked;
-    private int _playerCondition;
+    private string _playerCondition;
 
     public double Cooldown { get => _cooldown; set => SetValue(ref _cooldown, value); }
     public double MaxCooldown { get => _maxCooldown; set => SetValue(ref _maxCooldown, value); }
@@ -22,5 +22,5 @@ public class WirebugViewModel : Bindable
     public bool IsAvailable { get => _isAvailable; set => SetValue(ref _isAvailable, value); }
     public bool IsTemporary { get => _isTemporary; set => SetValue(ref _isTemporary, value); }
     public bool IsBlocked { get => _isBlocked; set => SetValue(ref _isBlocked, value); }
-    public int PlayerCondition { get => _playerCondition; set => SetValue(ref _playerCondition, value); }
+    public string PlayerCondition { get => _playerCondition; set => SetValue(ref _playerCondition, value); }
 }

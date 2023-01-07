@@ -458,6 +458,12 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
+            long PtrOffset = schema.PtrOffset switch
+            {
+                0 => debuffsPtr,
+                _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
+            };
+
             long SubIdCategory = schema.DependsOnCategory switch
             {
                 AbnormalityData.Consumables => Process.Memory.Read(AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"), AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")),
@@ -483,7 +489,7 @@ public sealed class MHRPlayer : CommonPlayer
             if (schema.IsInfinite)
                 abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
             else if (isConditionValid)
-                abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+                abnormality = Process.Memory.Read<MHRDebuffStructure>(PtrOffset + schema.Offset);
 
             if (!schema.IsBuildup)
                 abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
