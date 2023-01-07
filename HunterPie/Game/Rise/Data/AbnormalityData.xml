@@ -225,7 +225,7 @@
                      Offset="7E0"
                      Name="ABNORMALITY_PRE_SLEEP"
                      Icon="ICON_SLEEP"/>
-		<Abnormality Id="ABN_STUN_BUILDUP"
+        <Abnormality Id="ABN_STUN_BUILDUP"
                      PtrOffset="848"
                      Offset="10"
                      Name="ABNORMALITY_STUN_BUILDUP"
