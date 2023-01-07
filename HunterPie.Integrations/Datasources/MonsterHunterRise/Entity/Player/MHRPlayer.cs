@@ -191,13 +191,17 @@ public sealed class MHRPlayer : CommonPlayer
         if (stageAddress == 0x00000000)
             return;
 
-        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
+        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60); // GameState
 
-        int zoneId = stageData.IsMainMenu()
-            ? -1
-            : stageData.IsVillage()
-            ? stageData.VillageId
-            : stageData.IsLoadingScreen() ? -2 : stageData.IsSelectingCharacter() ? 199 : stageData.HuntingId + 200;
+        int zoneId = stageData.IsMainMenu() ? -1
+            : stageData.IsMakingCharacter() ? -2
+            : stageData.IsSelectingCharacter() ? 199
+            : stageData.IsVillage() ? stageData.VillageSpace
+            : stageData.IsRampage() ? -6
+            : stageData.IsResultScreen() ? -3
+            : stageData.IsDemo() ? -4
+            : stageData.IsLoadingScreen() ? -5
+            : stageData.CurrentMapNo + 200;
         MHRStageStructure tempStageData = _stageData;
         _stageData = stageData;
         _lastStageData = tempStageData;
