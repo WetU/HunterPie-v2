@@ -204,14 +204,14 @@
         <Abnormality Id="ABN_RUBY_WIREBUG"
                      Offset="1A0"
                      DependsOn="709"
-					 DependsOnCategory="Debuffs"
+                     DependsOnCategory="Debuffs"
                      WithValue="1"
                      Name="ABNORMALITY_RUBY_WIREBUG"
                      Icon="ICON_RUBY_WIREBUG"/>
         <Abnormality Id="ABN_GOLD_WIREBUG"
                      Offset="1A0"
                      DependsOn="709"
-					 DependsOnCategory="Debuffs"
+                     DependsOnCategory="Debuffs"
                      WithValue="2"
                      Name="ABNORMALITY_GOLD_WIREBUG"
                      Icon="ICON_GOLD_WIREBUG"/>
