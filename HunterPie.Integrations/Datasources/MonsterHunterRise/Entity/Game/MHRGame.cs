@@ -192,18 +192,18 @@ public sealed class MHRGame : CommonGame
     [ScannableMethod]
     private void GetDeathCounter()
     {
-        int maxDeathsCounter = Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("QUEST_ADDRESS"),
+        if (!Player.InHuntingZone)
+            return;
+
+        MaxDeaths = Process.Memory.Deref<int>(
+            AddressMap.GetAbsolute("QUEST_ADDRESS"), 
             AddressMap.Get<int[]>("QUEST_MAX_DEATHS_OFFSETS")
         );
 
-        int deathCounter = Process.Memory.Deref<int>(
+        Deaths = Process.Memory.Deref<int>(
             AddressMap.GetAbsolute("QUEST_ADDRESS"),
             AddressMap.Get<int[]>("QUEST_DEATH_COUNTER_OFFSETS")
         );
-
-        MaxDeaths = maxDeathsCounter;
-        Deaths = deathCounter;
     }
 
     [ScannableMethod]
@@ -231,7 +231,7 @@ public sealed class MHRGame : CommonGame
             AddressMap.Get<int[]>("CUTSCENE_STATE_OFFSETS")
         );
 
-        IsHudOpen = isHudOpen == 1 || isCutsceneActive == true;
+        IsHudOpen = isHudOpen == 1 || isCutsceneActive;
     }
 
     [ScannableMethod]

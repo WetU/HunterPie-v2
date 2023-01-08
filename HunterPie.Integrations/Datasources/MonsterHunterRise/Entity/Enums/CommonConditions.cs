@@ -1,6 +1,7 @@
 ﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
+
 [Flags]
-public enum CommonCondition : ulong
+public enum CommonConditions : ulong
 {
     None = 0,
     AttackUp = 1,

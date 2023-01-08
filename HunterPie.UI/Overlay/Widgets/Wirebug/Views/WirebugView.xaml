@@ -15,8 +15,8 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:RatioConverter x:Key="RatioConverter"/>
         <converters:ReverseRatioConverter x:Key="ReverseRatioConverter"/>
-        <converters:PlayerConditionToWirebugIconConverter x:Key="PlayerConditionToIconConverter"/>
-        <converters:PlayerConditionToWirebugColorConverter x:Key="PlayerConditionToColorConverter"/>
+        <converters:WirebugConditionToIconConverter x:Key="WirebugConditionToIconConverter"/>
+        <converters:WirebugConditionToColorConverter x:Key="WirebugConditionToColorConverter"/>
     </UserControl.Resources>
     <Grid>
         <Ellipse Width="1"
@@ -116,19 +116,16 @@
                 </MultiBinding>
             </controls:Arc.Percentage>
         </controls:Arc>
-
         <Image Margin="5,10,8,10"
-               d:Source="{StaticResource ICON_WIREBUG_RUBY}"
-               Source="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToIconConverter}}">
+               Source="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToIconConverter}}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0"
                                   BlurRadius="10"
-                                  Color="{Binding PlayerCondition, Mode=OneWay, Converter={StaticResource PlayerConditionToColorConverter}}"/>
+                                  Color="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToColorConverter}}"/>
             </Image.Effect>
         </Image>
-
         <Grid Visibility="{Binding OnCooldown, Converter={StaticResource BooleanToVisibilityConverter}}"
-              d:Visibility="Collapsed">
+              d:Visibility="Visible">
             <controls:Arc Stroke="#80000000"
                           StrokeThickness="20"
                           Margin="5" 
@@ -156,18 +153,16 @@
                        FontWeight="Medium">
                 <TextBlock.Effect>
                     <DropShadowEffect Color="#FF34343C"
-                                      BlurRadius="4"
+                                      BlurRadius="4" 
                                       ShadowDepth="0"/>
                 </TextBlock.Effect>
             </TextBlock>
         </Grid>
 
         <Ellipse Fill="{StaticResource RED_600}"
-                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                  Opacity="1"/>
         <Ellipse Fill="{StaticResource RED_LIGHT_300}"
-                 d:Visibility="Collapsed"
                  Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Ellipse.OpacityMask>
                 <ImageBrush ImageSource="{StaticResource ICON_ERROR_MASK}"/>

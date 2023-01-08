@@ -2,6 +2,7 @@
 using HunterPie.Core.Domain.Interfaces;
 using HunterPie.Core.Extensions;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
 
 namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 
@@ -11,8 +12,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     private double _cooldown;
     private bool _isAvailable = true;
     private bool _isBlocked;
-    private ulong _commonCondition;
-    private ulong _debuffCondition;
+    private WirebugConditions _wirebugCondition;
 
     public long Address { get; internal set; }
     public double Timer
@@ -69,28 +69,15 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         }
     }
 
-    public ulong CommonCondition
+    public WirebugConditions WirebugCondition
     {
-        get => _commonCondition;
+        get => _wirebugCondition;
         private set
         {
-            if (value != _commonCondition)
+            if (value != _wirebugCondition)
             {
-                _commonCondition = value;
-                this.Dispatch(_onPlayerConditionChange, this);
-            }
-        }
-    }
-
-    public ulong DebuffCondition
-    {
-        get => _debuffCondition;
-        private set
-        {
-            if (value != _debuffCondition)
-            {
-                _debuffCondition = value;
-                this.Dispatch(_onPlayerConditionChange, this);
+                _wirebugCondition = value;
+                this.Dispatch(_onWirebugConditionChange, this);
             }
         }
     }
@@ -123,11 +110,11 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         remove => _onBlockedStateChange.Unhook(value);
     }
 
-    private readonly SmartEvent<MHRWirebug> _onPlayerConditionChange = new();
+    private readonly SmartEvent<MHRWirebug> _onWirebugConditionChange = new();
     public event EventHandler<MHRWirebug> OnPlayerConditionChange
     {
-        add => _onPlayerConditionChange.Hook(value);
-        remove => _onPlayerConditionChange.Unhook(value);
+        add => _onWirebugConditionChange.Hook(value);
+        remove => _onWirebugConditionChange.Unhook(value);
     }
 
     void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
@@ -142,13 +129,12 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
         IsBlocked = data.IsBlocked;
         MaxCooldown = data.Structure.MaxCooldown;
         Cooldown = data.Structure.Cooldown;
-        CommonCondition = data.CommonCondition;
-        DebuffCondition = data.DebuffCondition;
+        WirebugCondition = data.WirebugCondition;
     }
 
     public void Dispose()
     {
-        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onPlayerConditionChange };
+        IDisposable[] events = { _onTimerUpdate, _onCooldownUpdate, _onAvailable, _onBlockedStateChange, _onWirebugConditionChange };
 
         events.DisposeAll();
     }

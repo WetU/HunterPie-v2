@@ -1,6 +1,7 @@
 ﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
+
 [Flags]
-public enum DebuffCondition : ulong
+public enum DebuffConditions : ulong
 {
     None = 0,
     NoData1 = 1,

@@ -1,8 +1,9 @@
-﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
+﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
+
+namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
 public struct MHRWirebugData
 {
     public bool IsBlocked;
-    public ulong CommonCondition;
-    public ulong DebuffCondition;
+    public WirebugConditions WirebugCondition;
     public MHRWirebugStructure Structure;
 }

@@ -47,6 +47,9 @@ public sealed class MHRPlayer : CommonPlayer
     private Weapon _weaponId = WeaponType.None;
     private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
+    private CommonConditions _commonCondition = CommonConditions.None;
+    private DebuffConditions _debuffCondition = DebuffConditions.None;
+    private WirebugConditions _wirebugCondition = WirebugConditions.None;
     #endregion
 
     public override string Name
@@ -398,6 +401,12 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
+            long PtrOffset = schema.PtrOffset switch
+            {
+                0 => consumableBuffs,
+                _ => Process.Memory.Read<long>(consumableBuffs + schema.PtrOffset)
+            };
+
             long SubIdCategory = schema.DependsOnCategory switch
             {
                 AbnormalityData.Debuffs => Process.Memory.Read(AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"), AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")),
@@ -422,7 +431,7 @@ public sealed class MHRPlayer : CommonPlayer
             if (schema.IsInfinite)
                 abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
             else if (isConditionValid)
-                abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
+                abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
 
             if (!schema.IsBuildup)
                 abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
@@ -704,11 +713,6 @@ public sealed class MHRPlayer : CommonPlayer
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
         long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
 
-        long conditionPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
-        );
-
         bool shouldDispatchEvent = false;
         for (int i = 0; i < wirebugsArrayLength; i++)
         {
@@ -720,8 +724,7 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
-                CommonCondition = Process.Memory.Read<ulong>(conditionPtr + 0x10),
-                DebuffCondition = Process.Memory.Read<ulong>(conditionPtr + 0x38),
+                WirebugCondition = _wirebugCondition,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 
@@ -749,6 +752,56 @@ public sealed class MHRPlayer : CommonPlayer
 
         if (shouldDispatchEvent)
             this.Dispatch(_onWirebugsRefresh, Wirebugs);
+    }
+
+    [ScannableMethod]
+    private void GetPlayerConditions()
+    {
+        if (!InHuntingZone)
+        {
+            _wirebugCondition = WirebugConditions.None;
+            return;
+        }
+
+        long conditionPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
+        );
+
+        if (conditionPtr.IsNullPointer())
+        {
+            _wirebugCondition = WirebugConditions.None;
+            return;
+        }
+
+        _commonCondition = (CommonConditions)Process.Memory.Read<ulong>(conditionPtr + 0x10);
+        _debuffCondition = (DebuffConditions)Process.Memory.Read<ulong>(conditionPtr + 0x38);
+
+        if (_commonCondition.HasFlag(CommonConditions.WindMantle))
+        {
+            _wirebugCondition = WirebugConditions.WindMantle;
+            return;
+        }
+
+        if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeGold))
+        {
+            _wirebugCondition = WirebugConditions.MarionetteTypeGold;
+            return;
+        }
+
+        if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby))
+        {
+            _wirebugCondition = WirebugConditions.MarionetteTypeRuby;
+            return;
+        }
+
+        if (_debuffCondition.HasFlag(DebuffConditions.IceL))
+        {
+            _wirebugCondition = WirebugConditions.IceL;
+            return;
+        }
+
+        _wirebugCondition = WirebugConditions.None;
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

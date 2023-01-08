@@ -37,5 +37,5 @@ public struct MHRStageStructure
     public bool IsDemo() => Type == 11;
     public bool IsLoadingScreen() => Type == 12;
 
-    public bool IsIrrelevantStage() => IsMainMenu() || IsMakingCharacter() || IsSelectingCharacter() || IsResultScreen() || IsDemo() || IsLoadingScreen();
+    public bool IsIrrelevantStage() => IsMainMenu() || IsMakingCharacter() || IsSelectingCharacter() || IsLoadingScreen();
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
+﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 
@@ -55,31 +54,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
 
     private void OnPlayerConditionChange(object sender, MHRWirebug e)
     {
-        if ((e.CommonCondition & (ulong)CommonCondition.WindMantle) == (ulong)CommonCondition.WindMantle)
-        {
-            PlayerCondition = "WindMantle";
-            return;
-        }
-
-        if ((e.CommonCondition & (ulong)CommonCondition.MarionetteTypeGold) == (ulong)CommonCondition.MarionetteTypeGold)
-        {
-            PlayerCondition = "GoldBug";
-            return;
-        }
-
-        if ((e.CommonCondition & (ulong)CommonCondition.MarionetteTypeRuby) == (ulong)CommonCondition.MarionetteTypeRuby)
-        {
-            PlayerCondition = "RubyBug";
-            return;
-        }
-
-        if ((e.DebuffCondition & (ulong)DebuffCondition.IceL) == (ulong)DebuffCondition.IceL)
-        {
-            PlayerCondition = "IceBlight";
-            return;
-        }
-
-        PlayerCondition = "None";
+        WirebugCondition = e.WirebugCondition;
     }
 
     private void UpdateData()
@@ -94,30 +69,6 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Timer = Context.Timer;
         IsTemporary = Context.Timer > 0;
 
-        if ((Context.CommonCondition & (ulong)CommonCondition.WindMantle) == (ulong)CommonCondition.WindMantle)
-        {
-            PlayerCondition = "WindMantle";
-            return;
-        }
-
-        if ((Context.CommonCondition & (ulong)CommonCondition.MarionetteTypeGold) == (ulong)CommonCondition.MarionetteTypeGold)
-        {
-            PlayerCondition = "GoldBug";
-            return;
-        }
-
-        if ((Context.CommonCondition & (ulong)CommonCondition.MarionetteTypeRuby) == (ulong)CommonCondition.MarionetteTypeRuby)
-        {
-            PlayerCondition = "RubyBug";
-            return;
-        }
-
-        if ((Context.DebuffCondition & (ulong)DebuffCondition.IceL) == (ulong)DebuffCondition.IceL)
-        {
-            PlayerCondition = "IceBlight";
-            return;
-        }
-
-        PlayerCondition = "None";
+        WirebugCondition = Context.WirebugCondition;
     }
 }
