@@ -30,8 +30,8 @@ public enum CommonConditions : ulong
     Reverse23 = 1 << 23,
     Reverse24 = 1 << 24,
     Reverse25 = 1 << 25,
-    Heroics = 1 << 26,
-    PeakPerformance = 1 << 27,
+    Heroics = 1 << 26, // 재난대처능력
+    PeakPerformance = 1 << 27, // 완전 충전
     DragonHeart = 1 << 28,
     LatentPower = 1 << 29,
     Agitator = 1 << 30,

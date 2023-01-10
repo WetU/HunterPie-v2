@@ -125,38 +125,37 @@ public abstract class CommonPlayer : Scannable, IPlayer, IEventDispatcher, IDisp
         where T : IAbnormality, IUpdatable<S>
         where S : struct
     {
-        if (abnormalities.ContainsKey(schema.Id) && timer <= 0)
+        if (abnormalities.ContainsKey(schema.Id))
         {
             var abnorm = (IUpdatable<S>)abnormalities[schema.Id];
-
             abnorm.Update(newData);
 
-            _ = abnormalities.Remove(schema.Id);
+            if (timer <= 0)
+            {
+                _ = abnormalities.Remove(schema.Id);
 
-            this.Dispatch(_onAbnormalityEnd, (IAbnormality)abnorm);
+                this.Dispatch(_onAbnormalityEnd, (IAbnormality)abnorm);
 
-            if (abnorm is IDisposable disposable)
-                disposable.Dispose();
+                if (abnorm is IDisposable disposable)
+                    disposable.Dispose();
+            }
         }
-        else if (abnormalities.ContainsKey(schema.Id) && timer > 0)
+        else
         {
+            if (timer > 0)
+            {
+                if (schema.Icon == "ICON_MISSING")
+                    Log.Info($"Missing abnormality: {schema.Id}");
 
-            var abnorm = (IUpdatable<S>)abnormalities[schema.Id];
-            abnorm.Update(newData);
-        }
-        else if (!abnormalities.ContainsKey(schema.Id) && timer > 0)
-        {
-            if (schema.Icon == "ICON_MISSING")
-                Log.Info($"Missing abnormality: {schema.Id}");
+                var abnorm = (IUpdatable<S>)Activator.CreateInstance(typeof(T), schema);
 
-            var abnorm = (IUpdatable<S>)Activator.CreateInstance(typeof(T), schema);
+                if (abnorm is null)
+                    return;
 
-            if (abnorm is null)
-                return;
-
-            abnormalities.Add(schema.Id, (IAbnormality)abnorm);
-            abnorm.Update(newData);
-            this.Dispatch(_onAbnormalityStart, (IAbnormality)abnorm);
+                abnormalities.Add(schema.Id, (IAbnormality)abnorm);
+                abnorm.Update(newData);
+                this.Dispatch(_onAbnormalityStart, (IAbnormality)abnorm);
+            }
         }
     }
 
