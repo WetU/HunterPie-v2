@@ -27,6 +27,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using WeaponType = HunterPie.Core.Game.Enums.Weapon;
 
+
 namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 
 public sealed class MHRPlayer : CommonPlayer
@@ -44,12 +45,13 @@ public sealed class MHRPlayer : CommonPlayer
     private int _highRank;
     private int _masterRank;
     private IWeapon _weapon;
-    private Weapon _weaponId = WeaponType.None;
+    private WeaponType _weaponId = WeaponType.None;
     private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
-    private CommonConditions _commonCondition = CommonConditions.None;
-    private DebuffConditions _debuffCondition = DebuffConditions.None;
+    private CommonConditions _commonCondition;
+    private DebuffConditions _debuffCondition;
     private WirebugConditions _wirebugCondition = WirebugConditions.None;
+    private int _maximumMightActive = 0;
     #endregion
 
     public override string Name
@@ -354,7 +356,10 @@ public sealed class MHRPlayer : CommonPlayer
         );
 
         if (!InHuntingZone || debuffsPtr == 0)
+        {
+            _maximumMightActive = 0;
             ClearAbnormalities(_abnormalities);
+        }
     }
 
     [ScannableMethod]
@@ -387,7 +392,10 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetConsumableAbnormalities()
     {
         if (!InHuntingZone)
+        {
+            _maximumMightActive = 0;
             return;
+        }
 
         long consumableBuffs = Process.Memory.Read(
             AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
@@ -395,7 +403,10 @@ public sealed class MHRPlayer : CommonPlayer
         );
 
         if (consumableBuffs == 0)
+        {
+            _maximumMightActive = 0;
             return;
+        }
 
         AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
 
@@ -428,16 +439,42 @@ public sealed class MHRPlayer : CommonPlayer
 
             MHRConsumableStructure abnormality = new();
 
-            if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
-            else if (isConditionValid)
-                abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
+            if (schema.Id == "ABN_MAXIMUM_MIGHT")
+            {
+                double readTimer = Process.Memory.Read<float>(PtrOffset + schema.Offset);
+                readTimer /= AbnormalityData.TIMER_MULTIPLIER;
+                readTimer = Math.Round(readTimer, 1);
 
-            if (!schema.IsBuildup)
-                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                if (_maximumMightActive == 0)
+                {
+                    if (readTimer == 3)
+                    {
+                        _maximumMightActive = 1;
+                    }
+                }
+                else
+                {
+                    if (readTimer == 2)
+                    {
+                        _maximumMightActive = 0;
+                    }
+                }
 
-            if (schema.IsReverseTimer && abnormality.Timer > 0)
-                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+                abnormality = abnormality with { Timer = _maximumMightActive };
+            }
+            else
+            {
+                if (schema.IsInfinite)
+                    abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                else if (isConditionValid)
+                    abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
+
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+                if (schema.IsReverseTimer && abnormality.Timer > 0)
+                    abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+            }
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -759,6 +796,8 @@ public sealed class MHRPlayer : CommonPlayer
     {
         if (!InHuntingZone)
         {
+            _commonCondition = CommonConditions.None;
+            _debuffCondition = DebuffConditions.None;
             _wirebugCondition = WirebugConditions.None;
             return;
         }
@@ -770,13 +809,15 @@ public sealed class MHRPlayer : CommonPlayer
 
         if (conditionPtr.IsNullPointer())
         {
+            _commonCondition = CommonConditions.None;
+            _debuffCondition = DebuffConditions.None;
             _wirebugCondition = WirebugConditions.None;
             return;
         }
 
         _commonCondition = (CommonConditions)Process.Memory.Read<ulong>(conditionPtr + 0x10);
         _debuffCondition = (DebuffConditions)Process.Memory.Read<ulong>(conditionPtr + 0x38);
-
+        // Wirebug Conditions : WindMantle > MarionetteType > IceL;
         if (_commonCondition.HasFlag(CommonConditions.WindMantle))
         {
             _wirebugCondition = WirebugConditions.WindMantle;
