@@ -351,7 +351,7 @@
                      Offset="10C"
                      Name="ABNORMALITY_MAXIMUM_MIGHT"
                      Icon="ICON_ARMORSKILL_SALMON"
-					 IsInfinite="True"
+                     IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_AFFINITY_SLIDING"
                      Offset="114"
