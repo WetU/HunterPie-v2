@@ -538,7 +538,7 @@ public sealed class MHRPlayer : CommonPlayer
                 case "ABN_STUN_BUILDUP":
                     long subPtr = Process.Memory.Read<long>(debuffsPtr + 0x848);
 
-                    if (subPtr.IsNullPointer())
+                    if (subPtr == 0)
                         abnormality.Timer = 0;
                     else
                         abnormality = Process.Memory.Read<MHRDebuffStructure>(subPtr + schema.Offset);
