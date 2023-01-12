@@ -1,5 +1,4 @@
 ﻿using HunterPie.Core.Game.Data.Schemas;
-using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Logger;
 using System.Collections.Generic;
 using System.Globalization;
@@ -55,11 +54,9 @@ public class AbnormalityData
             string id = abnormality.Attributes["Id"].Value;
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
-            string ptroffset = abnormality.Attributes["PtrOffset"]?.Value ?? "0";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
             string dependsOn = abnormality.Attributes["DependsOn"]?.Value ?? "0";
             string withValue = abnormality.Attributes["WithValue"]?.Value ?? "0";
-            string withValueNot = abnormality.Attributes["WithValueNot"]?.Value;
             string group = abnormality.ParentNode.Name;
             string category = abnormality.Attributes["Category"]?.Value ?? group;
             string isBuildup = abnormality.Attributes["IsBuildup"]?.Value ?? "False";
@@ -72,16 +69,13 @@ public class AbnormalityData
                 Id = BuildAbnormalityId(id, group),
                 Name = name,
                 Icon = icon,
-                CompareOperator = withValueNot != null ? AbnormalityCompareType.WithValueNot : AbnormalityCompareType.WithValue,
                 Category = category,
                 Group = group
             };
 
-            _ = int.TryParse(ptroffset, NumberStyles.HexNumber, null, out schema.PtrOffset);
             _ = int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);
             _ = int.TryParse(dependsOn, NumberStyles.HexNumber, null, out schema.DependsOn);
             _ = int.TryParse(withValue, out schema.WithValue);
-            _ = int.TryParse(withValueNot, out schema.WithValueNot);
             _ = bool.TryParse(isBuildup, out schema.IsBuildup);
             _ = int.TryParse(maxBuildup, out schema.MaxBuildup);
             _ = bool.TryParse(isInfinite, out schema.IsInfinite);

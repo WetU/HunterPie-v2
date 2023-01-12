@@ -411,23 +411,10 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
-            long PtrOffset = schema.PtrOffset switch
-            {
-                0 => consumableBuffs,
-                _ => Process.Memory.Read<long>(consumableBuffs + schema.PtrOffset)
-            };
-
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
-            };
-
-            bool isConditionValid = schema.CompareOperator switch
-            {
-                AbnormalityCompareType.WithValue => abnormSubId == schema.WithValue,
-                AbnormalityCompareType.WithValueNot => abnormSubId != schema.WithValueNot,
-                _ => false
             };
 
             MHRConsumableStructure abnormality = new();
@@ -435,7 +422,7 @@ public sealed class MHRPlayer : CommonPlayer
             switch (schema.Id)
             {
                 case "ABN_MAXIMUM_MIGHT":
-                    float readTimer = Process.Memory.Read<float>(PtrOffset + schema.Offset);
+                    float readTimer = Process.Memory.Read<float>(consumableBuffs + schema.Offset);
                     readTimer /= AbnormalityData.TIMER_MULTIPLIER;
                     double result = Math.Round(readTimer);
 
@@ -461,7 +448,7 @@ public sealed class MHRPlayer : CommonPlayer
                 case "ABN_RUBY_WIREBUG":
                     if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby))
                     {
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
+                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
                     }
                     else
@@ -471,7 +458,7 @@ public sealed class MHRPlayer : CommonPlayer
                 case "ABN_GOLD_WIREBUG":
                     if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeGold))
                     {
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
+                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
                     }
                     else
@@ -486,9 +473,9 @@ public sealed class MHRPlayer : CommonPlayer
                     break;
                 default:
                     if (schema.IsInfinite)
-                        abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
-                    else if (isConditionValid)
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(PtrOffset + schema.Offset);
+                        abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                    else if (abnormSubId == schema.WithValue)
+                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
                     if (!schema.IsBuildup)
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
@@ -524,23 +511,10 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
-            long PtrOffset = schema.PtrOffset switch
-            {
-                0 => debuffsPtr,
-                _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
-            };
-
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
                 _ => Process.Memory.Read<int>(debuffsPtr + schema.DependsOn)
-            };
-
-            bool isConditionValid = schema.CompareOperator switch
-            {
-                AbnormalityCompareType.WithValue => abnormSubId == schema.WithValue,
-                AbnormalityCompareType.WithValueNot => abnormSubId != schema.WithValueNot,
-                _ => false
             };
 
             MHRDebuffStructure abnormality = new();
@@ -561,11 +535,20 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer = 0;
 
                     break;
+                case "ABN_STUN_BUILDUP":
+                    long subPtr = Process.Memory.Read<long>(debuffsPtr + 0x848);
+
+                    if (subPtr.IsNullPointer())
+                        abnormality.Timer = 0;
+                    else
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(subPtr + schema.Offset);
+
+                    break;
                 default:
                     if (schema.IsInfinite)
-                        abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
-                    else if (isConditionValid)
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(PtrOffset + schema.Offset);
+                        abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                    else if (abnormSubId == schema.WithValue)
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
 
                     if (!schema.IsBuildup)
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;

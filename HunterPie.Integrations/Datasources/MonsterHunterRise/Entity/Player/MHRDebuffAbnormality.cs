@@ -46,8 +46,7 @@ public sealed class MHRDebuffAbnormality : CommonAbnormality, IUpdatable<MHRDebu
 
         if (IsBuildup)
             MaxTimer = data.MaxBuildup;
-
-        if (data.Id == "ABN_WINDMANTLE")
+        else if (data.MaxTimer != 0)
             MaxTimer = data.MaxTimer;
     }
 
