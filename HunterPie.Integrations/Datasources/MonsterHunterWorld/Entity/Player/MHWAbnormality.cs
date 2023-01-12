@@ -62,8 +62,6 @@ public sealed class MHWAbnormality : CommonAbnormality, IUpdatable<MHWAbnormalit
 
         if (IsBuildup)
             MaxTimer = schema.MaxBuildup;
-        else if (schema.IsReverseTimer)
-            MaxTimer = schema.MaxTimer;
     }
 
     void IUpdatable<MHWAbnormalityStructure>.Update(MHWAbnormalityStructure data)

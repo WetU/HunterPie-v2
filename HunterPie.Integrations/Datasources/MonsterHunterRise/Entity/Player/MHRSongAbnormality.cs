@@ -47,8 +47,6 @@ public sealed class MHRSongAbnormality : CommonAbnormality, IUpdatable<MHRHHAbno
         
         if (IsBuildup)
             MaxTimer = schema.MaxBuildup;
-        else if (schema.IsReverseTimer)
-            MaxTimer = schema.MaxTimer;
     }
 
     void IUpdatable<MHRHHAbnormality>.Update(MHRHHAbnormality data)

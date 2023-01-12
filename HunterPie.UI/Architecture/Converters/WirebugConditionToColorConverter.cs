@@ -1,5 +1,4 @@
-﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -9,35 +8,30 @@ public class WirebugConditionToColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is WirebugConditions WirebugCondition)
+        string color;
+
+        switch (value.ToString())
         {
-            string color;
-
-            switch (WirebugCondition)
-            {
-                case WirebugConditions.None:
-                    color = "#FF00D6F7";
-                    break;
-                case WirebugConditions.WindMantle:
-                    color = "#FF00D600";
-                    break;
-                case WirebugConditions.MarionetteTypeGold:
-                    color = "#FFF8A700";
-                    break;
-                case WirebugConditions.MarionetteTypeRuby:
-                    color = "#FFFE4A0D";
-                    break;
-                case WirebugConditions.IceL:
-                    color = "#FF6A94BE";
-                    break;
-                default:
-                    return "#FF00D6F7";
-            }
-
-            return color;
+            case "None":
+                color = "#FF00D6F7";
+                break;
+            case "WindMantle":
+                color = "#FF00D600";
+                break;
+            case "MarionetteTypeGold":
+                color = "#FFF8A700";
+                break;
+            case "MarionetteTypeRuby":
+                color = "#FFFE4A0D";
+                break;
+            case "IceL":
+                color = "#FF6A94BE";
+                break;
+            default:
+                return "#FF00D6F7";
         }
 
-        return null;
+        return color;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();

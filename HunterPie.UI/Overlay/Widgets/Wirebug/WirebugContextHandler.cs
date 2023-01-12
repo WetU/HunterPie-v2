@@ -1,5 +1,4 @@
-﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
-using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
+﻿using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 
 namespace HunterPie.UI.Overlay.Widgets.Wirebug;
@@ -40,7 +39,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
     {
         MaxTimer = e.MaxTimer;
         Timer = e.Timer;
-        IsTemporary = Context.Timer > 0;
+        IsTemporary = e.Timer > 0;
     }
 
     private void OnAvailable(object sender, MHRWirebug e) => IsAvailable = e.IsAvailable;
@@ -64,11 +63,10 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
         Cooldown = Context.Cooldown;
         OnCooldown = Context.Cooldown > 0;
         IsAvailable = Context.IsAvailable;
+        WirebugCondition = Context.WirebugCondition;
 
         MaxTimer = Context.MaxTimer;
         Timer = Context.Timer;
         IsTemporary = Context.Timer > 0;
-
-        WirebugCondition = Context.WirebugCondition;
     }
 }

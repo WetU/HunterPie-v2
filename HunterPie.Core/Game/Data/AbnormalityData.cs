@@ -62,11 +62,9 @@ public class AbnormalityData
             string withValueNot = abnormality.Attributes["WithValueNot"]?.Value;
             string group = abnormality.ParentNode.Name;
             string category = abnormality.Attributes["Category"]?.Value ?? group;
-            string dependsOnCategory = abnormality.Attributes["DependsOnCategory"]?.Value ?? category;
             string isBuildup = abnormality.Attributes["IsBuildup"]?.Value ?? "False";
             string maxBuildup = abnormality.Attributes["MaxBuildup"]?.Value ?? "0";
             string isInfinite = abnormality.Attributes["IsInfinite"]?.Value ?? "False";
-            string isReverseTimer = abnormality.Attributes["IsReverseTimer"]?.Value ?? "False";
             string maxTimer = abnormality.Attributes["MaxTimer"]?.Value ?? "0";
 
             AbnormalitySchema schema = new()
@@ -76,7 +74,6 @@ public class AbnormalityData
                 Icon = icon,
                 CompareOperator = withValueNot != null ? AbnormalityCompareType.WithValueNot : AbnormalityCompareType.WithValue,
                 Category = category,
-                DependsOnCategory = dependsOnCategory,
                 Group = group
             };
 
@@ -88,7 +85,6 @@ public class AbnormalityData
             _ = bool.TryParse(isBuildup, out schema.IsBuildup);
             _ = int.TryParse(maxBuildup, out schema.MaxBuildup);
             _ = bool.TryParse(isInfinite, out schema.IsInfinite);
-            _ = bool.TryParse(isReverseTimer, out schema.IsReverseTimer);
             _ = int.TryParse(maxTimer, out schema.MaxTimer);
 
             Abnormalities.Add(schema.Id, schema);

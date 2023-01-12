@@ -78,6 +78,7 @@
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>
+
                             <DataTrigger.ExitActions>
                                 <RemoveStoryboard BeginStoryboardName="ANIMATION_PULSE"/>
                             </DataTrigger.ExitActions>
@@ -86,7 +87,9 @@
                 </Style>
             </Ellipse.Style>
         </Ellipse>
+
         <Ellipse Fill="#B2000000"/>
+
         <controls:Arc StrokeThickness="3">
             <controls:Arc.Stroke>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -101,6 +104,7 @@
                 </MultiBinding>
             </controls:Arc.Percentage>
         </controls:Arc>
+
         <controls:Arc StrokeThickness="3"
                       Margin="3">
             <controls:Arc.Stroke>
@@ -116,6 +120,7 @@
                 </MultiBinding>
             </controls:Arc.Percentage>
         </controls:Arc>
+
         <Image Margin="5,10,8,10"
                Source="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToIconConverter}}">
             <Image.Effect>
@@ -124,8 +129,8 @@
                                   Color="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToColorConverter}}"/>
             </Image.Effect>
         </Image>
-        <Grid Visibility="{Binding OnCooldown, Converter={StaticResource BooleanToVisibilityConverter}}"
-              d:Visibility="Visible">
+
+        <Grid Visibility="{Binding OnCooldown, Converter={StaticResource BooleanToVisibilityConverter}}">
             <controls:Arc Stroke="#80000000"
                           StrokeThickness="20"
                           Margin="5" 
@@ -159,14 +164,14 @@
             </TextBlock>
         </Grid>
 
-        <Ellipse Fill="{StaticResource RED_600}"
-                 Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                 Opacity="1"/>
-        <Ellipse Fill="{StaticResource RED_LIGHT_300}"
-                 Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Ellipse.OpacityMask>
-                <ImageBrush ImageSource="{StaticResource ICON_ERROR_MASK}"/>
-            </Ellipse.OpacityMask>
-        </Ellipse>
+        <Grid Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Ellipse Fill="{StaticResource RED_600}"
+                     Opacity="1"/>
+            <Ellipse Fill="{StaticResource RED_LIGHT_300}">
+                <Ellipse.OpacityMask>
+                    <ImageBrush ImageSource="{StaticResource ICON_ERROR_MASK}"/>
+                </Ellipse.OpacityMask>
+            </Ellipse>
+        </Grid>
     </Grid>
 </UserControl>
