@@ -396,17 +396,6 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        long consumableBuffs = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
-            AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
-        );
-
-        if (consumableBuffs == 0)
-        {
-            _maximumMightActive = 0;
-            return;
-        }
-
         AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
 
         foreach (AbnormalitySchema schema in consumableSchemas)
@@ -422,16 +411,29 @@ public sealed class MHRPlayer : CommonPlayer
             switch (schema.Id)
             {
                 case "ABN_MAXIMUM_MIGHT":
-                    float readTimer = Process.Memory.Read<float>(consumableBuffs + schema.Offset);
-                    readTimer /= AbnormalityData.TIMER_MULTIPLIER;
-                    double result = Math.Round(readTimer);
+                    long consumableBuffs = Process.Memory.Read(
+                        AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+                        AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
+                    );
 
-                    if (_maximumMightActive == 0 && result == 3d)
-                        _maximumMightActive = 1;
-                    else if (_maximumMightActive == 1 && result == 2d)
+                    if (consumableBuffs == 0)
+                    {
                         _maximumMightActive = 0;
+                    }
+                    else
+                    {
+                        float readTimer = Process.Memory.Read<float>(consumableBuffs + schema.Offset);
+                        readTimer /= AbnormalityData.TIMER_MULTIPLIER;
+                        double result = Math.Round(readTimer);
 
-                    abnormality.Timer = _maximumMightActive;
+                        if (_maximumMightActive == 0 && result == 3d)
+                            _maximumMightActive = 1;
+                        else if (_maximumMightActive == 1 && result == 2d)
+                            _maximumMightActive = 0;
+
+                        abnormality.Timer = _maximumMightActive;
+                    }
+
                     break;
                 case "ABN_AGITATOR":
                     abnormality.Timer = _commonCondition.HasFlag(CommonConditions.Agitator) ? 1 : 0;
@@ -452,10 +454,20 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DragonHeart) ? 1 : 0;
                     break;
                 case "ABN_RUBY_WIREBUG":
+                    long consumableBuffs = Process.Memory.Read(
+                            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+                            AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
+                        );
+
                     if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby))
                     {
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                        if (consumableBuffs == 0)
+                            abnormality.Timer = 0;
+                        else
+                        {
+                            abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
+                            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                        }
                     }
                     else
                         abnormality.Timer = 0;
@@ -1035,6 +1047,12 @@ public sealed class MHRPlayer : CommonPlayer
         AbnormalitySchema[] schemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Songs);
         foreach (long buffPtr in buffs)
         {
+            if (id is >= 15 and <= 17 || id == 23)
+            {
+                id++;
+                continue;
+            }
+
             MHRHHAbnormality abnormality = Process.Memory.Read<MHRHHAbnormality>(buffPtr);
             abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
