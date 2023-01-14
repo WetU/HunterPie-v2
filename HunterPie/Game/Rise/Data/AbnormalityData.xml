@@ -46,9 +46,6 @@
         <Abnormality Id="14"
                      Name="ABNORMALITY_DIVINE_PROTECTION"
                      Icon="ICON_DIVINEPROTECTION_MHRS"/>
-        <Abnormality Id="15"/>
-        <Abnormality Id="16"/>
-        <Abnormality Id="17"/>
         <Abnormality Id="18"
                      Name="ABNORMALITY_HEALTH_REGEN"
                      Icon="ICON_EXT_HEALTHRECOVERY_MHRS"/>
@@ -64,7 +61,6 @@
         <Abnormality Id="22"
                      Name="ABNORMALITY_ENV_NEG"
                      Icon="ICON_ENVNEG_MHRS"/>
-        <Abnormality Id="23"/>
         <Abnormality Id="24"
                      Name="ABNORMALITY_SONIC_BARRIER"
                      Icon="ICON_SONICBARRIER"/>
@@ -187,8 +183,6 @@
                      Offset="F4"
                      Name="ABNORMALITY_ARMOR_AMMO"
                      Icon="ICON_ARMORAMMO"/>
-        <Abnormality Id="F4"
-                     Offset="FC"/>
         <Abnormality Id="ABN_POWER_DRUM"
                      Offset="100"
                      Name="ABNORMALITY_POWER_DRUM"
