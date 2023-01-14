@@ -2599,7 +2599,39 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    <DrawingImage x:Key="ICON_VENOM">
+    <DrawingImage x:Key="ICON_DEADLY_POISON">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V33.866668 H33.866666 V0 H0 Z">
+                <DrawingGroup Opacity="1" Transform="1,0,0,1,0,-263.13332">
+                    <GeometryDrawing Brush="#FF9010C0" Geometry="F1 M33.866666,33.866668z M0,0z M27.293517,270.19049A5.0081846,5.0081846,0,0,1,22.285332,275.19868A5.0081846,5.0081846,0,0,1,17.277147,270.19049A5.0081846,5.0081846,0,0,1,22.285332,265.18232A5.0081846,5.0081846,0,0,1,27.293517,270.19049z">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#FF000000" Thickness="1.05833328" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF502060" Geometry="F1 M33.866666,33.866668z M0,0z M24.133991,270.25772A1.8486587,1.8486587,0,0,1,22.285332,272.10637A1.8486587,1.8486587,0,0,1,20.436673,270.25772A1.8486587,1.8486587,0,0,1,22.285332,268.40906A1.8486587,1.8486587,0,0,1,24.133991,270.25772z" />
+                    <GeometryDrawing Brush="#FF9010C0" Geometry="F1 M33.866666,33.866668z M0,0z M16.346122,289.9428A5.0081845,5.0081845,0,0,1,11.337936,294.95099A5.0081845,5.0081845,0,0,1,6.3297511,289.9428A5.0081845,5.0081845,0,0,1,11.337936,284.93463A5.0081845,5.0081845,0,0,1,16.346122,289.9428z">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#FF000000" Thickness="1.05833328" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF502060" Geometry="F1 M33.866666,33.866668z M0,0z M13.186595,290.01003A1.8486587,1.8486587,0,0,1,11.337936,291.85868A1.8486587,1.8486587,0,0,1,9.4892771,290.01003A1.8486587,1.8486587,0,0,1,11.337936,288.16137A1.8486587,1.8486587,0,0,1,13.186595,290.01003z" />
+                    <GeometryDrawing Brush="#FFD00000" Geometry="F1 M33.866666,33.866668z M0,0z M27.732176,282.15859A7.0398067,7.0398067,0,0,1,20.692369,289.1984A7.0398067,7.0398067,0,0,1,13.652563,282.15859A7.0398067,7.0398067,0,0,1,20.692369,275.11879A7.0398067,7.0398067,0,0,1,27.732176,282.15859z">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#FF000000" Thickness="1.0583334" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF600000" Geometry="F1 M33.866666,33.866668z M0,0z M23.290955,282.25308A2.5985863,2.5985863,0,0,1,20.692369,284.85166A2.5985863,2.5985863,0,0,1,18.093783,282.25308A2.5985863,2.5985863,0,0,1,20.692369,279.65449A2.5985863,2.5985863,0,0,1,23.290955,282.25308z" />
+                    <GeometryDrawing Brush="#FFD00000" Geometry="F1 M33.866666,33.866668z M0,0z M20.214104,278.0154A7.0398067,7.0398067,0,0,1,13.174297,285.05521A7.0398067,7.0398067,0,0,1,6.1344907,278.0154A7.0398067,7.0398067,0,0,1,13.174297,270.9756A7.0398067,7.0398067,0,0,1,20.214104,278.0154z">
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="#FF000000" Thickness="1.0583334" StartLineCap="Round" EndLineCap="Round" LineJoin="Round" />
+                        </GeometryDrawing.Pen>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#FF600000" Geometry="F1 M33.866666,33.866668z M0,0z M15.772883,278.10989A2.5985863,2.5985863,0,0,1,13.174297,280.70847A2.5985863,2.5985863,0,0,1,10.575711,278.10989A2.5985863,2.5985863,0,0,1,13.174297,275.5113A2.5985863,2.5985863,0,0,1,15.772883,278.10989z" />
+                </DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="ICON_NOXIOUS_POISON">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V128 H128 V0 H0 Z">
                 <DrawingGroup Opacity="1">

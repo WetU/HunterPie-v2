@@ -232,11 +232,11 @@
         <Abnormality Id="ABN_NOXIOUS_POISON"
                      Offset="85C"
                      Name="ABNORMALITY_NOXIOUS_POISON"
-                     Icon="ICON_VENOM"/>
+                     Icon="ICON_NOXISOUS_POISON"/>
         <Abnormality Id="ABN_DEADLY_POISON"
                      Offset="85C"
                      Name="ABNORMALITY_DEADLY_POISON"
-                     Icon="ICON_VENOM"/>
+                     Icon="ICON_DEADLY_POISON"/>
         <Abnormality Id="ABN_STUN"
                      Offset="860"
                      Name="ABNORMALITY_STUN"
