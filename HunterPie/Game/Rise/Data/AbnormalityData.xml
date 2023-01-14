@@ -391,7 +391,7 @@
                      Category="Consumables"/>
         <Abnormality Id="ABN_DRAGONHEART"
                      Name="ABNORMALITY_DRAGONHEART"
-                     Icon="ICON_ARMORSKILL_SALMON"
+                     Icon="ICON_ARMORSKILL_ORANGE"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_PROTECTIVE_POLISH"
