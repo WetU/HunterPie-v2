@@ -445,6 +445,12 @@ public sealed class MHRPlayer : CommonPlayer
                 case "ABN_PEAK_PERFORMANCE":
                     abnormality.Timer = _commonCondition.HasFlag(CommonConditions.PeakPerformance) ? 1 : 0;
                     break;
+                case "ABN_DANGO_DEFENDER":
+                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DangoDefender) ? 1 : 0;
+                    break;
+                case "ABN_DRAGONHEART":
+                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DragonHeart) ? 1 : 0;
+                    break;
                 case "ABN_RUBY_WIREBUG":
                     if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby))
                     {
@@ -464,12 +470,6 @@ public sealed class MHRPlayer : CommonPlayer
                     else
                         abnormality.Timer = 0;
 
-                    break;
-                case "ABN_DANGO_DEFENDER":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DangoDefender) ? 1 : 0;
-                    break;
-                case "ABN_DRAGONHEART":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DragonHeart) ? 1 : 0;
                     break;
                 default:
                     if (schema.IsInfinite)
@@ -542,6 +542,36 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer = 0;
                     else
                         abnormality = Process.Memory.Read<MHRDebuffStructure>(subPtr + schema.Offset);
+
+                    break;
+                case "ABN_POISON":
+                    if (_debuffCondition.HasFlag(DebuffConditions.Poison))
+                    {
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                    }
+                    else
+                        abnormality.Timer = 0;
+
+                    break;
+                case "ABN_VENOM":
+                    if (_debuffCondition.HasFlag(DebuffConditions.NoxiousPoison) || _debuffCondition.HasFlag(DebuffConditions.DeadlyPoison))
+                    {
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                    }
+                    else
+                        abnormality.Timer = 0;
+
+                    break;
+                case "ABN_SLEEP":
+                    if (_debuffCondition.HasFlag(DebuffConditions.Sleep))
+                    {
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                    }
+                    else
+                        abnormality.Timer = 0;
 
                     break;
                 default:

@@ -110,7 +110,7 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     }
 
     private readonly SmartEvent<MHRWirebug> _onWirebugConditionChange = new();
-    public event EventHandler<MHRWirebug> OnPlayerConditionChange
+    public event EventHandler<MHRWirebug> OnWirebugConditionChange
     {
         add => _onWirebugConditionChange.Hook(value);
         remove => _onWirebugConditionChange.Unhook(value);

@@ -43,11 +43,7 @@ public sealed class MHRDebuffAbnormality : CommonAbnormality, IUpdatable<MHRDebu
             : AbnormalityType.Skill;
         IsInfinite = data.IsInfinite;
         IsBuildup = data.IsBuildup;
-
-        if (IsBuildup)
-            MaxTimer = data.MaxBuildup;
-        else if (data.MaxTimer != 0)
-            MaxTimer = data.MaxTimer;
+        MaxTimer = IsBuildup ? data.MaxBuildup : data.MaxTimer;
     }
 
     void IUpdatable<MHRDebuffStructure>.Update(MHRDebuffStructure structure)

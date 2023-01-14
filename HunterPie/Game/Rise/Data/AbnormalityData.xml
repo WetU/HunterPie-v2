@@ -227,14 +227,10 @@
                      MaxBuildup="100"/>
         <Abnormality Id="ABN_POISON"
                      Offset="85C"
-                     DependsOn="8BC"
-                     WithValue="1"
                      Name="ABNORMALITY_POISON"
                      Icon="ICON_POISON"/>
         <Abnormality Id="ABN_VENOM"
                      Offset="85C"
-                     DependsOn="8BC"
-                     WithValue="2"
                      Name="ABNORMALITY_VENOM"
                      Icon="ICON_VENOM"/>
         <Abnormality Id="ABN_STUN"
@@ -243,8 +239,6 @@
                      Icon="ICON_STUN"/>
         <Abnormality Id="ABN_SLEEP"
                      Offset="864"
-                     DependsOn="7E0"
-                     WithValue="0"
                      Name="ABNORMALITY_SLEEP"
                      Icon="ICON_SLEEP"/>
         <Abnormality Id="ABN_PARALYSIS"
