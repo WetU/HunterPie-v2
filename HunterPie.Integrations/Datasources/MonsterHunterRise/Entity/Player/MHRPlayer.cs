@@ -471,6 +471,20 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer = 0;
 
                     break;
+                case "ABN_DEMONDRUG" or "ABN_MEGA_DEMONDRUG":
+                    if (_commonCondition.HasFlag(CommonConditions.AttackUp) && abnormSubId == schema.WithValue)
+                        abnormality.Timer = 1;
+                    else
+                        abnormality.Timer = 0;
+
+                    break;
+                case "ABN_ARMORSKIN" or "ABN_MEGA_ARMORSKIN":
+                    if (_commonCondition.HasFlag(CommonConditions.DefenceUp) && abnormSubId == schema.WithValue)
+                        abnormality.Timer = 1;
+                    else
+                        abnormality.Timer = 0;
+
+                    break;
                 default:
                     if (schema.IsInfinite)
                         abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
@@ -554,8 +568,18 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer = 0;
 
                     break;
-                case "ABN_VENOM":
-                    if (_debuffCondition.HasFlag(DebuffConditions.NoxiousPoison) || _debuffCondition.HasFlag(DebuffConditions.DeadlyPoison))
+                case "ABN_NOXIOUS_POISON":
+                    if (_debuffCondition.HasFlag(DebuffConditions.NoxiousPoison))
+                    {
+                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                    }
+                    else
+                        abnormality.Timer = 0;
+
+                    break;
+                case "ABN_DEADLY_POISON":
+                    if (_debuffCondition.HasFlag(DebuffConditions.DeadlyPoison))
                     {
                         abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
