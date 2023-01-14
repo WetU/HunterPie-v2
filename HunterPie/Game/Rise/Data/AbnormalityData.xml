@@ -239,6 +239,8 @@
                      Icon="ICON_STUN"/>
         <Abnormality Id="ABN_SLEEP"
                      Offset="864"
+					 DependsOn="7E0"
+					 WithValue="0"
                      Name="ABNORMALITY_SLEEP"
                      Icon="ICON_SLEEP"/>
         <Abnormality Id="ABN_PARALYSIS"

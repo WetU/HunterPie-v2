@@ -564,16 +564,6 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer = 0;
 
                     break;
-                case "ABN_SLEEP":
-                    if (_debuffCondition.HasFlag(DebuffConditions.Sleep))
-                    {
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
                 default:
                     if (schema.IsInfinite)
                         abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
