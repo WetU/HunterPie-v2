@@ -18,16 +18,16 @@ public class WirebugConditionToColorConverter : IValueConverter
                 case WirebugConditions.None:
                     color = "#FF00D6F7";
                     break;
-                case WirebugConditions.WindMantle:
+                case WirebugConditions.ABN_WINDMANTLE:
                     color = "#FF00D600";
                     break;
-                case WirebugConditions.MarionetteTypeGold:
+                case WirebugConditions.ABN_RUBY_WIREBUG:
                     color = "#FFF8A700";
                     break;
-                case WirebugConditions.MarionetteTypeRuby:
+                case WirebugConditions.ABN_GOLD_WIREBUG:
                     color = "#FFFE4A0D";
                     break;
-                case WirebugConditions.IceL:
+                case WirebugConditions.ABN_ICE:
                     color = "#FF6A94BE";
                     break;
                 default:

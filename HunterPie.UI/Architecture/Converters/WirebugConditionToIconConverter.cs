@@ -19,16 +19,16 @@ public class WirebugConditionToIconConverter : IValueConverter
                 case WirebugConditions.None:
                     iconName = "ICON_WIREBUG";
                     break;
-                case WirebugConditions.WindMantle:
+                case WirebugConditions.ABN_WINDMANTLE:
                     iconName = "ICON_WIREBUG_GREEN";
                     break;
-                case WirebugConditions.MarionetteTypeGold:
+                case WirebugConditions.ABN_RUBY_WIREBUG:
                     iconName = "ICON_WIREBUG_GOLD";
                     break;
-                case WirebugConditions.MarionetteTypeRuby:
+                case WirebugConditions.ABN_GOLD_WIREBUG:
                     iconName = "ICON_WIREBUG_RUBY";
                     break;
-                case WirebugConditions.IceL:
+                case WirebugConditions.ABN_ICE:
                     iconName = "ICON_WIREBUG_ICE";
                     break;
                 default:
