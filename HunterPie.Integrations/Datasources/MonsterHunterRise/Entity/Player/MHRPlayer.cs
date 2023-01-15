@@ -27,7 +27,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using WeaponType = HunterPie.Core.Game.Enums.Weapon;
 
-
 namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 
 public sealed class MHRPlayer : CommonPlayer
@@ -50,7 +49,6 @@ public sealed class MHRPlayer : CommonPlayer
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
     private CommonConditions _commonCondition;
     private DebuffConditions _debuffCondition;
-    private int _maximumMightActive = 0;
     #endregion
 
     public override string Name
@@ -355,10 +353,7 @@ public sealed class MHRPlayer : CommonPlayer
         );
 
         if (!InHuntingZone || debuffsPtr == 0)
-        {
-            _maximumMightActive = 0;
             ClearAbnormalities(_abnormalities);
-        }
     }
 
     [ScannableMethod]
@@ -391,10 +386,7 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetConsumableAbnormalities()
     {
         if (!InHuntingZone)
-        {
-            _maximumMightActive = 0;
             return;
-        }
 
         long consumableBuffs = Process.Memory.Read(
             AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
@@ -402,10 +394,7 @@ public sealed class MHRPlayer : CommonPlayer
         );
 
         if (consumableBuffs == 0)
-        {
-            _maximumMightActive = 0;
             return;
-        }
 
         AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
 
@@ -417,85 +406,22 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
             };
 
+            bool conditionValid = schema.FlagType switch
+            {
+                "Buff" => _commonCondition.HasFlag((CommonConditions)Enum.Parse(typeof(CommonConditions), schema.WithFlag)) && abnormSubId == schema.WithValue,
+                "Debuff" => _debuffCondition.HasFlag((DebuffConditions)Enum.Parse(typeof(DebuffConditions), schema.WithFlag)) && abnormSubId == schema.WithValue,
+                _ => abnormSubId == schema.WithValue
+            };
+
             MHRConsumableStructure abnormality = new();
 
-            switch (schema.Id)
-            {
-                case "ABN_MAXIMUM_MIGHT":
-                    float readTimer = Process.Memory.Read<float>(consumableBuffs + schema.Offset);
-                    readTimer /= AbnormalityData.TIMER_MULTIPLIER;
-                    double result = Math.Round(readTimer);
+            if (schema.IsInfinite)
+                abnormality.Timer = conditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+            else if (conditionValid)
+                abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
-                    if (_maximumMightActive == 0 && result == 3d)
-                        _maximumMightActive = 1;
-                    else if (_maximumMightActive == 1 && result == 2d)
-                        _maximumMightActive = 0;
-
-                    abnormality.Timer = _maximumMightActive;
-                    break;
-                case "ABN_AGITATOR":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.Agitator) ? 1 : 0;
-                    break;
-                case "ABN_DEFIANCE":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.Defiance) ? 1 : 0;
-                    break;
-                case "ABN_HEROICS":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.Heroics) ? 1 : 0;
-                    break;
-                case "ABN_PEAK_PERFORMANCE":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.PeakPerformance) ? 1 : 0;
-                    break;
-                case "ABN_DANGO_DEFENDER":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DangoDefender) ? 1 : 0;
-                    break;
-                case "ABN_DRAGONHEART":
-                    abnormality.Timer = _commonCondition.HasFlag(CommonConditions.DragonHeart) ? 1 : 0;
-                    break;
-                case "ABN_RUBY_WIREBUG":
-                    if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby))
-                    {
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                case "ABN_GOLD_WIREBUG":
-                    if (_commonCondition.HasFlag(CommonConditions.MarionetteTypeGold))
-                    {
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                case "ABN_DEMONDRUG" or "ABN_MEGA_DEMONDRUG":
-                    if (_commonCondition.HasFlag(CommonConditions.AttackUp) && abnormSubId == schema.WithValue)
-                        abnormality.Timer = 1;
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                case "ABN_ARMORSKIN" or "ABN_MEGA_ARMORSKIN":
-                    if (_commonCondition.HasFlag(CommonConditions.DefenceUp) && abnormSubId == schema.WithValue)
-                        abnormality.Timer = 1;
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                default:
-                    if (schema.IsInfinite)
-                        abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
-                    else if (abnormSubId == schema.WithValue)
-                        abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
-
-                    if (!schema.IsBuildup)
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-
-                    break;
-            }
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -509,7 +435,6 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerDebuffAbnormalities()
     {
-        // Only scan in hunting zone due to invalid pointer when not in a hunting zone...
         if (!InHuntingZone)
             return;
 
@@ -525,80 +450,37 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
+            long Ptr = schema.SubPtr switch
+            {
+                0 => debuffsPtr,
+                _ => Process.Memory.Read<long>(debuffsPtr + schema.SubPtr)
+            };
+
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
                 _ => Process.Memory.Read<int>(debuffsPtr + schema.DependsOn)
             };
 
+            bool conditionValid = schema.FlagType switch
+            {
+                "Buff" => _commonCondition.HasFlag((CommonConditions)Enum.Parse(typeof(CommonConditions), schema.WithFlag)) && abnormSubId == schema.WithValue,
+                "Debuff" => _debuffCondition.HasFlag((DebuffConditions)Enum.Parse(typeof(DebuffConditions), schema.WithFlag)) && abnormSubId == schema.WithValue,
+                _ => abnormSubId == schema.WithValue
+            };
+
             MHRDebuffStructure abnormality = new();
 
-            switch (schema.Id)
-            {
-                case "ABN_LEECHED":
-                    abnormality.Timer = _debuffCondition.HasFlag(DebuffConditions.Blooding) ? 1 : 0;
-                    break;
-                case "ABN_WINDMANTLE":
-                    if (_commonCondition.HasFlag(CommonConditions.WindMantle))
-                    {
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                        abnormality.Timer = schema.MaxTimer - abnormality.Timer;
-                    }
-                    else
-                        abnormality.Timer = 0;
+            if (schema.IsInfinite)
+                abnormality.Timer = conditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+            else if (conditionValid)
+                abnormality = Process.Memory.Read<MHRDebuffStructure>(Ptr + schema.Offset);
 
-                    break;
-                case "ABN_STUN_BUILDUP":
-                    long subPtr = Process.Memory.Read<long>(debuffsPtr + 0x848);
-
-                    if (subPtr == 0)
-                        abnormality.Timer = 0;
-                    else
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(subPtr + schema.Offset);
-
-                    break;
-                case "ABN_POISON":
-                    if (_debuffCondition.HasFlag(DebuffConditions.Poison))
-                    {
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                case "ABN_NOXIOUS_POISON":
-                    if (_debuffCondition.HasFlag(DebuffConditions.NoxiousPoison))
-                    {
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                case "ABN_DEADLY_POISON":
-                    if (_debuffCondition.HasFlag(DebuffConditions.DeadlyPoison))
-                    {
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-                    }
-                    else
-                        abnormality.Timer = 0;
-
-                    break;
-                default:
-                    if (schema.IsInfinite)
-                        abnormality.Timer = abnormSubId == schema.WithValue ? AbnormalityData.TIMER_MULTIPLIER : 0;
-                    else if (abnormSubId == schema.WithValue)
-                        abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
-
-                    if (!schema.IsBuildup)
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-
-                    break;
-            }
+            if (!schema.IsBuildup)
+                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            // For WindMantle timer;
+            if (schema.MaxTimer > 0 && abnormality.Timer > 0)
+                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
 
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
@@ -818,11 +700,11 @@ public sealed class MHRPlayer : CommonPlayer
                     AddressMap.GetAbsolute("UI_ADDRESS"),
                     AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
                 ) != 0,
-                WirebugCondition = _commonCondition.HasFlag(CommonConditions.WindMantle) ? CommonConditions.WindMantle.ToString()
-                                 : _commonCondition.HasFlag(CommonConditions.MarionetteTypeGold) ? CommonConditions.MarionetteTypeGold.ToString()
-                                 : _commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby) ? CommonConditions.MarionetteTypeRuby.ToString()
-                                 : _debuffCondition.HasFlag(DebuffConditions.IceL) ? DebuffConditions.IceL.ToString()
-                                 : "None",
+                WirebugCondition = _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugConditions.WindMantle
+                                 : _commonCondition.HasFlag(CommonConditions.MarionetteTypeGold) ? WirebugConditions.MarionetteTypeGold
+                                 : _commonCondition.HasFlag(CommonConditions.MarionetteTypeRuby) ? WirebugConditions.MarionetteTypeRuby
+                                 : _debuffCondition.HasFlag(DebuffConditions.IceL) ? WirebugConditions.IceL
+                                 : WirebugConditions.None,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 
@@ -1035,12 +917,6 @@ public sealed class MHRPlayer : CommonPlayer
         AbnormalitySchema[] schemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Songs);
         foreach (long buffPtr in buffs)
         {
-            if (id is >= 15 and <= 17 || id == 23)
-            {
-                id++;
-                continue;
-            }
-
             MHRHHAbnormality abnormality = Process.Memory.Read<MHRHHAbnormality>(buffPtr);
             abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 

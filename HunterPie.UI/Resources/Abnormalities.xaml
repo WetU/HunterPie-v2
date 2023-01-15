@@ -2631,7 +2631,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    <DrawingImage x:Key="ICON_NOXIOUS_POISON">
+    <DrawingImage x:Key="ICON_VENOM">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V128 H128 V0 H0 Z">
                 <DrawingGroup Opacity="1">
