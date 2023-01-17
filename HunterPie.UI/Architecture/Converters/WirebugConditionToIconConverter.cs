@@ -22,7 +22,7 @@ public class WirebugConditionToIconConverter : IValueConverter
                 case WirebugConditions.ABN_WINDMANTLE:
                     iconName = "ICON_WIREBUG_GREEN";
                     break;
-                case WirebugConditions.ABN_RUBY_WIREBUG:
+                case WirebugState.RubyWirebug:
                     iconName = "ICON_WIREBUG_GOLD";
                     break;
                 case WirebugConditions.ABN_GOLD_WIREBUG:

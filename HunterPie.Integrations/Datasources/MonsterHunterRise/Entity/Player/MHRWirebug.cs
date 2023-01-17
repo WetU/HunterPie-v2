@@ -113,8 +113,8 @@ public sealed class MHRWirebug : IEventDispatcher, IUpdatable<MHRWirebugExtrasSt
     private readonly SmartEvent<MHRWirebug> _onWirebugConditionChange = new();
     public event EventHandler<MHRWirebug> OnWirebugConditionChange
     {
-        add => _onWirebugConditionChange.Hook(value);
-        remove => _onWirebugConditionChange.Unhook(value);
+        add => _onWirebugStateChange.Hook(value);
+        remove => _onWirebugStateChange.Unhook(value);
     }
 
     void IUpdatable<MHRWirebugExtrasStructure>.Update(MHRWirebugExtrasStructure data)
