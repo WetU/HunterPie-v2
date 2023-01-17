@@ -15,8 +15,9 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:RatioConverter x:Key="RatioConverter"/>
         <converters:ReverseRatioConverter x:Key="ReverseRatioConverter"/>
-        <converters:WirebugConditionToIconConverter x:Key="WirebugConditionToIconConverter"/>
-        <converters:WirebugConditionToColorConverter x:Key="WirebugConditionToColorConverter"/>
+        <converters:WirebugStateToVisibilityConverter x:Key="WirebugStateToVisibilityConverter"/>
+        <converters:WirebugStateToIconConverter x:Key="WirebugStateToIconConverter"/>
+        <converters:WirebugStateToColorConverter x:Key="WirebugStateToColorConverter"/>
     </UserControl.Resources>
     <Grid>
         <Ellipse Width="1"
@@ -122,11 +123,11 @@
         </controls:Arc>
 
         <Image Margin="5,10,8,10"
-               Source="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToIconConverter}}">
+               Source="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToIconConverter}}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0"
                                   BlurRadius="10"
-                                  Color="{Binding WirebugCondition, Mode=OneWay, Converter={StaticResource WirebugConditionToColorConverter}}"/>
+                                  Color="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToColorConverter}}"/>
             </Image.Effect>
         </Image>
 
@@ -164,7 +165,7 @@
             </TextBlock>
         </Grid>
 
-        <Grid Visibility="{Binding IsBlocked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Grid Visibility="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToVisibilityConverter}}">
             <Ellipse Fill="{StaticResource RED_600}"
                      Opacity="1"/>
             <Ellipse Fill="{StaticResource RED_LIGHT_300}">

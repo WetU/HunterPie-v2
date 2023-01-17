@@ -6,30 +6,33 @@ using System.Windows.Data;
 
 namespace HunterPie.UI.Architecture.Converters;
 
-public class WirebugConditionToIconConverter : IValueConverter
+public class WirebugStateToIconConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is WirebugConditions WIrebugCondition)
+        if (value is WirebugState WIrebugState)
         {
             string iconName;
 
-            switch (WIrebugCondition)
+            switch (WIrebugState)
             {
-                case WirebugConditions.None:
+                case WirebugState.None:
                     iconName = "ICON_WIREBUG";
                     break;
-                case WirebugConditions.ABN_WINDMANTLE:
-                    iconName = "ICON_WIREBUG_GREEN";
+                case WirebugState.IceBlight:
+                    iconName = "ICON_WIREBUG_ICE";
                     break;
                 case WirebugState.RubyWirebug:
                     iconName = "ICON_WIREBUG_GOLD";
                     break;
-                case WirebugConditions.ABN_GOLD_WIREBUG:
+                case WirebugState.GoldWirebug:
                     iconName = "ICON_WIREBUG_RUBY";
                     break;
-                case WirebugConditions.ABN_ICE:
-                    iconName = "ICON_WIREBUG_ICE";
+                case WirebugState.WindMantle:
+                    iconName = "ICON_WIREBUG_GREEN";
+                    break;
+                case WirebugState.Blocked:
+                    iconName = "ICON_WIREBUG";
                     break;
                 default:
                     return Resources.Icon("ICON_WIREBUG");

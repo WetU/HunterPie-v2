@@ -1,5 +1,6 @@
 ﻿using HunterPie.Core.Game.Data.Schemas;
 using HunterPie.Core.Logger;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -52,10 +53,10 @@ public class AbnormalityData
         foreach (XmlNode abnormality in abnormalities)
         {
             string id = abnormality.Attributes["Id"].Value;
+            string ptrOffset = abnormality.Attributes["PtrOffset"]?.Value ?? "0";
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
-            string subPtr = abnormality.Attributes["SubPtr"]?.Value ?? "0";
             string dependsOn = abnormality.Attributes["DependsOn"]?.Value ?? "0";
             string withValue = abnormality.Attributes["WithValue"]?.Value ?? "0";
             string group = abnormality.ParentNode.Name;
@@ -64,7 +65,8 @@ public class AbnormalityData
             string maxBuildup = abnormality.Attributes["MaxBuildup"]?.Value ?? "0";
             string isInfinite = abnormality.Attributes["IsInfinite"]?.Value ?? "False";
             string maxTimer = abnormality.Attributes["MaxTimer"]?.Value ?? "0";
-            string flagType = abnormality.Attributes["FlagType"]?.Value;
+            string flagType = abnormality.Attributes["FlagType"]?.Value ?? "None";
+            string flag = abnormality.Attributes["Flag"]?.Value ?? "None";
 
             AbnormalitySchema schema = new()
             {
@@ -73,17 +75,18 @@ public class AbnormalityData
                 Icon = icon,
                 Category = category,
                 Group = group,
-                FlagType = flagType,
+                Flag = flag
             };
 
+            _ = int.TryParse(ptrOffset, NumberStyles.HexNumber, null, out schema.PtrOffset);
             _ = int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);
-            _ = int.TryParse(subPtr, NumberStyles.HexNumber, null, out schema.SubPtr);
             _ = int.TryParse(dependsOn, NumberStyles.HexNumber, null, out schema.DependsOn);
             _ = int.TryParse(withValue, out schema.WithValue);
             _ = bool.TryParse(isBuildup, out schema.IsBuildup);
             _ = int.TryParse(maxBuildup, out schema.MaxBuildup);
             _ = bool.TryParse(isInfinite, out schema.IsInfinite);
             _ = int.TryParse(maxTimer, out schema.MaxTimer);
+            _ = Enum.TryParse(flagType, out schema.FlagType);
 
             Abnormalities.Add(schema.Id, schema);
         }
