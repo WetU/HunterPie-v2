@@ -200,13 +200,13 @@
                      Name="ABNORMALITY_RUBY_WIREBUG"
                      Icon="ICON_RUBY_WIREBUG"
                      FlagType="Common"
-					 Flag="RubyWirebug"/>
+                     Flag="RubyWirebug"/>
         <Abnormality Id="ABN_GOLD_WIREBUG"
                      Offset="1A0"
                      Name="ABNORMALITY_GOLD_WIREBUG"
                      Icon="ICON_GOLD_WIREBUG"
                      FlagType="Common"
-					 Flag="GoldWirebug"/>
+                     Flag="GoldWirebug"/>
     </Consumables>
     <Debuffs>
         <Abnormality Id="ABN_BLOOD"
@@ -218,8 +218,8 @@
                      Name="ABNORMALITY_PRE_SLEEP"
                      Icon="ICON_SLEEP"/>
         <Abnormality Id="ABN_STUN_BUILDUP"
-					 PtrOffset="848"
-					 Offset="10"
+                     PtrOffset="848"
+                     Offset="10"
                      Name="ABNORMALITY_STUN_BUILDUP"
                      Icon="ICON_STUN"
                      IsBuildup="True"
@@ -229,19 +229,19 @@
                      Name="ABNORMALITY_POISON"
                      Icon="ICON_POISON"
                      FlagType="Debuff"
-					 Flag="Poison"/>
+                     Flag="Poison"/>
         <Abnormality Id="ABN_NOXIOUS_POISON"
                      Offset="85C"
                      Name="ABNORMALITY_NOXIOUS_POISON"
                      Icon="ICON_VENOM"
                      FlagType="Debuff"
-					 Flag="NoxiousPoison"/>
+                     Flag="NoxiousPoison"/>
         <Abnormality Id="ABN_DEADLY_POISON"
                      Offset="85C"
                      Name="ABNORMALITY_DEADLY_POISON"
                      Icon="ICON_DEADLY_POISON"
                      FlagType="Debuff"
-					 Flag="DeadlyPoison"/>
+                     Flag="DeadlyPoison"/>
         <Abnormality Id="ABN_STUN"
                      Offset="860"
                      Name="ABNORMALITY_STUN"
@@ -316,7 +316,7 @@
                      Name="ABNORMALITY_LEECHED"
                      Icon="ICON_LEECHED"
                      FlagType="Debuff"
-					 Flag="Leeched"
+                     Flag="Leeched"
                      IsInfinite="True"/>
         <Abnormality Id="ABN_BLEED"
                      Offset="8CC"
@@ -343,7 +343,7 @@
                      Name="ABNORMALITY_AGITATOR"
                      Icon="ICON_ARMORSKILL_RED"
                      FlagType="Common"
-					 Flag="Agitator"
+                     Flag="Agitator"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_AFFINITY_SLIDING"
@@ -380,7 +380,7 @@
                      Name="ABNORMALITY_DEFIANCE"
                      Icon="ICON_ARMORSKILL_ORANGE"
                      FlagType="Common"
-					 Flag="Defiance"
+                     Flag="Defiance"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_INTERPID_HEART"
@@ -394,21 +394,21 @@
                      Name="ABNORMALITY_HEROICS"
                      Icon="ICON_ARMORSKILL_RED"
                      FlagType="Common"
-					 Flag="Heroics"
+                     Flag="Heroics"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_PEAK_PERFORMANCE"
                      Name="ABNORMALITY_PEAK_PERFORMANCE"
                      Icon="ICON_ARMORSKILL_RED"
                      FlagType="Common"
-					 Flag="PeakPerformance"
+                     Flag="PeakPerformance"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_DRAGONHEART"
                      Name="ABNORMALITY_DRAGONHEART"
                      Icon="ICON_ARMORSKILL_ORANGE"
                      FlagType="Common"
-					 Flag="Dragonheart"
+                     Flag="Dragonheart"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_PROTECTIVE_POLISH"
@@ -426,7 +426,7 @@
                      Name="ABNORMALITY_WINDMANTLE"
                      Icon="ICON_ARMORSKILL_GREEN"
                      FlagType="Common"
-					 Flag="WindMantle"
+                     Flag="WindMantle"
                      MaxTimer="15"
                      Category="Debuffs"/>
     </Skills>
@@ -452,7 +452,7 @@
                      Name="ABNORMALITY_DANGO_DEFENDER"
                      Icon="ICON_DANGODEFENDER"
                      FlagType="Common"
-					 Flag="DangoDefender"
+                     Flag="DangoDefender"
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_DANGO_HUNTER"
