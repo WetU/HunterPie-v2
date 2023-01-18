@@ -22,10 +22,10 @@ public class WirebugStateToColorConverter : IValueConverter
                     color = "#FF6A94BE";
                     break;
                 case WirebugState.RubyWirebug:
-                    color = "#FFF8A700";
+                    color = "#FFFE4A0D";
                     break;
                 case WirebugState.GoldWirebug:
-                    color = "#FFFE4A0D";
+                    color = "#FFF8A700";
                     break;
                 case WirebugState.WindMantle:
                     color = "#FF00D600";

@@ -23,10 +23,10 @@ public class WirebugStateToIconConverter : IValueConverter
                     iconName = "ICON_WIREBUG_ICE";
                     break;
                 case WirebugState.RubyWirebug:
-                    iconName = "ICON_WIREBUG_GOLD";
+                    iconName = "ICON_WIREBUG_RUBY";
                     break;
                 case WirebugState.GoldWirebug:
-                    iconName = "ICON_WIREBUG_RUBY";
+                    iconName = "ICON_WIREBUG_GOLD";
                     break;
                 case WirebugState.WindMantle:
                     iconName = "ICON_WIREBUG_GREEN";
