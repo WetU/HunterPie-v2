@@ -416,12 +416,14 @@ public sealed class MHRPlayer : CommonPlayer
             MHRConsumableStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                abnormality.Timer = isConditionValid ? 1 : 0;
             else if (isConditionValid)
+            {
                 abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
-            if (!schema.IsBuildup)
-                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            }
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -472,16 +474,18 @@ public sealed class MHRPlayer : CommonPlayer
             MHRDebuffStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                abnormality.Timer = isConditionValid ? 1 : 0;
             else if (isConditionValid)
+            {
                 abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
 
-            if (!schema.IsBuildup)
-                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-            // For WindMantle timer;
-            if (schema.MaxTimer > 0 && abnormality.Timer > 0)
-                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
+                if (schema.MaxTimer > 0)
+                    abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+            }
+            
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
                 schema,
@@ -686,10 +690,17 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        bool IsBlocked = Process.Memory.Deref<int>(
+        bool isBlocked = Process.Memory.Deref<int>(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
         ) != 0;
+
+        WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
+            _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
+            _commonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
+            _commonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
+            _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
+            WirebugState.None;
 
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
         long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
@@ -701,12 +712,7 @@ public sealed class MHRPlayer : CommonPlayer
 
             var data = new MHRWirebugData
             {
-                WirebugState = IsBlocked ? WirebugState.Blocked
-                    : _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle
-                    : _commonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug
-                    : _commonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug
-                    : _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight
-                    : WirebugState.None,
+                WirebugState = wirebugState,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 
