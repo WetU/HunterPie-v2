@@ -45,7 +45,8 @@ public sealed class MHRPlayer : CommonPlayer
     private int _highRank;
     private int _masterRank;
     private IWeapon _weapon;
-    private Weapon _weaponId = WeaponType.None;
+    private WeaponType _weaponId = WeaponType.None;
+    private CombatStatus _combatStatus = CombatStatus.None;
     private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
     private CommonConditions _commonCondition;
     private DebuffConditions _debuffCondition;
@@ -153,6 +154,18 @@ public sealed class MHRPlayer : CommonPlayer
 
     public Scroll SwitchScroll { get; private set; }
 
+    public override CombatStatus CombatStatus
+    {
+        get => _combatStatus;
+        protected set
+        {
+            if(value != _combatStatus)
+            {
+                _combatStatus = value;
+                this.Dispatch(_onCombatStatusChange);
+            }
+        }
+    }
     #region Events
 
     private readonly SmartEvent<MHRWirebug[]> _onWirebugsRefresh = new();
@@ -170,7 +183,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     // TODO: Add DTOs for middlewares
-
     [ScannableMethod]
     private void GetStageData()
     {
@@ -182,13 +194,17 @@ public sealed class MHRPlayer : CommonPlayer
         if (stageAddress == 0x00000000)
             return;
 
-        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
+        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60); // GameState
 
-        int zoneId = stageData.IsMainMenu()
-            ? -1
-            : stageData.IsVillage()
-            ? stageData.VillageId
-            : stageData.IsLoadingScreen() ? -2 : stageData.IsSelectingCharacter() ? 199 : stageData.HuntingId + 200;
+        int zoneId = stageData.IsMainMenu() ? -1
+            : stageData.IsMakingCharacter() ? -2
+            : stageData.IsSelectingCharacter() ? 199
+            : stageData.IsVillage() ? stageData.VillageSpace
+            : stageData.IsRampage() ? -6
+            : stageData.IsResultScreen() ? -3
+            : stageData.IsDemo() ? -4
+            : stageData.IsLoadingScreen() ? -5
+            : stageData.CurrentMapNo + 200;
         MHRStageStructure tempStageData = _stageData;
         _stageData = stageData;
         _lastStageData = tempStageData;
@@ -401,12 +417,14 @@ public sealed class MHRPlayer : CommonPlayer
             MHRConsumableStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                abnormality.Timer = isConditionValid ? 1 : 0;
             else if (isConditionValid)
+            {
                 abnormality = Process.Memory.Read<MHRConsumableStructure>(consumableBuffs + schema.Offset);
 
-            if (!schema.IsBuildup)
-                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            }
 
             HandleAbnormality<MHRConsumableAbnormality, MHRConsumableStructure>(
                 _abnormalities,
@@ -435,6 +453,12 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
+            long abnormSubPtr = schema.PtrOffset switch
+            {
+                0 => debuffsPtr,
+                _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
+            };
+
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
@@ -451,16 +475,18 @@ public sealed class MHRPlayer : CommonPlayer
             MHRDebuffStructure abnormality = new();
 
             if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? AbnormalityData.TIMER_MULTIPLIER : 0;
+                abnormality.Timer = isConditionValid ? 1 : 0;
             else if (isConditionValid)
-                abnormality = Process.Memory.Read<MHRDebuffStructure>(debuffsPtr + schema.Offset);
+            {
+                abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
 
-            if (!schema.IsBuildup)
-                abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
-            if (schema.MaxTimer > 0 && isConditionValid)
-                abnormality.Timer = schema.MaxTimer - abnormality.Timer;
-
+                if (schema.MaxTimer > 0)
+                    abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+            }
+            
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
                 schema,
@@ -639,6 +665,18 @@ public sealed class MHRPlayer : CommonPlayer
         _stamina.Update(staminaData);
     }
 
+    [ScannableMethod]
+    private void GetPlayerCombatStatus()
+    {
+        if (!InHuntingZone)
+            return;
+
+        CombatStatus = (CombatStatus)Memory.Deref<int>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_COMBAT_STATUS_OFFSETS")
+        );
+    }
+
     [ScannableMethod(typeof(MHRWirebugData))]
     private void GetPlayerWirebugs()
     {
@@ -658,6 +696,13 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
         ) != 0;
 
+        WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
+            _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
+            _commonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
+            _commonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
+            _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
+            WirebugState.None;
+
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
         long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
 
@@ -668,10 +713,7 @@ public sealed class MHRPlayer : CommonPlayer
 
             var data = new MHRWirebugData
             {
-                WirebugState = isBlocked ? WirebugState.Blocked
-                    : _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle
-                    : _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight
-                    : WirebugState.None,
+                WirebugState = wirebugState,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 

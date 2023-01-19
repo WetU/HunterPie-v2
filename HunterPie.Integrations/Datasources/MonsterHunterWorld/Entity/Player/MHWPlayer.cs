@@ -174,6 +174,12 @@ public sealed class MHWPlayer : CommonPlayer
     public MHWArgosy Argosy { get; } = new();
 
     public MHWTailraiders Tailraiders { get; } = new();
+
+    public override CombatStatus CombatStatus
+    {
+        get => CombatStatus.None;
+        protected set => throw new NotSupportedException();
+    }
     #endregion
 
     internal MHWPlayer(IProcessManager process) : base(process)
