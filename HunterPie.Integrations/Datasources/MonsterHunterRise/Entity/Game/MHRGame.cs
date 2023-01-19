@@ -196,7 +196,7 @@ public sealed class MHRGame : CommonGame
             return;
 
         MaxDeaths = Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("QUEST_ADDRESS"), 
+            AddressMap.GetAbsolute("QUEST_ADDRESS"),
             AddressMap.Get<int[]>("QUEST_MAX_DEATHS_OFFSETS")
         );
 
