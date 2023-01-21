@@ -21,7 +21,7 @@
         <enums:Orientation x:Key="OHorizontal">Horizontal</enums:Orientation>
         <enums:Orientation x:Key="OVertical">Vertical</enums:Orientation>
     </UserControl.Resources>
-    <Grid>
+    <Grid Visibility="{Binding IsTgCameraOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
         <ItemsControl ItemsSource="{Binding Monsters}"
                       HorizontalContentAlignment="Center">
             <ItemsControl.Style>

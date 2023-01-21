@@ -3,6 +3,7 @@ using HunterPie.Core.Client.Configuration;
 using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Game;
 using HunterPie.Core.Game.Entity.Enemy;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.System;
 using HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Monster.Views;
@@ -34,6 +35,8 @@ public class MonsterWidgetContextHandler : IContextHandler
 
     private void UpdateData()
     {
+        _viewModel.IsTgCameraOpen = _context.Game.IsTgCameraOpen;
+
         foreach (IMonster monster in _context.Game.Monsters)
         {
             monster.OnTargetChange += OnTargetChange;
@@ -47,12 +50,14 @@ public class MonsterWidgetContextHandler : IContextHandler
     {
         _context.Game.OnMonsterSpawn += OnMonsterSpawn;
         _context.Game.OnMonsterDespawn += OnMonsterDespawn;
+        _context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     public void UnhookEvents()
     {
         _context.Game.OnMonsterSpawn -= OnMonsterSpawn;
         _context.Game.OnMonsterDespawn -= OnMonsterDespawn;
+        _context.Game.OnHudStateChange -= OnHudStateChange;
 
         _view.Dispatcher.Invoke(() =>
         {
@@ -94,6 +99,8 @@ public class MonsterWidgetContextHandler : IContextHandler
     }
 
     private void OnTargetChange(object sender, EventArgs e) => CalculateVisibleMonsters();
+
+    private void OnHudStateChange(object sender, IGame e) => _viewModel.IsTgCameraOpen = e.IsTgCameraOpen;
 
     private void CalculateVisibleMonsters()
     {

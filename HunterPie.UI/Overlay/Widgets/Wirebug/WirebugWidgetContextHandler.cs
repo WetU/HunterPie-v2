@@ -1,21 +1,15 @@
 ﻿using HunterPie.Core.Client;
 using HunterPie.Core.Client.Configuration.Overlay;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Integrations.Datasources.MonsterHunterRise;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 using HunterPie.UI.Overlay.Widgets.Wirebug.Views;
-using System;
-using System.Collections.Generic;
 
 namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 
 public class WirebugWidgetContextHandler : IContextHandler
 {
-    private static readonly HashSet<int> UnavailableStages = new() {
-        1, // Room
-        3, // Gathering Hub
-        4, // Hub Prep Plaza
-    };
     private readonly MHRContext _context;
     private readonly WirebugsViewModel _viewModel;
     private readonly WirebugsView _view;
@@ -35,14 +29,14 @@ public class WirebugWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
-        Player.OnStageUpdate += OnStageUpdate;
         Player.OnWirebugsRefresh += OnWirebugsRefresh;
+        _context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     public void UnhookEvents()
     {
-        Player.OnStageUpdate -= OnStageUpdate;
         Player.OnWirebugsRefresh -= OnWirebugsRefresh;
+        _context.Game.OnHudStateChange -= OnHudStateChange;
 
         foreach (WirebugViewModel vm in _viewModel.Elements)
             if (vm is WirebugContextHandler model)
@@ -53,7 +47,7 @@ public class WirebugWidgetContextHandler : IContextHandler
         _ = WidgetManager.Unregister<WirebugsView, WirebugWidgetConfig>(_view);
     }
 
-    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
+    private void OnHudStateChange(object sender, IGame e) => _viewModel.IsWirebugHudOpen = e.IsWirebugHudOpen;
 
     private void OnWirebugsRefresh(object sender, MHRWirebug[] e)
     {
@@ -72,7 +66,7 @@ public class WirebugWidgetContextHandler : IContextHandler
 
     private void UpdateData()
     {
-        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
+        _viewModel.IsWirebugHudOpen = _context.Game.IsWirebugHudOpen;
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
             _viewModel.Elements.Add(new WirebugContextHandler(wirebug));

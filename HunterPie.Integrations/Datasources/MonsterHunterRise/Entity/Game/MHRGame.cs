@@ -36,6 +36,9 @@ public sealed class MHRGame : CommonGame
     private int _maxDeaths;
     private int _deaths;
     private bool _isHudOpen;
+    private bool _isPlayerHudOpen;
+    private bool _isTgCameraOpen;
+    private bool _isWirebugHudOpen;
     private DateTime _lastDamageUpdate = DateTime.MinValue;
     private readonly Dictionary<long, IMonster> _monsters = new();
     private readonly Dictionary<long, EntityDamageData[]> _damageDone = new();
@@ -53,6 +56,45 @@ public sealed class MHRGame : CommonGame
             if (value != _isHudOpen)
             {
                 _isHudOpen = value;
+                this.Dispatch(_onHudStateChange, this);
+            }
+        }
+    }
+
+    public override bool IsPlayerHudOpen
+    {
+        get => _isPlayerHudOpen;
+        protected set
+        {
+            if (value != _isPlayerHudOpen)
+            {
+                _isPlayerHudOpen = value;
+                this.Dispatch(_onHudStateChange, this);
+            }
+        }
+    }
+
+    public override bool IsTgCameraOpen
+    {
+        get => _isTgCameraOpen;
+        protected set
+        {
+            if (value != _isTgCameraOpen)
+            {
+                _isTgCameraOpen = value;
+                this.Dispatch(_onHudStateChange, this);
+            }
+        }
+    }
+
+    public override bool IsWirebugHudOpen
+    {
+        get => _isWirebugHudOpen;
+        protected set
+        {
+            if (value != _isWirebugHudOpen)
+            {
+                _isWirebugHudOpen = value;
                 this.Dispatch(_onHudStateChange, this);
             }
         }
@@ -231,7 +273,25 @@ public sealed class MHRGame : CommonGame
             AddressMap.Get<int[]>("CUTSCENE_STATE_OFFSETS")
         );
 
+        byte isPlayerHudOpen = Process.Memory.Deref<byte>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_HUD_VISIBLE_OFFSETS")
+        );
+
+        byte isTgCameraOpen = Process.Memory.Deref<byte>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("MONSTER_TARGET_CAMERA_VISIBLE_OFFSETS")
+        );
+
+        byte isWirebugHudOpen = Process.Memory.Deref<byte>(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("WIREBUG_HUD_VISIBLE_OFFSETS")
+        );
+
         IsHudOpen = isHudOpen == 1 || isCutsceneActive;
+        IsPlayerHudOpen = isPlayerHudOpen == 0;
+        IsTgCameraOpen = isTgCameraOpen == 0;
+        IsWirebugHudOpen = isWirebugHudOpen == 0;
     }
 
     [ScannableMethod]

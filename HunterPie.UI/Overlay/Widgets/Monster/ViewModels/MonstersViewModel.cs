@@ -14,4 +14,7 @@ public class MonstersViewModel : Bindable
     public ObservableCollection<BossMonsterViewModel> Monsters { get; } = new();
     public int VisibleMonsters { get => _visibleMonsters; set => SetValue(ref _visibleMonsters, value); }
     public int MonstersCount { get => _monstersCount; set => SetValue(ref _monstersCount, Math.Max(MINIMUM_MONSTER_COUNT, value)); }
+
+    private bool _isTgCameraOpen;
+    public bool IsTgCameraOpen { get => _isTgCameraOpen; set => SetValue(ref _isTgCameraOpen, value); }
 }

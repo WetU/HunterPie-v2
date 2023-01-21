@@ -7,7 +7,7 @@ public class MockWirebugsViewModel : WirebugsViewModel
 {
     public MockWirebugsViewModel()
     {
-        IsAvailable = true;
+        IsWirebugHudOpen = true;
         Elements.Add(
             new()
             {

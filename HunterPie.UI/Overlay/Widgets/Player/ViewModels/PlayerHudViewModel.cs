@@ -40,9 +40,6 @@ public class PlayerHudViewModel : ViewModel
     private double _maxRecoverableStamina;
     public double MaxRecoverableStamina { get => _maxRecoverableStamina; set => SetValue(ref _maxRecoverableStamina, value); }
 
-    private bool _inHuntingZone;
-    public bool InHuntingZone { get => _inHuntingZone; set => SetValue(ref _inHuntingZone, value); }
-
     private Weapon _weapon;
     public Weapon Weapon { get => _weapon; set => SetValue(ref _weapon, value); }
 
@@ -52,4 +49,7 @@ public class PlayerHudViewModel : ViewModel
     public bool IsMoxieActive { get => _isMoxieActive; set => SetValue(ref _isMoxieActive, value); }
 
     public WeaponSharpnessViewModel SharpnessViewModel { get; } = new();
+
+    private bool _isPlayerHudOpen;
+    public bool IsPlayerHudOpen { get => _isPlayerHudOpen; set => SetValue(ref _isPlayerHudOpen, value); }
 }

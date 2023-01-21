@@ -1,5 +1,6 @@
 ﻿using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Game;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.Game.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Abnormality.View;
 using HunterPie.UI.Overlay.Widgets.Abnormality.ViewModel;
@@ -34,6 +35,7 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
     {
         Context.Game.Player.OnAbnormalityStart += OnAbnormalityStart;
         Context.Game.Player.OnAbnormalityEnd += OnAbnormalityEnd;
+        Context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     private void OnAbnormalityEnd(object sender, IAbnormality e)
@@ -62,15 +64,20 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
         }, DispatcherPriority.Normal);
     }
 
+    private void OnHudStateChange(object sender, IGame e) => ViewModel.IsPlayerHudOpen = e.IsPlayerHudOpen;
+
     public void UnhookEvents()
     {
         Context.Game.Player.OnAbnormalityStart -= OnAbnormalityStart;
         Context.Game.Player.OnAbnormalityEnd -= OnAbnormalityEnd;
+        Context.Game.OnHudStateChange -= OnHudStateChange;
         _ = WidgetManager.Unregister<AbnormalityBarView, AbnormalityWidgetConfig>(View);
     }
 
     private void UpdateData()
     {
+        ViewModel.IsPlayerHudOpen = Context.Game.IsPlayerHudOpen;
+
         Application.Current.Dispatcher.Invoke(() =>
         {
             foreach (IAbnormality abnormality in Context.Game.Player.Abnormalities)

@@ -50,6 +50,10 @@ public sealed class MHWGame : CommonGame
         }
     }
 
+    public override bool IsPlayerHudOpen { get => false; protected set => throw new NotImplementedException(); }
+    public override bool IsTgCameraOpen { get => false; protected set => throw new NotImplementedException(); }
+    public override bool IsWirebugHudOpen { get => false; protected set => throw new NotImplementedException(); }
+
     public override float TimeElapsed { get; protected set; }
 
     private void SetTimeElapsed(float value, bool isReset)

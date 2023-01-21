@@ -1,6 +1,7 @@
 ﻿using HunterPie.Core.Client;
 using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Game;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
@@ -35,12 +36,12 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         Player.OnLogin += OnPlayerLogin;
         Player.OnLevelChange += OnPlayerLevelChange;
         Player.OnWeaponChange += OnPlayerWeaponChange;
-        Player.OnStageUpdate += OnStageChange;
         Player.Health.OnHealthChange += OnPlayerHealthChange;
         Player.Stamina.OnStaminaChange += OnPlayerStaminaChange;
         Player.Health.OnHeal += OnHeal;
         Player.OnAbnormalityStart += OnPlayerAbnormalityStart;
         Player.OnAbnormalityEnd += OnPlayerAbnormalityEnd;
+        _context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     public void UnhookEvents()
@@ -48,12 +49,12 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         Player.OnLogin -= OnPlayerLogin;
         Player.OnLevelChange -= OnPlayerLevelChange;
         Player.OnWeaponChange -= OnPlayerWeaponChange;
-        Player.OnStageUpdate -= OnStageChange;
         Player.Health.OnHealthChange -= OnPlayerHealthChange;
         Player.Stamina.OnStaminaChange -= OnPlayerStaminaChange;
         Player.Health.OnHeal -= OnHeal;
         Player.OnAbnormalityStart -= OnPlayerAbnormalityStart;
         Player.OnAbnormalityEnd -= OnPlayerAbnormalityEnd;
+        _context.Game.OnHudStateChange -= OnHudStateChange;
 
         if (Player.Weapon is IMeleeWeapon weapon)
         {
@@ -87,8 +88,6 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.ActiveAbnormalities.Add(category);
     }
     private void OnHeal(object sender, HealthChangeEventArgs e) => _viewModel.Heal = e.Heal;
-
-    private void OnStageChange(object sender, EventArgs e) => _viewModel.InHuntingZone = Player.InHuntingZone;
 
     private void OnPlayerLevelChange(object sender, LevelChangeEventArgs e) => _viewModel.Level = Player.MasterRank;
 
@@ -142,6 +141,8 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.RecoverableHealth = e.RecoverableHealth;
     }
 
+    private void OnHudStateChange(object sender, IGame e) => _viewModel.IsPlayerHudOpen = e.IsPlayerHudOpen;
+
     private void UpdateData()
     {
         _viewModel.MaxHealth = Player.Health.Max;
@@ -154,5 +155,6 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.Stamina = Player.Stamina.Current;
         _viewModel.Name = Player.Name;
         _viewModel.Level = Player.MasterRank;
+        _viewModel.IsPlayerHudOpen = _context.Game.IsPlayerHudOpen;
     }
 }

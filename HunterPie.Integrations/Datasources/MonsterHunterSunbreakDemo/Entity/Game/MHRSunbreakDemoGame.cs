@@ -24,6 +24,9 @@ public sealed class MHRSunbreakDemoGame : CommonGame
     public override IPlayer Player => _player;
     public override List<IMonster> Monsters { get; } = new();
     public override bool IsHudOpen { get; protected set; }
+    public override bool IsPlayerHudOpen { get => false; protected set => throw new NotImplementedException(); }
+    public override bool IsTgCameraOpen { get => false; protected set => throw new NotImplementedException(); }
+    public override bool IsWirebugHudOpen { get => false; protected set => throw new NotImplementedException(); }
 
     public override IChat? Chat => null;
     public override float TimeElapsed
