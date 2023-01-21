@@ -8,7 +8,6 @@ using HunterPie.Core.Game.Entity;
 using HunterPie.Core.Game.Entity.Party;
 using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Entity.Player.Vitals;
-using HunterPie.Core.Game.Enums;
 using HunterPie.Integrations.Datasources.Common.Entity.Player;
 using HunterPie.Integrations.Datasources.Common.Entity.Player.Vitals;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
@@ -67,12 +66,6 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     public override IHealthComponent Health { get; } = new HealthComponent();
 
     public override IWeapon Weapon { get; protected set; }
-
-    public override CombatStatus CombatStatus
-    {
-        get => CombatStatus.None;
-        protected set => throw new NotSupportedException();
-    }
 
     public MHRSunbreakDemoPlayer(IProcessManager process) : base(process) { }
 
@@ -158,7 +151,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     private void AbnormalitiesCleanup()
     {
         long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
@@ -171,7 +164,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     {
 
         long consumableBuffs = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
         );
 
@@ -209,7 +202,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     {
 
         long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
@@ -248,7 +241,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     {
 
         long songBuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
         );
 

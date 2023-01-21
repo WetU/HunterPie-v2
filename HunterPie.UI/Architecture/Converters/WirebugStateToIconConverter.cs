@@ -10,38 +10,27 @@ public class WirebugStateToIconConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is WirebugState WIrebugState)
+        string iconName = null;
+
+        switch ((WirebugState)value)
         {
-            string iconName;
-
-            switch (WIrebugState)
-            {
-                case WirebugState.None:
-                    iconName = "ICON_WIREBUG";
-                    break;
-                case WirebugState.IceBlight:
-                    iconName = "ICON_WIREBUG_ICE";
-                    break;
-                case WirebugState.RubyWirebug:
-                    iconName = "ICON_WIREBUG_RUBY";
-                    break;
-                case WirebugState.GoldWirebug:
-                    iconName = "ICON_WIREBUG_GOLD";
-                    break;
-                case WirebugState.WindMantle:
-                    iconName = "ICON_WIREBUG_GREEN";
-                    break;
-                case WirebugState.Blocked:
-                    iconName = "ICON_WIREBUG";
-                    break;
-                default:
-                    return Resources.Icon("ICON_WIREBUG");
-            }
-
-            return Resources.Icon(iconName);
+            case WirebugState.IceBlight:
+                iconName = "ICON_WIREBUG_ICE";
+                break;
+            case WirebugState.GoldWirebug:
+                iconName = "ICON_WIREBUG_GOLD";
+                break;
+            case WirebugState.RubyWirebug:
+                iconName = "ICON_WIREBUG_RUBY";
+                break;
+            case WirebugState.WindMantle:
+                iconName = "ICON_WIREBUG_GREEN";
+                break;
+            default:
+                return Resources.Icon("ICON_WIREBUG");
         }
 
-        return null;
+        return iconName is null ? Resources.Icon("ICON_WIREBUG") : Resources.Icon(iconName);
     }
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

@@ -46,8 +46,6 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private WeaponType _weaponId = WeaponType.None;
-    private CombatStatus _combatStatus = CombatStatus.None;
-    private readonly Dictionary<int, MHREquipmentSkillStructure> _armorSkills = new(46);
     private MHRPlayerConditionStructure _conditions;
     #endregion
 
@@ -147,21 +145,6 @@ public sealed class MHRPlayer : CommonPlayer
 
                 if (lastWeapon is IDisposable disposable)
                     disposable.Dispose();
-            }
-        }
-    }
-
-    public Scroll SwitchScroll { get; private set; }
-
-    public override CombatStatus CombatStatus
-    {
-        get => _combatStatus;
-        protected set
-        {
-            if(value != _combatStatus)
-            {
-                _combatStatus = value;
-                this.Dispatch(_onCombatStatusChange);
             }
         }
     }
@@ -345,56 +328,24 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     [ScannableMethod]
-    private void GetPlayerAbnormalitiesCleanup()
-    {
-        long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
-            AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
-        );
-
-        if (!InHuntingZone || debuffsPtr == 0)
-            ClearAbnormalities(_abnormalities);
-    }
-
-    [ScannableMethod]
-    private void GetPlayerEquipmentSkills()
-    {
-        long armorSkillsPtr = Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_GEAR_SKILLS_ARRAY_OFFSETS")
-        );
-
-        MHREquipmentSkillStructure[] armorSkills = Memory.ReadArrayOfPtrs<MHREquipmentSkillStructure>(armorSkillsPtr);
-
-        _armorSkills.Clear();
-
-        foreach (MHREquipmentSkillStructure skill in armorSkills)
-            if (skill.Id > 0)
-                _armorSkills.Add(skill.Id, skill);
-    }
-
-    [ScannableMethod]
-    private void GetPlayerSwitchState()
-    {
-        SwitchScroll = (Scroll)Memory.Deref<int>(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_SWITCH_SCROLL_OFFSETS")
-        );
-    }
-
-    [ScannableMethod]
     private void GetConsumableAbnormalities()
     {
         if (!InHuntingZone)
+        {
+            ClearAbnormalities(_abnormalities);
             return;
+        }
 
         long consumableBuffs = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
         );
 
-        if (consumableBuffs == 0)
+        if (consumableBuffs.IsNullPointer())
+        {
+            ClearAbnormalities(_abnormalities);
             return;
+        }
 
         AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
 
@@ -438,15 +389,21 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerDebuffAbnormalities()
     {
         if (!InHuntingZone)
+        {
+            ClearAbnormalities(_abnormalities);
             return;
+        }
 
         long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
-        if (debuffsPtr == 0)
+        if (debuffsPtr.IsNullPointer())
+        {
+            ClearAbnormalities(_abnormalities);
             return;
+        }
 
         AbnormalitySchema[] debuffSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Debuffs);
 
@@ -457,6 +414,9 @@ public sealed class MHRPlayer : CommonPlayer
                 0 => debuffsPtr,
                 _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
             };
+
+            if (abnormSubPtr.IsNullPointer())
+                continue;
 
             int abnormSubId = schema.DependsOn switch
             {
@@ -493,6 +453,32 @@ public sealed class MHRPlayer : CommonPlayer
                 abnormality
             );
         }
+    }
+
+    [ScannableMethod]
+    private void GetPlayerSongAbnormalities()
+    {
+        if (!InHuntingZone)
+        {
+            ClearAbnormalities(_abnormalities);
+            return;
+        }
+
+        long songBuffsPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
+        );
+
+        if (songBuffsPtr.IsNullPointer())
+        {
+            ClearAbnormalities(_abnormalities);
+            return;
+        }
+
+        uint songBuffsLength = Process.Memory.Read<uint>(songBuffsPtr + 0x1C);
+        long[] songBuffPtrs = Process.Memory.Read<long>(songBuffsPtr + 0x20, songBuffsLength);
+
+        DerefSongBuffs(songBuffPtrs);
     }
 
     [ScannableMethod]
@@ -593,26 +579,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     [ScannableMethod]
-    private void GetPlayerSongAbnormalities()
-    {
-        if (!InHuntingZone)
-            return;
-
-        long songBuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
-            AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
-        );
-
-        if (songBuffsPtr == 0)
-            return;
-
-        uint songBuffsLength = Process.Memory.Read<uint>(songBuffsPtr + 0x1C);
-        long[] songBuffPtrs = Process.Memory.Read<long>(songBuffsPtr + 0x20, songBuffsLength);
-
-        DerefSongBuffs(songBuffPtrs);
-    }
-
-    [ScannableMethod]
     private void GetPlayerStatus()
     {
         if (!InHuntingZone)
@@ -643,7 +609,7 @@ public sealed class MHRPlayer : CommonPlayer
         };
 
         // For when Berserk skill is active
-        if (_armorSkills.ContainsKey(137) && SwitchScroll == Scroll.Blue)
+        if (_conditions.CommonCondition.HasFlag(CommonConditions.Berserk))
             healthData = healthData with
             {
                 Health = 0,
@@ -664,23 +630,11 @@ public sealed class MHRPlayer : CommonPlayer
         _stamina.Update(staminaData);
     }
 
-    [ScannableMethod]
-    private void GetPlayerCombatStatus()
-    {
-        if (!InHuntingZone)
-            return;
-
-        CombatStatus = (CombatStatus)Memory.Deref<int>(
-            AddressMap.GetAbsolute("UI_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_COMBAT_STATUS_OFFSETS")
-        );
-    }
-
     [ScannableMethod(typeof(MHRWirebugData))]
     private void GetPlayerWirebugs()
     {
         long wirebugsArrayPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_DATA_OFFSETS")
         );
 
@@ -731,7 +685,7 @@ public sealed class MHRPlayer : CommonPlayer
 
         // Update last Wirebug with extra data
         MHRWirebugExtrasStructure extraData = Process.Memory.Deref<MHRWirebugExtrasStructure>(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_OFFSETS")
         );
         extraData.Timer /= AbnormalityData.TIMER_MULTIPLIER;
@@ -742,18 +696,16 @@ public sealed class MHRPlayer : CommonPlayer
             this.Dispatch(_onWirebugsRefresh, Wirebugs);
     }
 
-    [ScannableMethod(typeof(MHRCohootStructure))]
+    [ScannableMethod(typeof(MHRPlayerConditionStructure))]
     private void GetPlayerConditions()
     {
         if (!InHuntingZone)
             return;
 
-        MHRPlayerConditionStructure conditions = Process.Memory.Deref<MHRPlayerConditionStructure>(
+        _conditions = Process.Memory.Deref<MHRPlayerConditionStructure>(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
         );
-
-        _conditions = conditions;
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

@@ -58,7 +58,7 @@ public class MHRMeleeWeapon : CommonMeleeWeapon
     private void GetWeaponSharpness()
     {
         long sharpnessArrayPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("SHARPNESS_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("SHARPNESS_ARRAY_OFFSETS")
         );
 
@@ -66,7 +66,7 @@ public class MHRMeleeWeapon : CommonMeleeWeapon
             return;
 
         MHRSharpnessStructure structure = Process.Memory.Deref<MHRSharpnessStructure>(
-            AddressMap.GetAbsolute("SHARPNESS_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("SHARPNESS_OFFSETS")
         );
 

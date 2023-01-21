@@ -51,8 +51,5 @@ public class PlayerHudViewModel : ViewModel
     private bool _isMoxieActive;
     public bool IsMoxieActive { get => _isMoxieActive; set => SetValue(ref _isMoxieActive, value); }
 
-    private CombatStatus _combatStatus;
-    public CombatStatus CombatStatus { get => _combatStatus; set => SetValue(ref _combatStatus, value); }
-
     public WeaponSharpnessViewModel SharpnessViewModel { get; } = new();
 }

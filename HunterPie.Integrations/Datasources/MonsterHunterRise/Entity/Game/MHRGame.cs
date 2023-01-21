@@ -165,7 +165,7 @@ public sealed class MHRGame : CommonGame
 
         if (!isChatOpen)
             isChatOpen |= Process.Memory.Deref<byte>(
-                AddressMap.GetAbsolute("CHAT_UI_ADDRESS"),
+                AddressMap.GetAbsolute("UI_ADDRESS"),
                 AddressMap.Get<int[]>("CHAT_UI_OFFSETS")
             ) == 1;
 
