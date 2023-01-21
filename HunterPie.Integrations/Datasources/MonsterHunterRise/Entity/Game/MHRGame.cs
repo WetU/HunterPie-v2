@@ -273,25 +273,46 @@ public sealed class MHRGame : CommonGame
             AddressMap.Get<int[]>("CUTSCENE_STATE_OFFSETS")
         );
 
-        byte isPlayerHudOpen = Process.Memory.Deref<byte>(
-            AddressMap.GetAbsolute("UI_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_HUD_VISIBLE_OFFSETS")
-        );
-
-        byte isTgCameraOpen = Process.Memory.Deref<byte>(
-            AddressMap.GetAbsolute("UI_ADDRESS"),
-            AddressMap.Get<int[]>("MONSTER_TARGET_CAMERA_VISIBLE_OFFSETS")
-        );
-
-        byte isWirebugHudOpen = Process.Memory.Deref<byte>(
-            AddressMap.GetAbsolute("UI_ADDRESS"),
-            AddressMap.Get<int[]>("WIREBUG_HUD_VISIBLE_OFFSETS")
-        );
-
         IsHudOpen = isHudOpen == 1 || isCutsceneActive;
-        IsPlayerHudOpen = isPlayerHudOpen == 0;
-        IsTgCameraOpen = isTgCameraOpen == 0;
-        IsWirebugHudOpen = isWirebugHudOpen == 0;
+
+        long playerHudPtr = Process.Memory.ReadPtr(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("GUI_HUD_OFFSETS")
+        );
+
+        if (playerHudPtr.IsNullPointer())
+            IsPlayerHudOpen = false;
+        else
+        {
+            byte isPlayerHudOpen = Process.Memory.Read<byte>(playerHudPtr + 0x90);
+            IsPlayerHudOpen = isPlayerHudOpen != 1;
+        }
+
+        long tgCameraPtr = Process.Memory.ReadPtr(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("TARGET_CAMERA_HUD_OFFSETS")
+        );
+
+        if (tgCameraPtr.IsNullPointer())
+            IsTgCameraOpen = false;
+        else
+        {
+            byte isTgCameraOpen = Process.Memory.Read<byte>(tgCameraPtr + 0x90);
+            IsTgCameraOpen = isTgCameraOpen != 1;
+        }
+
+        long wirebugHudPtr = Process.Memory.ReadPtr(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("WIREBUG_HUD_OFFSETS")
+        );
+
+        if (wirebugHudPtr.IsNullPointer())
+            IsWirebugHudOpen = false;
+        else
+        {
+            byte isWirebugHudOpen = Process.Memory.Read<byte>(wirebugHudPtr + 0x90);
+            IsWirebugHudOpen = isWirebugHudOpen != 1;
+        }
     }
 
     [ScannableMethod]
