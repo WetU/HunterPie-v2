@@ -6,6 +6,7 @@ using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.System;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
 using HunterPie.UI.Overlay.Widgets.Player.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Player.Views;
 using System;
@@ -16,7 +17,9 @@ public class PlayerHudWidgetContextHandler : IContextHandler
     private readonly PlayerHudView _view;
     private readonly PlayerHudViewModel _viewModel;
     private readonly IContext _context;
-    private IPlayer Player => _context.Game.Player;
+    private IGame Game => _context.Game;
+    private IPlayer Player => Game.Player;
+    private MHRGame MHRGame => (MHRGame)Game;
 
     public PlayerHudWidgetContextHandler(IContext context)
     {
@@ -33,6 +36,8 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
+        MHRGame.OnRiseHudStateChange += OnRiseHudStateChange;
+
         Player.OnLogin += OnPlayerLogin;
         Player.OnLevelChange += OnPlayerLevelChange;
         Player.OnWeaponChange += OnPlayerWeaponChange;
@@ -41,11 +46,12 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         Player.Health.OnHeal += OnHeal;
         Player.OnAbnormalityStart += OnPlayerAbnormalityStart;
         Player.OnAbnormalityEnd += OnPlayerAbnormalityEnd;
-        _context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     public void UnhookEvents()
     {
+        MHRGame.OnRiseHudStateChange += OnRiseHudStateChange;
+
         Player.OnLogin -= OnPlayerLogin;
         Player.OnLevelChange -= OnPlayerLevelChange;
         Player.OnWeaponChange -= OnPlayerWeaponChange;
@@ -54,7 +60,6 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         Player.Health.OnHeal -= OnHeal;
         Player.OnAbnormalityStart -= OnPlayerAbnormalityStart;
         Player.OnAbnormalityEnd -= OnPlayerAbnormalityEnd;
-        _context.Game.OnHudStateChange -= OnHudStateChange;
 
         if (Player.Weapon is IMeleeWeapon weapon)
         {
@@ -67,7 +72,7 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     private void OnPlayerAbnormalityEnd(object sender, IAbnormality e)
     {
-        AbnormalityCategory category = _context.Game.AbnormalityCategorizationService.Categorize(e);
+        AbnormalityCategory category = Game.AbnormalityCategorizationService.Categorize(e);
 
         if (category == AbnormalityCategory.None)
             return;
@@ -80,7 +85,7 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     private void OnPlayerAbnormalityStart(object sender, IAbnormality e)
     {
-        AbnormalityCategory category = _context.Game.AbnormalityCategorizationService.Categorize(e);
+        AbnormalityCategory category = Game.AbnormalityCategorizationService.Categorize(e);
 
         if (category == AbnormalityCategory.None)
             return;
@@ -141,10 +146,12 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.RecoverableHealth = e.RecoverableHealth;
     }
 
-    private void OnHudStateChange(object sender, IGame e) => _viewModel.IsPlayerHudOpen = e.IsPlayerHudOpen;
+    private void OnRiseHudStateChange(object sender, MHRGame e) => _viewModel.IsPlayerHudHide = e.IsPlayerHudHide;
 
     private void UpdateData()
     {
+        _viewModel.IsPlayerHudHide = MHRGame.IsPlayerHudHide;
+
         _viewModel.MaxHealth = Player.Health.Max;
         _viewModel.MaxExtendableHealth = Player.Health.MaxPossibleHealth;
         _viewModel.Health = Player.Health.Current;
@@ -155,6 +162,5 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.Stamina = Player.Stamina.Current;
         _viewModel.Name = Player.Name;
         _viewModel.Level = Player.MasterRank;
-        _viewModel.IsPlayerHudOpen = _context.Game.IsPlayerHudOpen;
     }
 }

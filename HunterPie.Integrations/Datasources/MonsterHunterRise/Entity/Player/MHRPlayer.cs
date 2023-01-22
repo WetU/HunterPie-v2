@@ -609,12 +609,14 @@ public sealed class MHRPlayer : CommonPlayer
 
         // For when Berserk skill is active
         if (_conditions.CommonCondition.HasFlag(CommonConditions.Berserk))
+        {
             healthData = healthData with
             {
                 Health = 0,
                 RecoverableHealth = healthData.Health,
                 Heal = healthData.Heal > healthData.Health ? healthData.Heal : 0
             };
+        }
 
         _health.Update(healthData);
 

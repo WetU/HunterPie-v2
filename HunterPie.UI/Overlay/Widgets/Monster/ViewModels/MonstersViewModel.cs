@@ -15,6 +15,6 @@ public class MonstersViewModel : Bindable
     public int VisibleMonsters { get => _visibleMonsters; set => SetValue(ref _visibleMonsters, value); }
     public int MonstersCount { get => _monstersCount; set => SetValue(ref _monstersCount, Math.Max(MINIMUM_MONSTER_COUNT, value)); }
 
-    private bool _isTgCameraOpen;
-    public bool IsTgCameraOpen { get => _isTgCameraOpen; set => SetValue(ref _isTgCameraOpen, value); }
+    private bool _isTgCameraHide;
+    public bool IsTgCameraHide { get => _isTgCameraHide; set => SetValue(ref _isTgCameraHide, value); }
 }

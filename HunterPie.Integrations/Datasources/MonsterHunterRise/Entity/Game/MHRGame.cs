@@ -1,5 +1,6 @@
 ﻿
 using HunterPie.Core.Address.Map;
+using HunterPie.Core.Architecture.Events;
 using HunterPie.Core.Domain;
 using HunterPie.Core.Domain.Process;
 using HunterPie.Core.Extensions;
@@ -36,9 +37,9 @@ public sealed class MHRGame : CommonGame
     private int _maxDeaths;
     private int _deaths;
     private bool _isHudOpen;
-    private bool _isPlayerHudOpen;
-    private bool _isTgCameraOpen;
-    private bool _isWirebugHudOpen;
+    private bool _isPlayerHudHide;
+    private bool _isTgCameraHide;
+    private bool _isWirebugHudHide;
     private DateTime _lastDamageUpdate = DateTime.MinValue;
     private readonly Dictionary<long, IMonster> _monsters = new();
     private readonly Dictionary<long, EntityDamageData[]> _damageDone = new();
@@ -56,45 +57,6 @@ public sealed class MHRGame : CommonGame
             if (value != _isHudOpen)
             {
                 _isHudOpen = value;
-                this.Dispatch(_onHudStateChange, this);
-            }
-        }
-    }
-
-    public override bool IsPlayerHudOpen
-    {
-        get => _isPlayerHudOpen;
-        protected set
-        {
-            if (value != _isPlayerHudOpen)
-            {
-                _isPlayerHudOpen = value;
-                this.Dispatch(_onHudStateChange, this);
-            }
-        }
-    }
-
-    public override bool IsTgCameraOpen
-    {
-        get => _isTgCameraOpen;
-        protected set
-        {
-            if (value != _isTgCameraOpen)
-            {
-                _isTgCameraOpen = value;
-                this.Dispatch(_onHudStateChange, this);
-            }
-        }
-    }
-
-    public override bool IsWirebugHudOpen
-    {
-        get => _isWirebugHudOpen;
-        protected set
-        {
-            if (value != _isWirebugHudOpen)
-            {
-                _isWirebugHudOpen = value;
                 this.Dispatch(_onHudStateChange, this);
             }
         }
@@ -139,6 +101,52 @@ public sealed class MHRGame : CommonGame
                 this.Dispatch(_onDeathCountChange, this);
             }
         }
+    }
+
+    public bool IsPlayerHudHide
+    {
+        get => _isPlayerHudHide;
+        set
+        {
+            if (value != _isPlayerHudHide)
+            {
+                _isPlayerHudHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    public bool IsTgCameraHide
+    {
+        get => _isTgCameraHide;
+        set
+        {
+            if (value != _isTgCameraHide)
+            {
+                _isTgCameraHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    public bool IsWirebugHudHide
+    {
+        get => _isWirebugHudHide;
+        set
+        {
+            if (value != _isWirebugHudHide)
+            {
+                _isWirebugHudHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    private readonly SmartEvent<MHRGame> _onRiseHudStateChange = new();
+    public event EventHandler<MHRGame> OnRiseHudStateChange
+    {
+        add => _onRiseHudStateChange.Hook(value);
+        remove => _onRiseHudStateChange.Unhook(value);
     }
 
     public override IAbnormalityCategorizationService AbnormalityCategorizationService { get; } = new MHRAbnormalityCategorizationService();
@@ -274,45 +282,29 @@ public sealed class MHRGame : CommonGame
         );
 
         IsHudOpen = isHudOpen == 1 || isCutsceneActive;
+    }
 
-        long playerHudPtr = Process.Memory.ReadPtr(
+    [ScannableMethod]
+    private void GetRiseUIState()
+    {
+        long playerHudPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("GUI_HUD_OFFSETS")
         );
 
-        if (playerHudPtr.IsNullPointer())
-            IsPlayerHudOpen = false;
-        else
-        {
-            byte isPlayerHudOpen = Process.Memory.Read<byte>(playerHudPtr + 0x90);
-            IsPlayerHudOpen = isPlayerHudOpen != 1;
-        }
-
-        long tgCameraPtr = Process.Memory.ReadPtr(
+        long tgCameraPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("TARGET_CAMERA_HUD_OFFSETS")
         );
 
-        if (tgCameraPtr.IsNullPointer())
-            IsTgCameraOpen = false;
-        else
-        {
-            byte isTgCameraOpen = Process.Memory.Read<byte>(tgCameraPtr + 0x90);
-            IsTgCameraOpen = isTgCameraOpen != 1;
-        }
-
-        long wirebugHudPtr = Process.Memory.ReadPtr(
+        long wirebugHudPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_HUD_OFFSETS")
         );
 
-        if (wirebugHudPtr.IsNullPointer())
-            IsWirebugHudOpen = false;
-        else
-        {
-            byte isWirebugHudOpen = Process.Memory.Read<byte>(wirebugHudPtr + 0x90);
-            IsWirebugHudOpen = isWirebugHudOpen != 1;
-        }
+        IsPlayerHudHide = playerHudPtr == 0 || Process.Memory.Read<bool>(playerHudPtr + 0x90);
+        IsTgCameraHide = tgCameraPtr == 0 || Process.Memory.Read<bool>(tgCameraPtr + 0x90);
+        IsWirebugHudHide = wirebugHudPtr == 0 || Process.Memory.Read<bool>(wirebugHudPtr + 0x90);
     }
 
     [ScannableMethod]

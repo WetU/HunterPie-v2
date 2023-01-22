@@ -18,9 +18,10 @@
         <converters:PercentageToRelativeSizeConverter x:Key="PercentageToRelativeSizeConverter"/>
         <converters:WeaponToIconConverter x:Key="WeaponToIconConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:WeaponToMeleeVisibility x:Key="WeaponToMeleeVisibility"/>
     </UserControl.Resources>
-    <Grid Visibility="{Binding IsPlayerHudOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <Grid Visibility="{Binding IsPlayerHudHide, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>

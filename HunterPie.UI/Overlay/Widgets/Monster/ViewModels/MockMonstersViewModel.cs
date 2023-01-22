@@ -7,7 +7,7 @@ public class MockMonstersViewModel : MonstersViewModel
 {
     public MockMonstersViewModel(MonsterWidgetConfig config)
     {
-        IsTgCameraOpen = true;
+        IsTgCameraHide = false;
 
         Monsters.Add(new MockBossMonsterViewModel(config)
         {

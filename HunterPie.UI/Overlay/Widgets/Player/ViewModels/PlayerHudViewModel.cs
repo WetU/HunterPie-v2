@@ -6,7 +6,6 @@ namespace HunterPie.UI.Overlay.Widgets.Player.ViewModels;
 
 public class PlayerHudViewModel : ViewModel
 {
-
     private int _level;
     public int Level { get => _level; set => SetValue(ref _level, value); }
 
@@ -50,6 +49,6 @@ public class PlayerHudViewModel : ViewModel
 
     public WeaponSharpnessViewModel SharpnessViewModel { get; } = new();
 
-    private bool _isPlayerHudOpen;
-    public bool IsPlayerHudOpen { get => _isPlayerHudOpen; set => SetValue(ref _isPlayerHudOpen, value); }
+    private bool _isPlayerHudHide;
+    public bool IsPlayerHudHide { get => _isPlayerHudHide; set => SetValue(ref _isPlayerHudHide, value); }
 }

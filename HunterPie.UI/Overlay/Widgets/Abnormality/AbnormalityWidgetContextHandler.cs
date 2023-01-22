@@ -2,6 +2,7 @@
 using HunterPie.Core.Game;
 using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.Game.Entity.Player;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
 using HunterPie.UI.Overlay.Widgets.Abnormality.View;
 using HunterPie.UI.Overlay.Widgets.Abnormality.ViewModel;
 using System.Linq;
@@ -17,6 +18,9 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
     public readonly AbnormalityBarViewModel ViewModel;
     private readonly AbnormalityBarView View;
     private ref AbnormalityWidgetConfig Config => ref _config;
+    private IGame Game => Context.Game;
+    private IPlayer Player => Game.Player;
+    private MHRGame MHRGame => (MHRGame)Game;
 
     public AbnormalityWidgetContextHandler(IContext context, ref AbnormalityWidgetConfig config)
     {
@@ -33,9 +37,10 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
-        Context.Game.Player.OnAbnormalityStart += OnAbnormalityStart;
-        Context.Game.Player.OnAbnormalityEnd += OnAbnormalityEnd;
-        Context.Game.OnHudStateChange += OnHudStateChange;
+        MHRGame.OnRiseHudStateChange += OnRiseHudStateChange;
+
+        Player.OnAbnormalityStart += OnAbnormalityStart;
+        Player.OnAbnormalityEnd += OnAbnormalityEnd;
     }
 
     private void OnAbnormalityEnd(object sender, IAbnormality e)
@@ -64,23 +69,24 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
         }, DispatcherPriority.Normal);
     }
 
-    private void OnHudStateChange(object sender, IGame e) => ViewModel.IsPlayerHudOpen = e.IsPlayerHudOpen;
+    private void OnRiseHudStateChange(object sender, MHRGame e) => ViewModel.IsPlayerHudHide = e.IsPlayerHudHide;
 
     public void UnhookEvents()
     {
-        Context.Game.Player.OnAbnormalityStart -= OnAbnormalityStart;
-        Context.Game.Player.OnAbnormalityEnd -= OnAbnormalityEnd;
-        Context.Game.OnHudStateChange -= OnHudStateChange;
+        MHRGame.OnRiseHudStateChange -= OnRiseHudStateChange;
+
+        Player.OnAbnormalityStart -= OnAbnormalityStart;
+        Player.OnAbnormalityEnd -= OnAbnormalityEnd;
         _ = WidgetManager.Unregister<AbnormalityBarView, AbnormalityWidgetConfig>(View);
     }
 
     private void UpdateData()
     {
-        ViewModel.IsPlayerHudOpen = Context.Game.IsPlayerHudOpen;
+        ViewModel.IsPlayerHudHide = MHRGame.IsPlayerHudHide;
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-            foreach (IAbnormality abnormality in Context.Game.Player.Abnormalities)
+            foreach (IAbnormality abnormality in Player.Abnormalities)
             {
                 if (!Config.AllowedAbnormalities.Contains(abnormality.Id))
                     return;

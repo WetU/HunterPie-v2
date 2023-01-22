@@ -54,7 +54,7 @@ public class MockAbnormalityBarViewModel : AbnormalityBarViewModel
             }
         });
 
-        IsPlayerHudOpen = true;
+        IsPlayerHudHide = false;
     }
 
     private void SetupAbnormalities()

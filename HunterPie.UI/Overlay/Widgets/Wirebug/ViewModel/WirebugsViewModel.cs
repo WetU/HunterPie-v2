@@ -5,8 +5,8 @@ namespace HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 
 public class WirebugsViewModel : Bindable
 {
-    private bool _isWirebugHudOpen;
+    private bool _isWirebugHudHide;
 
     public ObservableCollection<WirebugViewModel> Elements { get; } = new();
-    public bool IsWirebugHudOpen { get => _isWirebugHudOpen; set => SetValue(ref _isWirebugHudOpen, value); }
+    public bool IsWirebugHudHide { get => _isWirebugHudHide; set => SetValue(ref _isWirebugHudHide, value); }
 }

@@ -20,12 +20,6 @@ public interface IGame : IDisposable
 
     public bool IsHudOpen { get; }
 
-    public bool IsPlayerHudOpen { get; }
-
-    public bool IsTgCameraOpen { get; }
-
-    public bool IsWirebugHudOpen { get; }
-    
     public float TimeElapsed { get; }
 
     public int MaxDeaths { get; }

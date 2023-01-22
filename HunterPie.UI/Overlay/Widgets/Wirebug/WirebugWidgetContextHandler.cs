@@ -1,10 +1,11 @@
 ﻿using HunterPie.Core.Client;
 using HunterPie.Core.Client.Configuration.Overlay;
-using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Integrations.Datasources.MonsterHunterRise;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 using HunterPie.UI.Overlay.Widgets.Wirebug.Views;
+using System;
 
 namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 
@@ -13,6 +14,7 @@ public class WirebugWidgetContextHandler : IContextHandler
     private readonly MHRContext _context;
     private readonly WirebugsViewModel _viewModel;
     private readonly WirebugsView _view;
+    private MHRGame Game => (MHRGame)_context.Game;
     private MHRPlayer Player => (MHRPlayer)_context.Game.Player;
 
     public WirebugWidgetContextHandler(MHRContext context)
@@ -29,14 +31,14 @@ public class WirebugWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
+        Game.OnRiseHudStateChange += OnRiseHudStateChange;
         Player.OnWirebugsRefresh += OnWirebugsRefresh;
-        _context.Game.OnHudStateChange += OnHudStateChange;
     }
 
     public void UnhookEvents()
     {
+        Game.OnRiseHudStateChange -= OnRiseHudStateChange;
         Player.OnWirebugsRefresh -= OnWirebugsRefresh;
-        _context.Game.OnHudStateChange -= OnHudStateChange;
 
         foreach (WirebugViewModel vm in _viewModel.Elements)
             if (vm is WirebugContextHandler model)
@@ -46,8 +48,6 @@ public class WirebugWidgetContextHandler : IContextHandler
 
         _ = WidgetManager.Unregister<WirebugsView, WirebugWidgetConfig>(_view);
     }
-
-    private void OnHudStateChange(object sender, IGame e) => _viewModel.IsWirebugHudOpen = e.IsWirebugHudOpen;
 
     private void OnWirebugsRefresh(object sender, MHRWirebug[] e)
     {
@@ -64,9 +64,11 @@ public class WirebugWidgetContextHandler : IContextHandler
         });
     }
 
+    private void OnRiseHudStateChange(object sender, MHRGame e) => _viewModel.IsWirebugHudHide = e.IsWirebugHudHide;
+
     private void UpdateData()
     {
-        _viewModel.IsWirebugHudOpen = _context.Game.IsWirebugHudOpen;
+        _viewModel.IsWirebugHudHide = Game.IsWirebugHudHide;
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
             _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
