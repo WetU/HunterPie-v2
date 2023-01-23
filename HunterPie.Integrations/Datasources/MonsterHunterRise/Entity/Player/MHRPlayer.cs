@@ -1,5 +1,4 @@
-﻿
-using HunterPie.Core.Address.Map;
+﻿using HunterPie.Core.Address.Map;
 using HunterPie.Core.Architecture.Events;
 using HunterPie.Core.Domain;
 using HunterPie.Core.Domain.Interfaces;
@@ -341,7 +340,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
         );
 
-        if (consumableBuffs.IsNullPointer())
+        if (consumableBuffs == 0)
         {
             ClearAbnormalities(_abnormalities);
             return;
@@ -399,7 +398,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
-        if (debuffsPtr.IsNullPointer())
+        if (debuffsPtr == 0)
         {
             ClearAbnormalities(_abnormalities);
             return;
@@ -415,7 +414,7 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
             };
 
-            if (abnormSubPtr.IsNullPointer())
+            if (abnormSubPtr == 0)
                 continue;
 
             int abnormSubId = schema.DependsOn switch
@@ -608,14 +607,15 @@ public sealed class MHRPlayer : CommonPlayer
             Heal = playerHud.Heal
         };
 
-        // For when Berserk skill is active
         if (_conditions.CommonCondition.HasFlag(CommonConditions.Berserk))
+        {
             healthData = healthData with
             {
                 Health = 0,
                 RecoverableHealth = healthData.Health,
                 Heal = healthData.Heal > healthData.Health ? healthData.Heal : 0
             };
+        }
 
         _health.Update(healthData);
 

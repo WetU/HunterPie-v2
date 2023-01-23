@@ -25,7 +25,6 @@ public class MockPlayerHudViewModel : PlayerHudViewModel
         MaxStamina = 2500.0;
         MaxPossibleStamina = 2500.0;
         Weapon = WeaponId.SwitchAxe;
-        InHuntingZone = true;
     }
 
     private void SetupSharpnessMocks()

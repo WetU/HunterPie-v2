@@ -13,10 +13,11 @@
            Style="{StaticResource STYLE_WIREBUG_WIDGET}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <vm:MockWirebugsViewModel x:Key="MockViewModel"/>
         <converters:SecondsToTimeString x:Key="SecondsToTimeString"/>
     </UserControl.Resources>
-    <Grid Visibility="{Binding IsAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+    <Grid Visibility="{Binding IsWirebugHudHide, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
         <ItemsControl ItemsSource="{Binding Elements, Mode=OneWay}"
                       HorizontalAlignment="Center"
                       d:DataContext="{StaticResource MockViewModel}">

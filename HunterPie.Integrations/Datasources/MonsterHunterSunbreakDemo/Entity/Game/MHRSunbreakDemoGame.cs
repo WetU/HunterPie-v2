@@ -24,7 +24,6 @@ public sealed class MHRSunbreakDemoGame : CommonGame
     public override IPlayer Player => _player;
     public override List<IMonster> Monsters { get; } = new();
     public override bool IsHudOpen { get; protected set; }
-
     public override IChat? Chat => null;
     public override float TimeElapsed
     {
