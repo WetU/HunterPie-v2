@@ -21,7 +21,11 @@
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:WeaponToMeleeVisibility x:Key="WeaponToMeleeVisibility"/>
     </UserControl.Resources>
+<<<<<<< HEAD
     <Grid>
+=======
+    <Grid Visibility="{Binding IsPlayerHudHide, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+>>>>>>> 8a854c465d57939c679700374647777d50429afc
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>

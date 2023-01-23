@@ -6,6 +6,7 @@ using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.System;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
 using HunterPie.UI.Overlay.Widgets.Player.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Player.Views;
 using System;
@@ -18,6 +19,10 @@ public class PlayerHudWidgetContextHandler : IContextHandler
     private readonly IContext _context;
     private IGame Game => _context.Game;
     private IPlayer Player => Game.Player;
+<<<<<<< HEAD
+=======
+    private MHRGame MHRGame => (MHRGame)Game;
+>>>>>>> 8a854c465d57939c679700374647777d50429afc
 
     public PlayerHudWidgetContextHandler(IContext context)
     {
@@ -34,10 +39,11 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
+        MHRGame.OnRiseHudStateChange += OnRiseHudStateChange;
+
         Player.OnLogin += OnPlayerLogin;
         Player.OnLevelChange += OnPlayerLevelChange;
         Player.OnWeaponChange += OnPlayerWeaponChange;
-        Player.OnStageUpdate += OnStageChange;
         Player.Health.OnHealthChange += OnPlayerHealthChange;
         Player.Stamina.OnStaminaChange += OnPlayerStaminaChange;
         Player.Health.OnHeal += OnHeal;
@@ -47,10 +53,11 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     public void UnhookEvents()
     {
+        MHRGame.OnRiseHudStateChange += OnRiseHudStateChange;
+
         Player.OnLogin -= OnPlayerLogin;
         Player.OnLevelChange -= OnPlayerLevelChange;
         Player.OnWeaponChange -= OnPlayerWeaponChange;
-        Player.OnStageUpdate -= OnStageChange;
         Player.Health.OnHealthChange -= OnPlayerHealthChange;
         Player.Stamina.OnStaminaChange -= OnPlayerStaminaChange;
         Player.Health.OnHeal -= OnHeal;
@@ -90,8 +97,6 @@ public class PlayerHudWidgetContextHandler : IContextHandler
     }
 
     private void OnHeal(object sender, HealthChangeEventArgs e) => _viewModel.Heal = e.Heal;
-
-    private void OnStageChange(object sender, EventArgs e) => _viewModel.InHuntingZone = Player.InHuntingZone;
 
     private void OnPlayerLevelChange(object sender, LevelChangeEventArgs e) => _viewModel.Level = Player.MasterRank;
 
@@ -145,8 +150,12 @@ public class PlayerHudWidgetContextHandler : IContextHandler
         _viewModel.RecoverableHealth = e.RecoverableHealth;
     }
 
+    private void OnRiseHudStateChange(object sender, MHRGame e) => _viewModel.IsPlayerHudHide = e.IsPlayerHudHide;
+
     private void UpdateData()
     {
+        _viewModel.IsPlayerHudHide = MHRGame.IsPlayerHudHide;
+
         _viewModel.MaxHealth = Player.Health.Max;
         _viewModel.MaxExtendableHealth = Player.Health.MaxPossibleHealth;
         _viewModel.Health = Player.Health.Current;

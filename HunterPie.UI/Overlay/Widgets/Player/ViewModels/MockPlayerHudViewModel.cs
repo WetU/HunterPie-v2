@@ -25,6 +25,10 @@ public class MockPlayerHudViewModel : PlayerHudViewModel
         MaxStamina = 2500.0;
         MaxPossibleStamina = 2500.0;
         Weapon = WeaponId.SwitchAxe;
+<<<<<<< HEAD
+=======
+        IsPlayerHudHide = false;
+>>>>>>> 8a854c465d57939c679700374647777d50429afc
     }
 
     private void SetupSharpnessMocks()

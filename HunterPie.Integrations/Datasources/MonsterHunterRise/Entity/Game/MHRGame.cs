@@ -1,5 +1,6 @@
 ﻿
 using HunterPie.Core.Address.Map;
+using HunterPie.Core.Architecture.Events;
 using HunterPie.Core.Domain;
 using HunterPie.Core.Domain.Process;
 using HunterPie.Core.Extensions;
@@ -36,6 +37,9 @@ public sealed class MHRGame : CommonGame
     private int _maxDeaths;
     private int _deaths;
     private bool _isHudOpen;
+    private bool _isPlayerHudHide;
+    private bool _isTgCameraHide;
+    private bool _isWirebugHudHide;
     private DateTime _lastDamageUpdate = DateTime.MinValue;
     private readonly Dictionary<long, IMonster> _monsters = new();
     private readonly Dictionary<long, EntityDamageData[]> _damageDone = new();
@@ -97,6 +101,52 @@ public sealed class MHRGame : CommonGame
                 this.Dispatch(_onDeathCountChange, this);
             }
         }
+    }
+
+    public bool IsPlayerHudHide
+    {
+        get => _isPlayerHudHide;
+        set
+        {
+            if (value != _isPlayerHudHide)
+            {
+                _isPlayerHudHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    public bool IsTgCameraHide
+    {
+        get => _isTgCameraHide;
+        set
+        {
+            if (value != _isTgCameraHide)
+            {
+                _isTgCameraHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    public bool IsWirebugHudHide
+    {
+        get => _isWirebugHudHide;
+        set
+        {
+            if (value != _isWirebugHudHide)
+            {
+                _isWirebugHudHide = value;
+                this.Dispatch(_onRiseHudStateChange, this);
+            }
+        }
+    }
+
+    private readonly SmartEvent<MHRGame> _onRiseHudStateChange = new();
+    public event EventHandler<MHRGame> OnRiseHudStateChange
+    {
+        add => _onRiseHudStateChange.Hook(value);
+        remove => _onRiseHudStateChange.Unhook(value);
     }
 
     public override IAbnormalityCategorizationService AbnormalityCategorizationService { get; } = new MHRAbnormalityCategorizationService();
@@ -232,6 +282,29 @@ public sealed class MHRGame : CommonGame
         );
 
         IsHudOpen = isHudOpen == 1 || isCutsceneActive;
+    }
+
+    [ScannableMethod]
+    private void GetRiseUIState()
+    {
+        long playerHudPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("GUI_HUD_OFFSETS")
+        );
+
+        long tgCameraPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("TARGET_CAMERA_HUD_OFFSETS")
+        );
+
+        long wirebugHudPtr = Process.Memory.Read(
+            AddressMap.GetAbsolute("UI_ADDRESS"),
+            AddressMap.Get<int[]>("WIREBUG_HUD_OFFSETS")
+        );
+
+        IsPlayerHudHide = playerHudPtr == 0 || Process.Memory.Read<bool>(playerHudPtr + 0x90);
+        IsTgCameraHide = tgCameraPtr == 0 || Process.Memory.Read<bool>(tgCameraPtr + 0x90);
+        IsWirebugHudHide = wirebugHudPtr == 0 || Process.Memory.Read<bool>(wirebugHudPtr + 0x90);
     }
 
     [ScannableMethod]
