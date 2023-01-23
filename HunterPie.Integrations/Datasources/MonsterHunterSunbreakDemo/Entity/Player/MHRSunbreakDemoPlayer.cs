@@ -151,7 +151,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     private void AbnormalitiesCleanup()
     {
         long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
@@ -163,7 +163,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     private void GetPlayerConsumableAbnormalities()
     {
         long consumableBuffs = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
         );
 
@@ -200,7 +200,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     private void GetPlayerDebuffAbnormalities()
     {
         long debuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
@@ -238,7 +238,7 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     private void GetPlayerSongAbnormalities()
     {
         long songBuffsPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
         );
 

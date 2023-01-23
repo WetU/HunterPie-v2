@@ -13,14 +13,13 @@
            x:TypeArguments="viewmodels:MonstersViewModel"
            Style="{StaticResource STYLE_MONSTERS_WIDGET}">
     <UserControl.Resources>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:OrientationConverter x:Key="OrientationConverter"/>
         <converters:DynamicMonsterBarSizeConverter x:Key="DynamicMonsterBarSizeConverter"/>
         <converters:BindingMultiplierConverter x:Key="BindingMultiplierConverter"/>
         <enums:Orientation x:Key="OHorizontal">Horizontal</enums:Orientation>
         <enums:Orientation x:Key="OVertical">Vertical</enums:Orientation>
     </UserControl.Resources>
-    <Grid Visibility="{Binding IsTgCameraHide, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+    <Grid>
         <ItemsControl ItemsSource="{Binding Monsters}"
                       HorizontalContentAlignment="Center">
             <ItemsControl.Style>

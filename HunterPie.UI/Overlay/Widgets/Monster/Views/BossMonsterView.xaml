@@ -13,7 +13,6 @@
              xmlns:view="clr-namespace:HunterPie.UI.Overlay.Widgets.Monster.Views"
              xmlns:ocomponents="clr-namespace:HunterPie.UI.Overlay.Components"
              xmlns:loading="clr-namespace:HunterPie.UI.Controls.Loading"
-             xmlns:selectors="clr-namespace:HunterPie.UI.Architecture.Selectors"
              xmlns:genums="clr-namespace:HunterPie.Core.Game.Enums;assembly=HunterPie.Core"
              d:DataContext="{d:DesignInstance Type=viewmodels:BossMonsterViewModel}"
              IsHitTestVisible="False"

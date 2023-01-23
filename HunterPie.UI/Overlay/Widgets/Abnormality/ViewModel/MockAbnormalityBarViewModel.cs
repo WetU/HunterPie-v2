@@ -53,8 +53,6 @@ public class MockAbnormalityBarViewModel : AbnormalityBarViewModel
                     vm.Timer = vm.MaxTimer;
             }
         });
-
-        IsPlayerHudHide = false;
     }
 
     private void SetupAbnormalities()

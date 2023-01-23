@@ -1,20 +1,24 @@
 ﻿using HunterPie.Core.Client;
 using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Integrations.Datasources.MonsterHunterRise;
-using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.UI.Overlay.Widgets.Wirebug.ViewModel;
 using HunterPie.UI.Overlay.Widgets.Wirebug.Views;
 using System;
+using System.Collections.Generic;
 
 namespace HunterPie.UI.Overlay.Widgets.Wirebug;
 
 public class WirebugWidgetContextHandler : IContextHandler
 {
+    private static readonly HashSet<int> UnavailableStages = new() {
+        1, // Room
+        3, // Gathering Hub
+        4, // Hub Prep Plaza
+    };
     private readonly MHRContext _context;
     private readonly WirebugsViewModel _viewModel;
     private readonly WirebugsView _view;
-    private MHRGame Game => (MHRGame)_context.Game;
     private MHRPlayer Player => (MHRPlayer)_context.Game.Player;
 
     public WirebugWidgetContextHandler(MHRContext context)
@@ -31,13 +35,13 @@ public class WirebugWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
-        Game.OnRiseHudStateChange += OnRiseHudStateChange;
+        Player.OnStageUpdate += OnStageUpdate;
         Player.OnWirebugsRefresh += OnWirebugsRefresh;
     }
 
     public void UnhookEvents()
     {
-        Game.OnRiseHudStateChange -= OnRiseHudStateChange;
+        Player.OnStageUpdate -= OnStageUpdate;
         Player.OnWirebugsRefresh -= OnWirebugsRefresh;
 
         foreach (WirebugViewModel vm in _viewModel.Elements)
@@ -48,6 +52,8 @@ public class WirebugWidgetContextHandler : IContextHandler
 
         _ = WidgetManager.Unregister<WirebugsView, WirebugWidgetConfig>(_view);
     }
+
+    private void OnStageUpdate(object sender, EventArgs e) => _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
 
     private void OnWirebugsRefresh(object sender, MHRWirebug[] e)
     {
@@ -64,11 +70,9 @@ public class WirebugWidgetContextHandler : IContextHandler
         });
     }
 
-    private void OnRiseHudStateChange(object sender, MHRGame e) => _viewModel.IsWirebugHudHide = e.IsWirebugHudHide;
-
     private void UpdateData()
     {
-        _viewModel.IsWirebugHudHide = Game.IsWirebugHudHide;
+        _viewModel.IsAvailable = !UnavailableStages.Contains(Player.StageId);
 
         foreach (MHRWirebug wirebug in Player.Wirebugs)
             _viewModel.Elements.Add(new WirebugContextHandler(wirebug));
