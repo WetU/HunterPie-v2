@@ -2,10 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:HunterPie.UI.Overlay.Widgets.Player.Views;assembly=HunterPie.UI"
                     xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters;assembly=HunterPie.UI">
-    <converters:PercentageToRelativeSizeConverter x:Key="PercentageToRelativeSizeConverter"/>
     <converters:WeaponToMeleeVisibility x:Key="WeaponToMeleeVisibility"/>
-    <converters:CombatStatusToIconConverter x:Key="CombatStatusToIconConverter"/>
-    <converters:CombatStatusToVisibilityConverter x:Key="CombatStatusToVisibilityConverter"/>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     <Style x:Key="STYLE_PLAYER_HUD_WIDGET" TargetType="{x:Type local:PlayerHudView}">
         <Setter Property="Template">
