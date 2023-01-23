@@ -330,10 +330,7 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetConsumableAbnormalities()
     {
         if (!InHuntingZone)
-        {
-            ClearAbnormalities(_abnormalities);
             return;
-        }
 
         long consumableBuffs = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
@@ -388,10 +385,7 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerDebuffAbnormalities()
     {
         if (!InHuntingZone)
-        {
-            ClearAbnormalities(_abnormalities);
             return;
-        }
 
         long debuffsPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
@@ -442,7 +436,10 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
                 if (schema.MaxTimer > 0)
-                    abnormality.Timer = schema.MaxTimer - abnormality.Timer;
+                {
+                    float tempTImer = schema.MaxTimer - abnormality.Timer;
+                    abnormality.Timer = tempTImer > 0 ? tempTImer : 0;
+                }
             }
             
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
@@ -458,17 +455,14 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerSongAbnormalities()
     {
         if (!InHuntingZone)
-        {
-            ClearAbnormalities(_abnormalities);
             return;
-        }
 
         long songBuffsPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
         );
 
-        if (songBuffsPtr.IsNullPointer())
+        if (songBuffsPtr == 0)
         {
             ClearAbnormalities(_abnormalities);
             return;
