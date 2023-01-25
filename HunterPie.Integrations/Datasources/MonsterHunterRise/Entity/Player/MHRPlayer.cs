@@ -46,6 +46,8 @@ public sealed class MHRPlayer : CommonPlayer
     private IWeapon _weapon;
     private WeaponType _weaponId = WeaponType.None;
     private MHRPlayerConditionStructure _conditions;
+    private CommonConditions CommonCondition => _conditions.CommonCondition;
+    private DebuffConditions DebuffCondition => _conditions.DebuffCondition;
     #endregion
 
     public override string Name
@@ -355,8 +357,8 @@ public sealed class MHRPlayer : CommonPlayer
 
             bool isConditionValid = schema.FlagType switch
             {
-                AbnormalityFlagType.RiseCommon => _conditions.CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
-                AbnormalityFlagType.RiseDebuff => _conditions.DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
+                AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
@@ -419,8 +421,8 @@ public sealed class MHRPlayer : CommonPlayer
 
             bool isConditionValid = schema.FlagType switch
             {
-                AbnormalityFlagType.RiseCommon => _conditions.CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
-                AbnormalityFlagType.RiseDebuff => _conditions.DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
+                AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
@@ -598,7 +600,7 @@ public sealed class MHRPlayer : CommonPlayer
             Heal = playerHud.Heal
         };
 
-        if (_conditions.CommonCondition.HasFlag(CommonConditions.Berserk))
+        if (CommonCondition.HasFlag(CommonConditions.Berserk))
         {
             healthData = healthData with
             {
@@ -641,10 +643,10 @@ public sealed class MHRPlayer : CommonPlayer
         ) != 0;
 
         WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
-            _conditions.CommonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
-            _conditions.CommonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
-            _conditions.CommonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
-            _conditions.DebuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
+            CommonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
+            CommonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
+            CommonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
+            DebuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
             WirebugState.None;
 
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
