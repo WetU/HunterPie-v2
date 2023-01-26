@@ -45,9 +45,9 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private WeaponType _weaponId = WeaponType.None;
-    private MHRPlayerConditionStructure _conditions;
-    private CommonConditions CommonCondition => _conditions.CommonCondition;
-    private DebuffConditions DebuffCondition => _conditions.DebuffCondition;
+    private CommonConditions CommonCondition;
+    private DebuffConditions DebuffCondition;
+    //private WeaponConditions WeaponCondition;
     #endregion
 
     public override string Name
@@ -272,6 +272,9 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerWeaponData()
     {
+        if (!InHuntingZone)
+            return;
+
         long weaponIdPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("WEAPON_ADDRESS"),
             AddressMap.Get<int[]>("WEAPON_OFFSETS")
@@ -695,10 +698,14 @@ public sealed class MHRPlayer : CommonPlayer
         if (!InHuntingZone)
             return;
 
-        _conditions = Process.Memory.Deref<MHRPlayerConditionStructure>(
+        MHRPlayerConditionStructure _conditions = Process.Memory.Deref<MHRPlayerConditionStructure>(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
         );
+
+        CommonCondition = _conditions.CommonCondition;
+        DebuffCondition = _conditions.DebuffCondition;
+        //WeaponCondition = _conditions.WeaponCondition;
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

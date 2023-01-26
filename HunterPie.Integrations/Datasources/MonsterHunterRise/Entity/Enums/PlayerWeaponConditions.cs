@@ -1,7 +1,7 @@
 ﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
 
 [Flags]
-public enum WeaponConditions : long
+public enum WeaponConditions : ulong
 {
     None = 0,
     ShotDamageUp = 1,
