@@ -217,18 +217,6 @@
                      FlagType="RiseCommon"
                      Flag="HealthRegen"
 					 IsInfinite="True"/>
-        <Abnormality Id="ABN_ESCAPE_UP"
-                     Name="ABNORMALITY_ESCAPE_UP"
-                     Icon="ICON_ESCAPE_UP"
-                     FlagType="RiseCommon"
-                     Flag="EscapeUp"
-					 IsInfinite="True"/>
-        <Abnormality Id="ABN_DEBUFF_ATKUP"
-                     Name="ABNORMALITY_DEBUFF_ATKUP"
-                     Icon="ICON_DEBUFF_ATKUP"
-                     FlagType="RiseCommon"
-                     Flag="DebuffAttackUp"
-					 IsInfinite="True"/>
     </Consumables>
     <Debuffs>
         <Abnormality Id="ABN_BLOOD"

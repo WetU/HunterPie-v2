@@ -10,13 +10,14 @@ namespace HunterPie.UI.Architecture.Converters;
 
 public class WirebugStateToColorConverter : IValueConverter
 {
-    private readonly Dictionary<WirebugState, Color> _stateColors = new(5)
+    private readonly Dictionary<WirebugState, Color> _stateColors = new(6)
     {
         { WirebugState.None, Resources.Get<Color>("WIREBUG_NORMAL") },
         { WirebugState.IceBlight, Resources.Get<Color>("WIREBUG_ICEBLIGHT") },
         { WirebugState.GoldWirebug, Resources.Get<Color>("WIREBUG_GOLD") },
         { WirebugState.RubyWirebug, Resources.Get<Color>("WIREBUG_RUBY") },
-        { WirebugState.WindMantle, Resources.Get<Color>("WIREBUG_WINDMANTLE") }
+        { WirebugState.WindMantle, Resources.Get<Color>("WIREBUG_WINDMANTLE") },
+        { WirebugState.Blocked, Resources.Get<Color>("WIREBUG_NORMAL")}
     };
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
