@@ -30,7 +30,7 @@ public enum WeaponConditions : ulong
     ShortSwordOilBuff = 1 << 23,
     HeavyBowgunFullAutoOverHeat = 1 << 24,
     BowArrowUp = 1 << 25,
-    GunLanceExplodePileBUff = 1 << 26,
+    GunLanceExplodePileBuff = 1 << 26,
     HornImpactPullsBuff = 1 << 27,
     LongSwordlaiCounterLv2 = 1 << 28,
     LongSwordlaiCounterLv3 = 1 << 29
