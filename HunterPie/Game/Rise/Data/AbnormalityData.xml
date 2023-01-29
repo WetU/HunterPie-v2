@@ -553,6 +553,11 @@
 					 FlagType="RiseCommon"
 					 Flag="LatentPower"
                      Category="Debuffs"/>
+		<Abnormality Id="ABN_MAXIMUM_MIGHT"
+					 Name="ABNORMALITY_MAXIMUM_MIGHT"
+					 Icon="ICON_ARMORSKILL_SALMON"
+					 IsInfinite="True"
+					 Category="Debuffs"/>
         <Abnormality Id="ABN_WINDMANTLE"
                      Offset="77C"
                      Name="ABNORMALITY_WINDMANTLE"
@@ -577,7 +582,7 @@
 					 Category="Consumables"/>
 		<Abnormality Id="ABN_BERSERK"
 					 Name="ABNORMALITY_BERSERK"
-					 Icon="ICON_ARMORSKILL_RED"
+					 Icon="ICON_ARMORSKILL_ORANGE"
 					 FlagType="RiseCommon"
 					 Flag="Berserk"
 					 IsInfinite="True"

@@ -48,6 +48,7 @@ public sealed class MHRPlayer : CommonPlayer
     private CommonConditions CommonCondition;
     private DebuffConditions DebuffCondition;
     //private WeaponConditions WeaponCondition;
+    private bool _maxMightActive = false;
     #endregion
 
     public override string Name
@@ -431,22 +432,27 @@ public sealed class MHRPlayer : CommonPlayer
 
             MHRDebuffStructure abnormality = new();
 
-            if (schema.IsInfinite)
-                abnormality.Timer = isConditionValid ? 1 : 0;
-            else if (isConditionValid)
+            if (schema.Id == "ABN_MAXIMUM_MIGHT")
+                abnormality.Timer = _maxMightActive ? 1 : 0;
+            else
             {
-                abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
-
-                if (!schema.IsBuildup)
-                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-
-                if (schema.MaxTimer > 0)
+                if (schema.IsInfinite)
+                    abnormality.Timer = isConditionValid ? 1 : 0;
+                else if (isConditionValid)
                 {
-                    float tempTImer = schema.MaxTimer - abnormality.Timer;
-                    abnormality.Timer = tempTImer > 0 ? tempTImer : 0;
+                    abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
+
+                    if (!schema.IsBuildup)
+                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+
+                    if (schema.MaxTimer > 0)
+                    {
+                        float tempTImer = schema.MaxTimer - abnormality.Timer;
+                        abnormality.Timer = tempTImer > 0 ? tempTImer : 0;
+                    }
                 }
             }
-            
+
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
                 _abnormalities,
                 schema,
@@ -474,6 +480,41 @@ public sealed class MHRPlayer : CommonPlayer
         long[] songBuffPtrs = Process.Memory.Read<long>(songBuffsPtr + 0x20, songBuffsLength);
 
         DerefSongBuffs(songBuffPtrs);
+    }
+
+    [ScannableMethod]
+    private void GetMaxmimumMightState()
+    {
+        if (!InHuntingZone)
+        {
+            _maxMightActive = false;
+            return;
+        }
+
+        long actionFlagArray = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_ACTIONARG_FLAG_OFFSETS")
+        );
+
+        if (actionFlagArray == 0)
+        {
+            _maxMightActive = false;
+            return;
+        }
+
+        uint actionFlagArrayLength = Process.Memory.Read<uint>(actionFlagArray + 0x1C);
+        uint[] actionFlagPtrs = Process.Memory.Read<uint>(actionFlagArray + 0x20, actionFlagArrayLength);
+
+        foreach (uint flag in actionFlagPtrs)
+        {
+            if (flag == 32)
+            {
+                _maxMightActive = true;
+                return;
+            }
+        }
+
+        _maxMightActive = false;
     }
 
     [ScannableMethod]
