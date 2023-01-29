@@ -48,7 +48,7 @@ public sealed class MHRPlayer : CommonPlayer
     private CommonConditions CommonCondition;
     private DebuffConditions DebuffCondition;
     //private WeaponConditions WeaponCondition;
-    private bool _maxMightActive = false;
+    private ActionFlags ActionFlag;
     #endregion
 
     public override string Name
@@ -363,6 +363,7 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseAction => ActionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
@@ -427,30 +428,23 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseAction => ActionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
             MHRDebuffStructure abnormality = new();
 
-            if (schema.Id == "ABN_MAXIMUM_MIGHT")
-                abnormality.Timer = _maxMightActive ? 1 : 0;
-            else
+            if (schema.IsInfinite)
+                abnormality.Timer = isConditionValid ? 1 : 0;
+            else if (isConditionValid)
             {
-                if (schema.IsInfinite)
-                    abnormality.Timer = isConditionValid ? 1 : 0;
-                else if (isConditionValid)
-                {
-                    abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
+                abnormality = Process.Memory.Read<MHRDebuffStructure>(abnormSubPtr + schema.Offset);
 
-                    if (!schema.IsBuildup)
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
-
-                    if (schema.MaxTimer > 0)
-                    {
-                        float tempTImer = schema.MaxTimer - abnormality.Timer;
-                        abnormality.Timer = tempTImer > 0 ? tempTImer : 0;
-                    }
-                }
+                if (!schema.IsBuildup)
+                    abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                    
+                if (schema.MaxTimer > 0)
+                    abnormality.Timer = (schema.MaxTimer - abnormality.Timer) > 0 ? (schema.MaxTimer - abnormality.Timer) : 0;
             }
 
             HandleAbnormality<MHRDebuffAbnormality, MHRDebuffStructure>(
@@ -480,41 +474,6 @@ public sealed class MHRPlayer : CommonPlayer
         long[] songBuffPtrs = Process.Memory.Read<long>(songBuffsPtr + 0x20, songBuffsLength);
 
         DerefSongBuffs(songBuffPtrs);
-    }
-
-    [ScannableMethod]
-    private void GetMaxmimumMightState()
-    {
-        if (!InHuntingZone)
-        {
-            _maxMightActive = false;
-            return;
-        }
-
-        long actionFlagArray = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_ACTIONARG_FLAG_OFFSETS")
-        );
-
-        if (actionFlagArray == 0)
-        {
-            _maxMightActive = false;
-            return;
-        }
-
-        uint actionFlagArrayLength = Process.Memory.Read<uint>(actionFlagArray + 0x1C);
-        uint[] actionFlagPtrs = Process.Memory.Read<uint>(actionFlagArray + 0x20, actionFlagArrayLength);
-
-        foreach (uint flag in actionFlagPtrs)
-        {
-            if (flag == 32)
-            {
-                _maxMightActive = true;
-                return;
-            }
-        }
-
-        _maxMightActive = false;
     }
 
     [ScannableMethod]
@@ -747,6 +706,29 @@ public sealed class MHRPlayer : CommonPlayer
         CommonCondition = _conditions.CommonCondition;
         DebuffCondition = _conditions.DebuffCondition;
         //WeaponCondition = _conditions.WeaponCondition;
+    }
+
+    [ScannableMethod]
+    private void GetPlayerActionArgs()
+    {
+        if (!InHuntingZone)
+        {
+            ActionFlag = ActionFlags.None;
+            return;
+        }
+
+        long actionFlagArray = Process.Memory.Read(
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.Get<int[]>("PLAYER_ACTIONFLAG_OFFSETS")
+        );
+
+        if (actionFlagArray == 0)
+        {
+            ActionFlag = ActionFlags.None;
+            return;
+        }
+        
+        ActionFlag = (ActionFlags)Process.Memory.Read<ulong>(actionFlagArray + 0x20);
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

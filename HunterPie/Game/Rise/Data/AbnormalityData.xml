@@ -556,6 +556,8 @@
 		<Abnormality Id="ABN_MAXIMUM_MIGHT"
 					 Name="ABNORMALITY_MAXIMUM_MIGHT"
 					 Icon="ICON_ARMORSKILL_SALMON"
+					 FlagType="RiseAction"
+					 Flag="MaximumMight"
 					 IsInfinite="True"
 					 Category="Debuffs"/>
         <Abnormality Id="ABN_WINDMANTLE"
