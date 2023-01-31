@@ -31,13 +31,13 @@ public sealed class MHRSunbreakDemoGame : CommonGame
         protected set => throw new NotImplementedException();
     }
 
-    public override int MaxDeaths
+    public override uint MaxDeaths
     {
         get => throw new NotImplementedException();
         protected set => throw new NotImplementedException();
     }
 
-    public override int Deaths
+    public override uint Deaths
     {
         get => throw new NotImplementedException();
         protected set => throw new NotImplementedException();

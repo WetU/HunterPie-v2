@@ -28,7 +28,7 @@ public sealed class MHWGame : CommonGame
     private readonly Dictionary<long, IMonster> _monsters = new();
     private readonly Dictionary<long, EntityDamageData[]> _damageDone = new();
     private bool _isMouseVisible;
-    private int _deaths;
+    private uint _deaths;
     private readonly Stopwatch _localTimerStopwatch = new();
     private readonly Stopwatch _damageUpdateThrottleStopwatch = new();
 
@@ -61,13 +61,13 @@ public sealed class MHWGame : CommonGame
         this.Dispatch(_onTimeElapsedChange, new TimeElapsedChangeEventArgs(isReset, value));
     }
 
-    public override int MaxDeaths
+    public override uint MaxDeaths
     {
         get => 0;
         protected set => throw new NotSupportedException();
     }
 
-    public override int Deaths
+    public override uint Deaths
     {
         get => _deaths;
         protected set
@@ -166,7 +166,7 @@ public sealed class MHWGame : CommonGame
     [ScannableMethod]
     private void GetDeathCounter()
     {
-        int deathCounter = Process.Memory.Deref<int>(
+        uint deathCounter = Process.Memory.Deref<uint>(
             AddressMap.GetAbsolute("QUEST_DATA_ADDRESS"),
             AddressMap.Get<int[]>("QUEST_DEATH_COUNTER_OFFSETS")
         );

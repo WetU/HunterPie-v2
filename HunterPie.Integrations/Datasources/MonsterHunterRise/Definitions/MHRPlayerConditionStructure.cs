@@ -9,8 +9,8 @@ public struct MHRPlayerConditionStructure
     [FieldOffset(0x10)]
     public CommonConditions CommonCondition;
 
-    [FieldOffset(0x28)]
-    public WeaponConditions WeaponCondition;
+    //[FieldOffset(0x28)]
+    //public WeaponConditions WeaponCondition;
 
     [FieldOffset(0x38)]
     public DebuffConditions DebuffCondition;

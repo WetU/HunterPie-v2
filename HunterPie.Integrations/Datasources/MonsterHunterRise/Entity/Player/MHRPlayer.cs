@@ -640,7 +640,7 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        bool isBlocked = Process.Memory.Deref<int>(
+        bool isBlocked = Process.Memory.Deref<byte>(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
         ) != 0;
@@ -712,10 +712,7 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerActionArgs()
     {
         if (!InHuntingZone)
-        {
-            ActionFlag = ActionFlags.None;
             return;
-        }
 
         long actionFlagArray = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
@@ -723,12 +720,9 @@ public sealed class MHRPlayer : CommonPlayer
         );
 
         if (actionFlagArray == 0)
-        {
-            ActionFlag = ActionFlags.None;
             return;
-        }
-        
-        ActionFlag = (ActionFlags)Process.Memory.Read<ulong>(actionFlagArray + 0x20);
+
+        ActionFlag = (ActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]
