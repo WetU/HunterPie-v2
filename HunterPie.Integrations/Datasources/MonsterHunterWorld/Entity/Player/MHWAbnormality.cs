@@ -57,6 +57,7 @@ public sealed class MHWAbnormality : CommonAbnormality, IUpdatable<MHWAbnormalit
             AbnormalityData.Foods => AbnormalityType.Food,
             _ => throw new NotImplementedException("unreachable")
         };
+        IsInfinite = schema.IsInfinite;
         IsBuildup = schema.IsBuildup;
 
         if (IsBuildup)

@@ -66,24 +66,20 @@ internal class HuntStatisticsService : IHuntStatisticsService<HuntStatisticsMode
         _context.Game.OnMonsterSpawn -= OnMonsterSpawn;
     }
 
-    private void OnMonsterSpawn(object sender, IMonster e) => HandleMonster(e);
-
-    private void OnPartyMemberJoin(object sender, IPartyMember e) => HandlePartyMember(e);
-
-    private void HandleMonster(IMonster e)
+    private void OnMonsterSpawn(object sender, IMonster e)
     {
         _monsterStatisticsServices.Add(new MonsterStatisticsService(_context, e));
     }
 
-    private void HandlePartyMember(IPartyMember member)
+    private void OnPartyMemberJoin(object sender, IPartyMember e)
     {
-        if (member.Type != MemberType.Player)
+        if (e.Type != MemberType.Player)
             return;
 
-        _partyMembersStatisticsServices.Add(new PartyMemberStatisticsService(_context, member));
+        _partyMembersStatisticsServices.Add(new PartyMemberStatisticsService(_context, e));
     }
 
-    private static string GenerateHuntHash(List<PartyMemberModel> players, List<MonsterModel> monsters)
+    private string GenerateHuntHash(List<PartyMemberModel> players, List<MonsterModel> monsters)
     {
         string[] data = players.Select(p => p.Name)
             .Concat(monsters.Select(m => m.Id.ToString()))

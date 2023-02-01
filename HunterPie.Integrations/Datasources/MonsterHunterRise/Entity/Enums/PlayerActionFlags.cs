@@ -1,6 +1,8 @@
 ﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
-public enum Scroll
+
+[Flags]
+public enum ActionFlags : uint
 {
-    Red,
-    Blue
+    None = 0,
+    MaximumMight = 1 << 5
 }

@@ -35,8 +35,8 @@ public sealed class MHRGame : CommonGame
     private readonly MHRPlayer _player;
     private float _timeElapsed;
     private (int, DateTime) _lastTeleport = (0, DateTime.Now);
-    private int _maxDeaths;
-    private int _deaths;
+    private uint _maxDeaths;
+    private uint _deaths;
     private bool _isHudOpen;
     private bool _isInQuest;
     private DateTime _lastDamageUpdate = DateTime.MinValue;
@@ -76,7 +76,7 @@ public sealed class MHRGame : CommonGame
         }
     }
 
-    public override int MaxDeaths
+    public override uint MaxDeaths
     {
         get => _maxDeaths;
         protected set
@@ -89,7 +89,7 @@ public sealed class MHRGame : CommonGame
         }
     }
 
-    public override int Deaths
+    public override uint Deaths
     {
         get => _deaths;
         protected set
@@ -181,7 +181,7 @@ public sealed class MHRGame : CommonGame
 
         if (!isChatOpen)
             isChatOpen |= Process.Memory.Deref<byte>(
-                AddressMap.GetAbsolute("CHAT_UI_ADDRESS"),
+                AddressMap.GetAbsolute("UI_ADDRESS"),
                 AddressMap.Get<int[]>("CHAT_UI_OFFSETS")
             ) == 1;
 
@@ -211,18 +211,15 @@ public sealed class MHRGame : CommonGame
         if (!Player.InHuntingZone)
             return;
 
-        int maxDeathsCounter = Process.Memory.Deref<int>(
+        MaxDeaths = Process.Memory.Deref<uint>(
             AddressMap.GetAbsolute("QUEST_ADDRESS"),
             AddressMap.Get<int[]>("QUEST_MAX_DEATHS_OFFSETS")
         );
 
-        int deathCounter = Process.Memory.Deref<int>(
+        Deaths = Process.Memory.Deref<uint>(
             AddressMap.GetAbsolute("QUEST_ADDRESS"),
             AddressMap.Get<int[]>("QUEST_DEATH_COUNTER_OFFSETS")
         );
-
-        MaxDeaths = maxDeathsCounter;
-        Deaths = deathCounter;
     }
 
     [ScannableMethod]
@@ -269,12 +266,12 @@ public sealed class MHRGame : CommonGame
             AddressMap.Get<int[]>("MOUSE_OFFSETS")
         );
 
-        byte isCutsceneActive = Process.Memory.Deref<byte>(
+        bool isCutsceneActive = Process.Memory.Deref<bool>(
             AddressMap.GetAbsolute("EVENTCAMERA_ADDRESS"),
             AddressMap.Get<int[]>("CUTSCENE_STATE_OFFSETS")
         );
 
-        IsHudOpen = isHudOpen == 1 || isCutsceneActive != 0;
+        IsHudOpen = isHudOpen == 1 || isCutsceneActive;
     }
 
     [ScannableMethod]

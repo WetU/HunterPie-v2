@@ -58,6 +58,7 @@ public class AbnormalityData
         foreach (XmlNode abnormality in abnormalities)
         {
             string id = abnormality.Attributes["Id"].Value;
+            string ptrOffset = abnormality.Attributes["PtrOffset"]?.Value ?? "0";
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
@@ -81,6 +82,7 @@ public class AbnormalityData
                 Group = group,
             };
 
+            int.TryParse(ptrOffset, NumberStyles.HexNumber, null, out schema.PtrOffset);
             int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);
             int.TryParse(dependsOn, NumberStyles.HexNumber, null, out schema.DependsOn);
             int.TryParse(withValue, out schema.WithValue);

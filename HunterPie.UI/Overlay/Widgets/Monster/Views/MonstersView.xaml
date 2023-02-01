@@ -8,13 +8,11 @@
            xmlns:viewmodels="clr-namespace:HunterPie.UI.Overlay.Widgets.Monster.ViewModels"
            xmlns:converters="clr-namespace:HunterPie.UI.Architecture.Converters"
            xmlns:enums="clr-namespace:HunterPie.Core.Client.Configuration.Enums;assembly=HunterPie.Core"
-           xmlns:overlay="clr-namespace:HunterPie.UI.Overlay.Components"
            mc:Ignorable="d"
            d:DataContext="{d:DesignInstance Type=viewmodels:MonstersViewModel}"
            x:TypeArguments="viewmodels:MonstersViewModel"
            Style="{StaticResource STYLE_MONSTERS_WIDGET}">
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:OrientationConverter x:Key="OrientationConverter"/>
         <converters:DynamicMonsterBarSizeConverter x:Key="DynamicMonsterBarSizeConverter"/>
         <converters:BindingMultiplierConverter x:Key="BindingMultiplierConverter"/>

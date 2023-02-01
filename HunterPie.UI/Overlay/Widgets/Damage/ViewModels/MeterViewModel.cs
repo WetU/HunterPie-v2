@@ -12,8 +12,8 @@ public class MeterViewModel : ViewModel
 {
     public DamageMeterWidgetConfig Settings { get; }
     private double _timeElapsed = 1;
-    private int _maxDeaths;
-    private int _deaths;
+    private uint _maxDeaths;
+    private uint _deaths;
     private bool _inHuntingZone;
     private Func<double, string> _damageFormatter;
     private bool _hasPetsToBeDisplayed;
@@ -35,13 +35,13 @@ public class MeterViewModel : ViewModel
         set => SetValue(ref _timeElapsed, value);
     }
 
-    public int MaxDeaths
+    public uint MaxDeaths
     {
         get => _maxDeaths;
         set => SetValue(ref _maxDeaths, value);
     }
 
-    public int Deaths
+    public uint Deaths
     {
         get => _deaths;
         set => SetValue(ref _deaths, value);

@@ -3,6 +3,7 @@ using HunterPie.Core.Client.Configuration;
 using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Game;
 using HunterPie.Core.Game.Entity.Enemy;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.System;
 using HunterPie.UI.Overlay.Widgets.Monster.ViewModels;
 using HunterPie.UI.Overlay.Widgets.Monster.Views;
@@ -17,6 +18,7 @@ public class MonsterWidgetContextHandler : IContextHandler
     private readonly MonstersView _view;
     private MonsterWidgetConfig Settings => _view.Settings;
     private readonly IContext _context;
+    private IGame Game => _context.Game;
 
     public MonsterWidgetContextHandler(IContext context)
     {
@@ -34,7 +36,7 @@ public class MonsterWidgetContextHandler : IContextHandler
 
     private void UpdateData()
     {
-        foreach (IMonster monster in _context.Game.Monsters)
+        foreach (IMonster monster in Game.Monsters)
         {
             monster.OnTargetChange += OnTargetChange;
             _viewModel.Monsters.Add(new MonsterContextHandler(monster, Settings));
@@ -45,14 +47,14 @@ public class MonsterWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
-        _context.Game.OnMonsterSpawn += OnMonsterSpawn;
-        _context.Game.OnMonsterDespawn += OnMonsterDespawn;
+        Game.OnMonsterSpawn += OnMonsterSpawn;
+        Game.OnMonsterDespawn += OnMonsterDespawn;
     }
 
     public void UnhookEvents()
     {
-        _context.Game.OnMonsterSpawn -= OnMonsterSpawn;
-        _context.Game.OnMonsterDespawn -= OnMonsterDespawn;
+        Game.OnMonsterSpawn -= OnMonsterSpawn;
+        Game.OnMonsterDespawn -= OnMonsterDespawn;
 
         _view.Dispatcher.Invoke(() =>
         {
@@ -95,15 +97,16 @@ public class MonsterWidgetContextHandler : IContextHandler
 
     private void OnTargetChange(object sender, EventArgs e) => CalculateVisibleMonsters();
 
+
     private void CalculateVisibleMonsters()
     {
-        int targets = _context.Game.Monsters.Count(m => m.IsTarget);
+        int targets = Game.Monsters.Count(m => m.IsTarget);
 
         _viewModel.VisibleMonsters = Settings.ShowOnlyTarget.Value switch
         {
             true => targets,
-            false => targets == 0 ? _context.Game.Monsters.Count : targets,
+            false => targets == 0 ? Game.Monsters.Count : targets,
         };
-        _viewModel.MonstersCount = _context.Game.Monsters.Count;
+        _viewModel.MonstersCount = Game.Monsters.Count;
     }
 }
