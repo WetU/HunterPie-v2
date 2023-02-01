@@ -346,7 +346,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
         );
 
-        if (consumableBuffs == 0)
+        if (consumableBuffs.IsNullPointer())
             return;
 
         AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
@@ -399,7 +399,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
         );
 
-        if (debuffsPtr == 0)
+        if (debuffsPtr.IsNullPointer())
         {
             ClearAbnormalities(_abnormalities);
             return;
@@ -415,7 +415,7 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
             };
 
-            if (abnormSubPtr == 0)
+            if (abnormSubPtr.IsNullPointer())
                 continue;
 
             int abnormSubId = schema.DependsOn switch
@@ -467,7 +467,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")
         );
 
-        if (songBuffsPtr == 0)
+        if (songBuffsPtr.IsNullPointer())
             return;
 
         uint songBuffsLength = Process.Memory.Read<uint>(songBuffsPtr + 0x1C);
@@ -640,7 +640,7 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        bool isBlocked = Process.Memory.Deref<byte>(
+        bool isBlocked = Process.Memory.Deref<int>(
             AddressMap.GetAbsolute("UI_ADDRESS"),
             AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
         ) != 0;
@@ -912,7 +912,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("PETALACES_ARRAY_OFFSETS")
         );
 
-        if (petalaceArray == 0)
+        if (petalaceArray.IsNullPointer())
             return null;
 
         int selectedPetalaceId = Process.Memory.Deref<int>(
