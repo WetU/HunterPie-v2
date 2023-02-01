@@ -712,15 +712,21 @@ public sealed class MHRPlayer : CommonPlayer
     private void GetPlayerActionArgs()
     {
         if (!InHuntingZone)
+        {
+            ActionFlag = ActionFlags.None;
             return;
+        }
 
         long actionFlagArray = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_ACTIONFLAG_OFFSETS")
         );
 
-        if (actionFlagArray == 0)
+        if (actionFlagArray.IsNullPointer())
+        {
+            ActionFlag = ActionFlags.None;
             return;
+        }
 
         ActionFlag = (ActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
     }
