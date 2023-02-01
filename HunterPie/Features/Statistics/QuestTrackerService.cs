@@ -4,6 +4,7 @@ using HunterPie.Core.Game.Events;
 using HunterPie.Core.Json;
 using HunterPie.Domain.Interfaces;
 using HunterPie.Features.Account;
+using HunterPie.Features.Account.Config;
 using HunterPie.Features.Statistics.Models;
 using HunterPie.Integrations.Poogie.Common.Models;
 using HunterPie.Integrations.Poogie.Statistics;
