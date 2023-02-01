@@ -207,7 +207,7 @@
 					 Flag="GourmetFish"/>
         <Abnormality Id="ABN_IMMUNIZER"
                      Offset="E8"
-                     Name="ABNORMALITY_IMMUNIZER"
+                     Name="ABNORMALITY_NATURAL_HEALING"
                      Icon="ICON_NATURALHEALING_MHRS"
 					 FlagType="RiseCommon"
 					 Flag="NaturalHealing"/>
