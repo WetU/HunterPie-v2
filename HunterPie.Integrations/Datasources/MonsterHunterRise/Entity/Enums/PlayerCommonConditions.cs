@@ -62,5 +62,5 @@ public enum CommonConditions : ulong
     PowderMantleBlue = 1UL << 59,
     StrifeS = 1UL << 60,
     StrifeL = 1UL << 61,
-    Berserk = 1UL << 62,
+    Berserk = 1UL << 62
 }

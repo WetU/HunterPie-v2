@@ -1,4 +1,4 @@
-﻿using HunterPie.Core.Address.Map;
+using HunterPie.Core.Address.Map;
 using HunterPie.Core.Architecture.Events;
 using HunterPie.Core.Domain;
 using HunterPie.Core.Domain.Interfaces;
@@ -44,7 +44,7 @@ public sealed class MHRPlayer : CommonPlayer
     private int _highRank;
     private int _masterRank;
     private IWeapon _weapon;
-    private WeaponType _weaponId = WeaponType.None;
+    private Weapon _weaponId = WeaponType.None;
     private CommonConditions CommonCondition;
     private DebuffConditions DebuffCondition;
     //private WeaponConditions WeaponCondition;
