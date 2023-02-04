@@ -692,24 +692,28 @@ public sealed class MHRPlayer : CommonPlayer
             this.Dispatch(_onWirebugsRefresh, Wirebugs);
     }
 
-    [ScannableMethod(typeof(MHRPlayerConditionStructure))]
+    [ScannableMethod(typeof(MHRPlayerConditionsStructure))]
     private void GetPlayerConditions()
     {
         if (!InHuntingZone)
+        {
+            CommonCondition = CommonConditions.None;
+            DebuffCondition = DebuffConditions.None;
             return;
+        }
 
-        MHRPlayerConditionStructure _conditions = Process.Memory.Deref<MHRPlayerConditionStructure>(
+        MHRPlayerConditionsStructure conditions = Process.Memory.Deref<MHRPlayerConditionsStructure>(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
         );
 
-        CommonCondition = _conditions.CommonCondition;
-        DebuffCondition = _conditions.DebuffCondition;
+        CommonCondition = conditions.CommonCondition;
+        DebuffCondition = conditions.DebuffCondition;
         //WeaponCondition = _conditions.WeaponCondition;
     }
 
-    [ScannableMethod]
-    private void GetPlayerActionArgs()
+    [ScannableMethod(typeof(MHRPlayerActionFlagsStructure))]
+    private void GetPlayerActionFlags()
     {
         if (!InHuntingZone)
         {
@@ -717,18 +721,12 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        long actionFlagArray = Process.Memory.Read(
+        MHRPlayerActionFlagsStructure flags = Process.Memory.Deref<MHRPlayerActionFlagsStructure>(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_ACTIONFLAG_OFFSETS")
         );
 
-        if (actionFlagArray.IsNullPointer())
-        {
-            ActionFlag = ActionFlags.None;
-            return;
-        }
-
-        ActionFlag = (ActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
+        ActionFlag = flags.ActionFlag;
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

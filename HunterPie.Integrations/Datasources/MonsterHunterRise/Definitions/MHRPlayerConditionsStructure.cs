@@ -4,7 +4,7 @@ using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
 namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct MHRPlayerConditionStructure
+public struct MHRPlayerConditionsStructure
 {
     [FieldOffset(0x10)]
     public CommonConditions CommonCondition;
