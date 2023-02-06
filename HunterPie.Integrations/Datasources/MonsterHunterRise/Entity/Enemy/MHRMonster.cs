@@ -188,7 +188,7 @@ public class MHRMonster : CommonMonster
         _address = address;
         GetMonsterType();
 
-        if (MonsterType == MonsterType.Qurio)
+        if (MonsterType == MonsterType.Mystery)
             _qurioThreshold = new("PART_QURIO_THRESHOLD");
 
         Log.Debug($"Initialized monster at address {address:X}");
@@ -253,7 +253,7 @@ public class MHRMonster : CommonMonster
     [ScannableMethod]
     private void GetMonsterCaptureThreshold()
     {
-        if (MonsterType == MonsterType.Qurio)
+        if (MonsterType == MonsterType.Mystery)
         {
             CaptureThreshold = 0.0f;
             return;
@@ -282,7 +282,7 @@ public class MHRMonster : CommonMonster
             _address,
             AddressMap.Get<int[]>("MONSTER_QURIO_DATA")
         );
-        bool isQurioActive = Process.Memory.Read<byte>(qurioDataPtr + 0x12) == 2;
+        bool isQurioActive = Process.Memory.Read<sbyte>(qurioDataPtr + 0x12) == 2;
 
         // Flinch array
         long monsterFlinchPartsPtr = Process.Memory.ReadPtr(_address, AddressMap.Get<int[]>("MONSTER_FLINCH_HEALTH_COMPONENT_OFFSETS"));

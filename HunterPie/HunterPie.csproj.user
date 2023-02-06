@@ -167,6 +167,15 @@
     <Page Update="Resources\Styles\Client.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Themes\WetU\AbnormalityTrayWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\WetU\MonsterWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\WetU\PlayerWidget.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Update\Presentation\UpdateView.xaml">
       <SubType>Designer</SubType>
     </Page>

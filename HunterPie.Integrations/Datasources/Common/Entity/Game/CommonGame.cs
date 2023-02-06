@@ -20,8 +20,8 @@ public abstract class CommonGame : Scannable, IGame, IEventDispatcher
     public abstract IChat? Chat { get; }
     public abstract bool IsHudOpen { get; protected set; }
     public abstract float TimeElapsed { get; protected set; }
-    public abstract int MaxDeaths { get; protected set; }
-    public abstract int Deaths { get; protected set; }
+    public abstract uint MaxDeaths { get; protected set; }
+    public abstract uint Deaths { get; protected set; }
     public abstract bool IsInQuest { get; protected set; }
 
     protected readonly SmartEvent<IMonster> _onMonsterSpawn = new();

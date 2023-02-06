@@ -24,8 +24,8 @@ internal static class UpdateUseCase
         vm.State = "Initializing HunterPie";
         UpdateService service = new();
 
-        vm.State = "Checking for new localization files...";
-        await service.UpdateLocalizationFiles();
+        //vm.State = "Checking for new localization files...";
+        //await service.UpdateLocalizationFiles();
 
         vm.State = "Checking for latest version...";
         Version? latest = await service.GetLatestVersion();
