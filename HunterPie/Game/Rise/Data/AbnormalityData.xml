@@ -54,7 +54,7 @@
                      Icon="ICON_EXT_HEALTHRECOVERY_MHRS"/>
         <Abnormality Id="19"
                      Name="ABNORMALITY_STAMINA_USE_RED"
-                     Icon="ICON_STAMINAUP_MHRS"/>
+                     Icon="ICON_STAMINA_USE_RED_MHRS"/>
         <Abnormality Id="20"
                      Name="ABNORMALITY_STAMINA_REC_UP"
                      Icon="ICON_MAXSTAMRECOVERY_MHRS"/>
