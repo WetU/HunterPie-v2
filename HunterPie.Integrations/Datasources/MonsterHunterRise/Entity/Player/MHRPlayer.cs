@@ -678,10 +678,10 @@ public sealed class MHRPlayer : CommonPlayer
         ) != 0;
 
         WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
+            DebuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
             CommonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
             CommonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
             CommonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
-            DebuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
             WirebugState.None;
 
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
