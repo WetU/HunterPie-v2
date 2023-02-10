@@ -59,6 +59,7 @@ public sealed class MHWAbnormality : CommonAbnormality, IUpdatable<MHWAbnormalit
         };
         IsInfinite = schema.IsInfinite;
         IsBuildup = schema.IsBuildup;
+        IsInfinite = schema.IsInfinite;
 
         if (IsBuildup)
             MaxTimer = schema.MaxBuildup;

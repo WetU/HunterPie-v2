@@ -30,3 +30,4 @@ Icons
 Installer/*.ttf
 Installer/installer
 /Localization
+/HunterPie.Integrations/Datasources/MonsterHunterRise/Entity/Enums/Scroll.cs
