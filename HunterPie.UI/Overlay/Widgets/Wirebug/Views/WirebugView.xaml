@@ -123,7 +123,8 @@
         </controls:Arc>
 
         <Image Margin="5,10,8,10"
-               Source="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToIconConverter}}">
+               Source="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToIconConverter}}"
+               d:Source="{StaticResource ICON_WIREBUG}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0"
                                   BlurRadius="10"
@@ -165,7 +166,8 @@
             </TextBlock>
         </Grid>
 
-        <Grid Visibility="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToVisibilityConverter}}">
+        <Grid Visibility="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToVisibilityConverter}}"
+              d:Visibility="Collapsed">
             <Ellipse Fill="{StaticResource RED_600}"
                      Opacity="1"/>
             <Ellipse Fill="{StaticResource RED_LIGHT_300}">
