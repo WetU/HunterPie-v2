@@ -200,7 +200,7 @@
 
     <Color x:Key="WIREBUG_NORMAL">#FF64BAAC</Color>
     <Color x:Key="WIREBUG_ICEBLIGHT">#FF70D0F7</Color>
-    <Color x:Key="WIREBUG_GOLD">#FFF8A700</Color>
-    <Color x:Key="WIREBUG_RUBY">#FFFE4A0D</Color>
     <Color x:Key="WIREBUG_WINDMANTLE">#FF00D600</Color>
+    <Color x:Key="WIREBUG_GOLD">#FFFFE21D</Color>
+    <Color x:Key="WIREBUG_RUBY">#FFFE4A0D</Color>
 </ResourceDictionary>

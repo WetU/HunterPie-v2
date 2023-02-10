@@ -15,16 +15,16 @@ public class WirebugStateToIconConverter : IValueConverter
         switch ((WirebugState)value)
         {
             case WirebugState.IceBlight:
-                iconName = "ICON_WIREBUG_ICE";
+                iconName = "ICON_WIREBUG_ICEBLIGHT";
                 break;
-            case WirebugState.GoldWirebug:
-                iconName = "ICON_WIREBUG_GOLD";
+            case WirebugState.WindMantle:
+                iconName = "ICON_WIREBUG_WINDMANTLE";
                 break;
             case WirebugState.RubyWirebug:
                 iconName = "ICON_WIREBUG_RUBY";
                 break;
-            case WirebugState.WindMantle:
-                iconName = "ICON_WIREBUG_GREEN";
+            case WirebugState.GoldWirebug:
+                iconName = "ICON_WIREBUG_GOLD";
                 break;
             default:
                 return Resources.Icon("ICON_WIREBUG");
