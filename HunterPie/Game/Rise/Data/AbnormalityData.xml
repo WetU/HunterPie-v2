@@ -478,6 +478,8 @@
                      Name="ABNORMALITY_WINDMANTLE"
                      Icon="ICON_ARMORSKILL_GREEN"
                      MaxTimer="15"
+					 FlagType="RiseCommon"
+					 Flag="WindMantle"
                      Category="Debuffs"/>
         <Abnormality Id="ABN_STRIFE_S"
                      Name="ABNORMALITY_STRIFE_S"
