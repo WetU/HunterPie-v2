@@ -124,7 +124,7 @@
 
         <Image Margin="5,10,8,10"
                Source="{Binding WirebugState, Mode=OneWay, Converter={StaticResource WirebugStateToIconConverter}}"
-               d:Source="{StaticResource ICON_WIREBUG_ICEBLIGHT}">
+               d:Source="{StaticResource ICON_WIREBUG_WINDMANTLE}">
             <Image.Effect>
                 <DropShadowEffect ShadowDepth="0"
                                   BlurRadius="10"

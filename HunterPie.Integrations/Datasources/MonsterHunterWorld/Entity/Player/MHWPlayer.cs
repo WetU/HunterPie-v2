@@ -179,7 +179,14 @@ public sealed class MHWPlayer : CommonPlayer
 
     internal MHWPlayer(IProcessManager process) : base(process)
     {
-        _weapon = new MHWMeleeWeapon(process, WeaponType.Greatsword);
+        _weapon = CreateDefaultWeapon(process);
+    }
+
+    private static IWeapon CreateDefaultWeapon(IProcessManager process)
+    {
+        var weapon = new MHWMeleeWeapon(process, WeaponType.Greatsword);
+        ScanManager.Add(weapon);
+        return weapon;
     }
 
     [ScannableMethod(typeof(ZoneData))]

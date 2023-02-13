@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Abnormalities>
     <Songs>
         <Abnormality Id="0"
@@ -336,14 +336,8 @@
                      Offset="8B8"
                      Name="ABNORMALITY_BUBBLES_PLUS"
                      Icon="ICON_BUBBLE+"
-					 FlagType="RiseDebuff"
-					 Flag="BubbleBlightL"/>
-        <Abnormality Id="ABN_LEECHED"
-                     Name="ABNORMALITY_LEECHED"
-                     Icon="ICON_LEECHED"
                      FlagType="RiseDebuff"
-                     Flag="Leeched"
-                     IsInfinite="True"/>
+                     Flag="BubbleBlightL"/>
         <Abnormality Id="ABN_BLEED"
                      Offset="8DC"
                      Name="ABNORMALITY_BLEED"
@@ -358,6 +352,12 @@
                      Offset="8F4"
                      Name="ABNORMALITY_FRENZY"
                      Icon="ICON_FRENZY"/>
+        <Abnormality Id="ABN_LEECHED"
+                     Name="ABNORMALITY_LEECHED"
+                     Icon="ICON_LEECHED"
+                     FlagType="RiseDebuff"
+                     Flag="Leeched"
+                     IsInfinite="True"/>
     </Debuffs>
     <Skills>
         <Abnormality Id="ABN_OFFENSIVE_GUARD"
@@ -370,11 +370,11 @@
                      Name="ABNORMALITY_AFFINITY_SLIDING"
                      Icon="ICON_ARMORSKILL_SALMON"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_WALLRUNNER_ATKUP"
-					 Offset="11C"
-					 Name="ABNORMALITY_WALL_RUNNER"
-					 Icon="ICON_ARMORSKILL_GREEN"
-					 Category="Consumables"/>
+        <Abnormality Id="ABN_WALLRUNNER_ATKUP"
+                     Offset="11C"
+                     Name="ABNORMALITY_WALL_RUNNER"
+                     Icon="ICON_ARMORSKILL_GREEN"
+                     Category="Consumables"/>
         <Abnormality Id="ABN_COUNTERSTRIKE"
                      Offset="120"
                      Name="ABNORMALITY_COUNTERSTRIKE"
@@ -400,11 +400,13 @@
                      Name="ABNORMALITY_GRINDER_S"
                      Icon="ICON_GRINDER_S"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_STATUS_TRIGGER"
-					 Offset="1AC"
-					 Name="ABNORMALITY_STATUS_TRIGGER"
-					 Icon="ICON_STATUS_TRIGGER"
-					 Category="Consumables"/>
+        <Abnormality Id="ABN_STATUS_TRIGGER"
+                     Offset="1AC"
+                     Name="ABNORMALITY_STATUS_TRIGGER"
+                     Icon="ICON_STATUS_TRIGGER"
+                     FlagType="RiseCommon"
+                     Flag="StatusTrigger"
+                     Category="Comsumables"/>
         <Abnormality Id="ABN_INTERPID_HEART"
                      Offset="1B0"
                      Name="ABNORMALITY_INTERPID_HEART"
@@ -412,20 +414,20 @@
                      IsBuildup="True"
                      MaxBuildup="400"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_POWDERMANTLE_RED"
-					 Offset="1BC"
-					 Name="ABNORMALITY_POWDERMANTLE_RED"
-					 Icon="ICON_ARMORSKILL_RED"
-					 FlagType="RiseCommon"
-					 Flag="PowderMantleRed"
-					 Category="Consumables"/>
-		<Abnormality Id="ABN_POWDERMANTLE_BLUE"
-					 Offset="1BC"
-					 Name="ABNORMALITY_POWDERMANTLE_BLUE"
-					 Icon="ICON_ARMORSKILL_RED"
-					 FlagType="RiseCommon"
-					 Flag="PowderMantleBlue"
-					 Category="Consumables"/>
+        <Abnormality Id="ABN_POWDERMANTLE_RED"
+                     Offset="1BC"
+                     Name="ABNORMALITY_POWDERMANTLE_RED"
+                     Icon="ICON_ARMORSKILL_RED"
+                     FlagType="RiseCommon"
+                     Flag="PowderMantleRed"
+                     Category="Consumables"/>
+        <Abnormality Id="ABN_POWDERMANTLE_BLUE"
+                     Offset="1BC"
+                     Name="ABNORMALITY_POWDERMANTLE_BLUE"
+                     Icon="ICON_ARMORSKILL_RED"
+                     FlagType="RiseCommon"
+                     Flag="PowderMantleBlue"
+                     Category="Consumables"/>
         <Abnormality Id="ABN_PROTECTIVE_POLISH"
                      Offset="1D8"
                      Name="ABNORMALITY_PROTECTIVE_POLISH"
@@ -440,25 +442,25 @@
                      Offset="77C"
                      Name="ABNORMALITY_WINDMANTLE"
                      Icon="ICON_ARMORSKILL_GREEN"
+                     FlagType="RiseCommon"
+                     Flag="WindMantle"
                      MaxTimer="15"
-					 FlagType="RiseCommon"
-					 Flag="WindMantle"
                      Category="Debuffs"/>
-		<Abnormality Id="ABN_AGITATOR"
+        <Abnormality Id="ABN_AGITATOR"
                      Name="ABNORMALITY_AGITATOR"
                      Icon="ICON_ARMORSKILL_RED"
                      FlagType="RiseCommon"
                      Flag="Agitator"
                      IsInfinite="True"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_DEFIANCE"
+        <Abnormality Id="ABN_DEFIANCE"
                      Name="ABNORMALITY_DEFIANCE"
                      Icon="ICON_ARMORSKILL_ORANGE"
                      FlagType="RiseCommon"
                      Flag="Defiance"
                      IsInfinite="True"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_HEROICS"
+        <Abnormality Id="ABN_HEROICS"
                      Name="ABNORMALITY_HEROICS"
                      Icon="ICON_ARMORSKILL_RED"
                      FlagType="RiseCommon"
@@ -500,7 +502,7 @@
                      Flag="Berserk"
                      IsInfinite="True"
                      Category="Consumables"/>
-		<Abnormality Id="ABN_DRAGON_CONVERSION"
+        <Abnormality Id="ABN_DRAGON_CONVERSION"
                      Name="ABNORMALITY_DRAGON_CONVERSION"
                      Icon="ICON_ALLRESUP_MHRS"
                      FlagType="RiseCommon"
@@ -508,12 +510,12 @@
                      IsInfinite="True"
                      Category="Consumables"/>
         <Abnormality Id="ABN_MAXIMUM_MIGHT"
-					 Name="ABNORMALITY_MAXIMUM_MIGHT"
-					 Icon="ICON_ARMORSKILL_SALMON"
-					 FlagType="RiseAction"
-					 Flag="MaximumMight"
-					 IsInfinite="True"
-					 Category="Consumables"/>
+                     Name="ABNORMALITY_MAXIMUM_MIGHT"
+                     Icon="ICON_ARMORSKILL_SALMON"
+                     FlagType="RiseAction"
+                     Flag="MaximumMight"
+                     IsInfinite="True"
+                     Category="Consumables"/>
     </Skills>
     <Foods>
         <Abnormality Id="ABN_DANGO_BULKER"
