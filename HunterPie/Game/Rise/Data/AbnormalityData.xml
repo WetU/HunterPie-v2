@@ -54,7 +54,7 @@
                      Icon="ICON_EXT_HEALTHRECOVERY_MHRS"/>
         <Abnormality Id="19"
                      Name="ABNORMALITY_STAMINA_USE_RED"
-                     Icon="ICON_STAMINA_USE_RED_MHRS"/>
+                     Icon="ICON_STAMINAUP_MHRS"/>
         <Abnormality Id="20"
                      Name="ABNORMALITY_STAMINA_REC_UP"
                      Icon="ICON_MAXSTAMRECOVERY_MHRS"/>
@@ -126,7 +126,7 @@
         <Abnormality Id="ABN_DASH_JUICE"
                      Offset="9C"
                      Name="ABNORMALITY_DASH_JUICE"
-                     Icon="ICON_STAMINAUP_MHRS"/>
+                     Icon="ITEM_DASH"/>
         <Abnormality Id="ABN_DEMON_POWDER"
                      Offset="A8"
                      Name="ABNORMALITY_DEMON_POWDER"
@@ -400,6 +400,19 @@
                      Name="ABNORMALITY_ADRENALINE_RUSH"
                      Icon="ICON_ARMORSKILL_RED"
                      Category="Consumables"/>
+		<Abnormality Id="ABN_FURIOUS_BUILDUP"
+					 Offset="188"
+					 Name="ABNORMALITY_FURIOUS_BUILDUP"
+					 Icon="ICON_ARMORSKILL_YELLOW"
+					 IsBuildup="True"
+					 MaxBuildup="100"
+					 IsInteger="True"
+					 Category="Consumables"/>
+		<Abnormality Id="ABN_FURIOUS_STAMINA_BUFF"
+					 Offset="18C"
+					 Name="ABNORMALITY_FURIOUS_STAMINA_BUFF"
+					 Icon="ICON_INFINITE_STAMINA_MHRS"
+					 Category="Consumables"/>
         <Abnormality Id="ABN_GRINDER_S"
                      Offset="190"
                      Name="ABNORMALITY_GRINDER_S"

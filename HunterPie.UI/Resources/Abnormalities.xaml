@@ -3990,7 +3990,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    <DrawingImage x:Key="ICON_STAMINA_USE_RED_MHRS">
+    <DrawingImage x:Key="ICON_STAMINAUP_MHRS">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V16.933334 H16.933333 V0 H0 Z">
                 <DrawingGroup Opacity="1" Transform="1,0,0,1,0,-280.06665">
@@ -4007,7 +4007,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    <DrawingImage x:Key="ICON_STAMINAUP_MHRS">
+    <DrawingImage x:Key="ICON_INFINITE_STAMINA_MHRS">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V16.933334 H16.933333 V0 H0 Z">
                 <DrawingGroup Opacity="1" Transform="1,0,0,1,0,-280.06665">

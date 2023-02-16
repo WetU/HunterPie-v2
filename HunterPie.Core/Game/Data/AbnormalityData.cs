@@ -72,6 +72,7 @@ public class AbnormalityData
             string maxTimer = abnormality.Attributes["MaxTimer"]?.Value ?? "0";
             string flagType = abnormality.Attributes["FlagType"]?.Value ?? "None";
             string flag = abnormality.Attributes["Flag"]?.Value ?? "None";
+            string isInteger = abnormality.Attributes["IsInteger"]?.Value ?? "False";
 
             AbnormalitySchema schema = new()
             {
@@ -91,6 +92,7 @@ public class AbnormalityData
             bool.TryParse(isInfinite, out schema.IsInfinite);
             int.TryParse(maxTimer, out schema.MaxTimer);
             Enum.TryParse(flagType, out schema.FlagType);
+            bool.TryParse(isInteger, out schema.IsInteger);
 
             schema.Flag = _flagTypeParser?.Parse(schema.FlagType, flag);
 
