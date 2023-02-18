@@ -13,7 +13,6 @@ using HunterPie.Core.Game.Entity.Player.Vitals;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.Game.Utils;
-using HunterPie.Core.Logger;
 using HunterPie.Core.Native.IPC.Models.Common;
 using HunterPie.Integrations.Datasources.Common.Definition;
 using HunterPie.Integrations.Datasources.Common.Entity.Player;
@@ -24,6 +23,7 @@ using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Environment.Ac
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Party;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Entities;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Weapons;
+using HunterPie.Integrations.Datasources.MonsterHunterRise.Services;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Utils;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -362,6 +362,15 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
+            long abnormPtr = schema.PtrOffset switch
+            {
+                0 => consumableBuffs,
+                _ => Process.Memory.Read<long>(consumableBuffs + schema.PtrOffset)
+            };
+
+            if (abnormPtr.IsNullPointer())
+                continue;
+
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
@@ -384,14 +393,16 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = 1;
                 else
                 {
-                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs + schema.Offset);
+                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(abnormPtr + schema.Offset);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
                     if (schema.MaxTimer > 0)
-                        abnormality.Timer = schema.MaxTimer - abnormality.Timer > 0 ? schema.MaxTimer - abnormality.Timer : 0;
+                        abnormality.Timer = schema.MaxTimer - abnormality.Timer > 0
+                            ? schema.MaxTimer - abnormality.Timer
+                            : 0;
                 }
             }
 
@@ -463,7 +474,9 @@ public sealed class MHRPlayer : CommonPlayer
                         abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
 
                     if (schema.MaxTimer > 0)
-                        abnormality.Timer = schema.MaxTimer - abnormality.Timer > 0 ? schema.MaxTimer - abnormality.Timer : 0;
+                        abnormality.Timer = schema.MaxTimer - abnormality.Timer > 0
+                            ? schema.MaxTimer - abnormality.Timer
+                            : 0;
                 }
             }
 
