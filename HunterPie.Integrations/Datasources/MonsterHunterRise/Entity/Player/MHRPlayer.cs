@@ -47,10 +47,10 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private Weapon _weaponId = WeaponType.None;
-    private CommonConditions CommonCondition;
-    private DebuffConditions DebuffCondition;
-    //private WeaponConditions WeaponCondition;
-    private ActionFlags ActionFlag;
+    private CommonConditions _commonCondition = CommonConditions.None;
+    private DebuffConditions _debuffCondition = DebuffConditions.None;
+    //private WeaponConditions _weaponCondition = WeaponConditions.None;
+    private ActionFlags _actionFlag = ActionFlags.None;
     #endregion
 
     public override string Name
@@ -187,7 +187,7 @@ public sealed class MHRPlayer : CommonPlayer
         if (stageAddress == 0x00000000)
             return;
 
-        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60); // GameState
+        MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
 
         int zoneId = stageData.IsMainMenu() ? -1
             : stageData.IsMakingCharacter() ? -2
@@ -379,9 +379,9 @@ public sealed class MHRPlayer : CommonPlayer
 
             bool isConditionValid = schema.FlagType switch
             {
-                AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
-                AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
-                AbnormalityFlagType.RiseAction => ActionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
+                AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
+                AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
@@ -451,9 +451,9 @@ public sealed class MHRPlayer : CommonPlayer
 
             bool isConditionValid = schema.FlagType switch
             {
-                AbnormalityFlagType.RiseCommon => CommonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
-                AbnormalityFlagType.RiseDebuff => DebuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
-                AbnormalityFlagType.RiseAction => ActionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
+                AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
+                AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
+                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue;
 
@@ -663,7 +663,7 @@ public sealed class MHRPlayer : CommonPlayer
             Heal = playerHud.Heal
         };
 
-        if (CommonCondition.HasFlag(CommonConditions.Berserk))
+        if (_commonCondition.HasFlag(CommonConditions.Berserk))
         {
             healthData = healthData with
             {
@@ -706,10 +706,10 @@ public sealed class MHRPlayer : CommonPlayer
         ) != 0;
 
         WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
-            DebuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
-            CommonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
-            CommonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
-            CommonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
+            _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
+            _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
+            _commonCondition.HasFlag(CommonConditions.RubyWirebug) ? WirebugState.RubyWirebug :
+            _commonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
             WirebugState.None;
 
         int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
@@ -752,41 +752,54 @@ public sealed class MHRPlayer : CommonPlayer
             this.Dispatch(_onWirebugsRefresh, Wirebugs);
     }
 
-    [ScannableMethod(typeof(MHRPlayerConditionsStructure))]
+    [ScannableMethod]
     private void GetPlayerConditions()
     {
         if (!InHuntingZone)
         {
-            CommonCondition = CommonConditions.None;
-            DebuffCondition = DebuffConditions.None;
+            _commonCondition = CommonConditions.None;
+            _debuffCondition = DebuffConditions.None;
             return;
         }
 
-        MHRPlayerConditionsStructure conditions = Process.Memory.Deref<MHRPlayerConditionsStructure>(
+        long conditionPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_CONDITION_OFFSETS")
         );
 
-        CommonCondition = conditions.CommonCondition;
-        DebuffCondition = conditions.DebuffCondition;
-        //WeaponCondition = _conditions.WeaponCondition;
+        if (conditionPtr.IsNullPointer())
+        {
+            _commonCondition = CommonConditions.None;
+            _debuffCondition = DebuffConditions.None;
+            return;
+        }
+
+        _commonCondition = (CommonConditions)Process.Memory.Read<ulong>(conditionPtr + 0x10);
+        //_weaponCondition = (WeaponConditions)Process.Memory.Read<ulong>(conditionPtr + 0x28);
+        _debuffCondition = (DebuffConditions)Process.Memory.Read<ulong>(conditionPtr + 0x38);
     }
 
-    [ScannableMethod(typeof(MHRPlayerActionFlagsStructure))]
+    [ScannableMethod]
     private void GetPlayerActionFlags()
     {
         if (!InHuntingZone)
         {
-            ActionFlag = ActionFlags.None;
+            _actionFlag = ActionFlags.None;
             return;
         }
 
-        MHRPlayerActionFlagsStructure flags = Process.Memory.Deref<MHRPlayerActionFlagsStructure>(
+        long actionFlagArray = Process.Memory.Read(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("PLAYER_ACTIONFLAG_OFFSETS")
         );
 
-        ActionFlag = flags.ActionFlag;
+        if (actionFlagArray.IsNullPointer())
+        {
+            _actionFlag = ActionFlags.None;
+            return;
+        }
+
+        _actionFlag = (ActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]

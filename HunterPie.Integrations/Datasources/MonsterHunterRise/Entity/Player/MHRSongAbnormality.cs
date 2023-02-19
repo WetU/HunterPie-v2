@@ -42,9 +42,6 @@ public sealed class MHRSongAbnormality : CommonAbnormality, IUpdatable<MHRHHAbno
         Id = schema.Id;
         Name = schema.Name;
         Icon = schema.Icon;
-        IsInfinite = schema.IsInfinite;
-        IsBuildup = schema.IsBuildup;
-        MaxTimer = IsBuildup ? schema.MaxBuildup : schema.MaxTimer;
     }
 
     void IUpdatable<MHRHHAbnormality>.Update(MHRHHAbnormality data)
