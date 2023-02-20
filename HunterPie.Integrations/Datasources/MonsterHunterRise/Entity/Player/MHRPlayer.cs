@@ -362,15 +362,6 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
-            long abnormPtr = schema.PtrOffset switch
-            {
-                0 => consumableBuffs,
-                _ => Process.Memory.Read<long>(consumableBuffs + schema.PtrOffset)
-            };
-
-            if (abnormPtr.IsNullPointer())
-                continue;
-
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
@@ -393,7 +384,9 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = 1;
                 else
                 {
-                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(abnormPtr + schema.Offset);
+                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null
+                        ? Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs + schema.Offset)
+                        : Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)
@@ -434,15 +427,6 @@ public sealed class MHRPlayer : CommonPlayer
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
-            long abnormPtr = schema.PtrOffset switch
-            {
-                0 => debuffsPtr,
-                _ => Process.Memory.Read<long>(debuffsPtr + schema.PtrOffset)
-            };
-
-            if (abnormPtr.IsNullPointer())
-                continue;
-
             int abnormSubId = schema.DependsOn switch
             {
                 0 => 0,
@@ -465,7 +449,9 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = 1;
                 else
                 {
-                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(abnormPtr + schema.Offset);
+                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null
+                        ? Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr + schema.Offset)
+                        : Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)

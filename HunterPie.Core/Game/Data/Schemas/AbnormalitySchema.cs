@@ -7,8 +7,8 @@ namespace HunterPie.Core.Game.Data.Schemas;
 public struct AbnormalitySchema
 {
     public string Id;
-    public int PtrOffset;
     public int Offset;
+    public int[]? Offsets;
     public int DependsOn;
     public int WithValue;
     public string Name;

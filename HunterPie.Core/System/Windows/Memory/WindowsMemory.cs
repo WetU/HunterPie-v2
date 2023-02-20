@@ -38,6 +38,15 @@ public class WindowsMemory : IMemory
 
     public T Read<T>(long address) where T : struct => Read<T>(address, 1)[0];
 
+    public T Read<T>(long address, int[] offsets) where T : struct
+    {
+        int length = offsets.Length - 1;
+        int[] tmpArray = new int[length];
+        Array.Copy(offsets, 0, tmpArray, 0, length);
+        address = ReadPtr(address, tmpArray);
+        return Read<T>(address + offsets[^1], 1)[0];
+    }
+
     public T[] Read<T>(long address, uint count) where T : struct
     {
         Type type = typeof(T);
