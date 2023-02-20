@@ -10,7 +10,7 @@ internal class WirebugContextHandler : WirebugViewModel, IContextHandler
     public WirebugContextHandler(MHRWirebug context)
     {
         Context = context;
-        
+
         UpdateData();
         HookEvents();
     }

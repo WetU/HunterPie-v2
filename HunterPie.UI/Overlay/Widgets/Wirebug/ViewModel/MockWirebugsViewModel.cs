@@ -7,6 +7,7 @@ public class MockWirebugsViewModel : WirebugsViewModel
 {
     public MockWirebugsViewModel()
     {
+        IsAvailable = true;
         Elements.Add(
             new()
             {
