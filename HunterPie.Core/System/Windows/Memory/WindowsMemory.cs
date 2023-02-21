@@ -45,7 +45,7 @@ public class WindowsMemory : IMemory
         Array.Copy(offsets, 0, tmpArray, 0, length);
         address = ReadPtr(address, tmpArray);
 
-        return Read<T>(address + offsets[^1]);
+        return Read<T>(address + offsets[^1], 1)[0];
     }
 
     public T[] Read<T>(long address, uint count) where T : struct

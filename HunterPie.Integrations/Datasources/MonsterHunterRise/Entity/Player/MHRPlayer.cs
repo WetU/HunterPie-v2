@@ -384,7 +384,8 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = 1;
                 else
                 {
-                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null
+                    MHRAbnormalityStructure abnormalityStructure
+                        = schema.Offsets == null
                         ? Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs + schema.Offset)
                         : Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
@@ -449,7 +450,8 @@ public sealed class MHRPlayer : CommonPlayer
                     abnormality.Timer = 1;
                 else
                 {
-                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null
+                    MHRAbnormalityStructure abnormalityStructure
+                        = schema.Offsets == null
                         ? Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr + schema.Offset)
                         : Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);

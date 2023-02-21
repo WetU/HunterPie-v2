@@ -61,7 +61,7 @@ public class AbnormalityData
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
-            string[]? offsets = abnormality.Attributes["Offsets"]?.Value.Split(",") ?? null;
+            string[]? offsets = abnormality.Attributes["Offsets"]?.Value.Split(",");
             string dependsOn = abnormality.Attributes["DependsOn"]?.Value ?? "0";
             string withValue = abnormality.Attributes["WithValue"]?.Value ?? "0";
             string group = abnormality.ParentNode!.Name;
