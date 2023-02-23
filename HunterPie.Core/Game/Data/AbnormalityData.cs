@@ -93,8 +93,21 @@ public class AbnormalityData
             Enum.TryParse(flagType, out schema.FlagType);
             bool.TryParse(isInteger, out schema.IsInteger);
 
-            schema.Offsets = offsets?.Select(element => Convert.ToInt32(element, 16)).ToArray();
             schema.Flag = _flagTypeParser?.Parse(schema.FlagType, flag);
+
+            if (offsets != null)
+            {
+                int length = offsets.Length;
+                schema.Offsets = new int[length];
+
+                for (int i = 0; i < length; i++)
+                {
+                    bool success = int.TryParse(offsets[i], NumberStyles.HexNumber, null, out int tmp);
+
+                    if (success)
+                        schema.Offsets[i] = tmp;
+                }
+            }
 
             Abnormalities.Add(schema.Id, schema);
         }
