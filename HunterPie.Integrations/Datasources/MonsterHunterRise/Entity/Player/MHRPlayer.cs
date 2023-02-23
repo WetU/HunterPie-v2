@@ -25,6 +25,7 @@ using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Entitie
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Weapons;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Services;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Utils;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using WeaponType = HunterPie.Core.Game.Enums.Weapon;
@@ -380,11 +381,11 @@ public sealed class MHRPlayer : CommonPlayer
 
             if (isConditionValid)
             {
-                if (schema.IsInfinite)
-                    abnormality.Timer = 1;
-                else
+                abnormality.Timer = Convert.ToSingle(schema.IsInfinite);
+
+                if (!schema.IsInfinite)
                 {
-                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null ? Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs + schema.Offset) : Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs, schema.Offsets);
+                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs, schema.Offset, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)
@@ -443,11 +444,11 @@ public sealed class MHRPlayer : CommonPlayer
 
             if (isConditionValid)
             {
-                if (schema.IsInfinite)
-                    abnormality.Timer = 1;
-                else
+                abnormality.Timer = Convert.ToSingle(schema.IsInfinite);
+
+                if (!schema.IsInfinite)
                 {
-                    MHRAbnormalityStructure abnormalityStructure = schema.Offsets == null ? Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr + schema.Offset) : Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr, schema.Offsets);
+                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr, schema.Offset, schema.Offsets);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)

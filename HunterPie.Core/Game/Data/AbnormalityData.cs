@@ -31,7 +31,7 @@ public class AbnormalityData
 
     private static XmlDocument _abnormalityData;
     private static IAbnormalityFlagTypeParser? _flagTypeParser;
-    public static Dictionary<string, AbnormalitySchema> Abnormalities { get; private set; }
+        public static Dictionary<string, AbnormalitySchema> Abnormalities { get; private set; }
 
 
     internal static void Init(string path, IAbnormalityFlagTypeParser? flagTypeParser = null)
@@ -77,6 +77,7 @@ public class AbnormalityData
             AbnormalitySchema schema = new()
             {
                 Id = BuildAbnormalityId(id, group),
+                Offsets = ParseOffsets(offsets),
                 Name = name,
                 Icon = icon,
                 Category = category,
@@ -94,20 +95,6 @@ public class AbnormalityData
             bool.TryParse(isInteger, out schema.IsInteger);
 
             schema.Flag = _flagTypeParser?.Parse(schema.FlagType, flag);
-
-            if (offsets != null)
-            {
-                int length = offsets.Length;
-                schema.Offsets = new int[length];
-
-                for (int i = 0; i < length; i++)
-                {
-                    bool success = int.TryParse(offsets[i], NumberStyles.HexNumber, null, out int tmp);
-
-                    if (success)
-                        schema.Offsets[i] = tmp;
-                }
-            }
 
             Abnormalities.Add(schema.Id, schema);
         }
@@ -165,5 +152,21 @@ public class AbnormalityData
                                                             .ToArray();
 
         return abnormalities;
+    }
+
+    private static int[]? ParseOffsets(string[]? offsets)
+    {
+        if (offsets == null)
+            return null;
+
+        int length = offsets.Length;
+        int[] tmpArr = new int[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            int.TryParse(offsets[i], NumberStyles.HexNumber, null, out tmpArr[i]);
+        }
+
+        return tmpArr;
     }
 }

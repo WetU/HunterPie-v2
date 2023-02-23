@@ -10,6 +10,7 @@ using System.Text;
 
 namespace HunterPie.Core.System.Windows.Memory;
 
+#nullable enable
 public class WindowsMemory : IMemory
 {
     private const long NULLPTR = 0;
@@ -38,21 +39,24 @@ public class WindowsMemory : IMemory
 
     public T Read<T>(long address) where T : struct => Read<T>(address, 1)[0];
 
-    public T Read<T>(long address, int[] offsets) where T : struct
-    {
-        int length = offsets.Length - 1;
-        int[] tmpArray = new int[length];
-        Array.Copy(offsets, 0, tmpArray, 0, length);
-        address = ReadPtr(address, tmpArray);
-
-        return Read<T>(address + offsets[^1], 1)[0];
-    }
-
     public T[] Read<T>(long address, uint count) where T : struct
     {
         Type type = typeof(T);
 
         return type.IsPrimitive ? ReadPrimitive<T>(address, count) : ReadStructure<T>(address, count);
+    }
+
+    public T Read<T>(long address, int offset, int[]? offsets) where T : struct
+    {
+        if (offsets == null)
+            return Read<T>(address + offset, 1)[0];
+
+        for (int i = 0; i < offsets.Length - 1; i++)
+        {
+            address = Read<long>(address + offsets[i]);
+        }
+
+        return Read<T>(address + offsets[^1], 1)[0];
     }
 
     public long Read(long address, int[] offsets)
