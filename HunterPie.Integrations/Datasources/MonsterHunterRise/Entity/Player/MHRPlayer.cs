@@ -25,7 +25,6 @@ using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Entitie
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player.Weapons;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Services;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Utils;
-using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using WeaponType = HunterPie.Core.Game.Enums.Weapon;
