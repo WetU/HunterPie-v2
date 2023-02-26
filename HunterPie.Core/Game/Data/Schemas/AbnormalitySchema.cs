@@ -22,6 +22,7 @@ public struct AbnormalitySchema
     public bool IsInfinite;
     public int MaxTimer;
     public bool IsInteger;
+    public byte EquipSkillId;
 
     public T? GetFlagAs<T>()
     {
