@@ -12,7 +12,7 @@ public class MHRAbnormalityFlagTypeParser : IAbnormalityFlagTypeParser
         {
             AbnormalityFlagType.RiseCommon => typeof(CommonConditions),
             AbnormalityFlagType.RiseDebuff => typeof(DebuffConditions),
-            AbnormalityFlagType.RiseAction => typeof(ActionFlags),
+            AbnormalityFlagType.RiseAction => typeof(PrimaryActionFlags),
             _ => null
         };
 

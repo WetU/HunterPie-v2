@@ -1,10 +1,10 @@
 using HunterPie.Core.Address.Map;
 using HunterPie.Core.Architecture.Events;
+using HunterPie.Core.Client.Configuration.Enums;
 using HunterPie.Core.Domain;
 using HunterPie.Core.Domain.Interfaces;
 using HunterPie.Core.Domain.Process;
 using HunterPie.Core.Extensions;
-using HunterPie.Core.Game.Data;
 using HunterPie.Core.Game.Data.Schemas;
 using HunterPie.Core.Game.Entity;
 using HunterPie.Core.Game.Entity.Party;
@@ -12,6 +12,7 @@ using HunterPie.Core.Game.Entity.Player;
 using HunterPie.Core.Game.Entity.Player.Vitals;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
+using HunterPie.Core.Game.Services;
 using HunterPie.Core.Game.Utils;
 using HunterPie.Core.Native.IPC.Models.Common;
 using HunterPie.Integrations.Datasources.Common.Definition;
@@ -51,7 +52,7 @@ public sealed class MHRPlayer : CommonPlayer
     private CommonConditions _commonCondition = CommonConditions.None;
     private DebuffConditions _debuffCondition = DebuffConditions.None;
     //private WeaponConditions _weaponCondition = WeaponConditions.None;
-    private ActionFlags _actionFlag = ActionFlags.None;
+    private PrimaryActionFlags _actionFlag = PrimaryActionFlags.None;
     #endregion
 
     public override string Name
@@ -379,7 +380,7 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        AbnormalitySchema[] consumableSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Consumables);
+        AbnormalitySchema[] consumableSchemas = AbnormalityService.FindAllAbnormalitiesBy(GameType.Rise, "Consumables");
 
         foreach (AbnormalitySchema schema in consumableSchemas)
         {
@@ -399,7 +400,7 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
-                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
+                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<PrimaryActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue && hasSkill;
 
@@ -409,13 +410,13 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 abnormality.Timer = Convert.ToSingle(schema.IsInfinite);
 
-                if (!schema.IsInfinite)
+                if (abnormality.Timer == 0.0f)
                 {
-                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs, schema.Offset, schema.Offsets);
+                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(consumableBuffs + schema.Offset);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                        abnormality.Timer /= AbnormalityService.TIMER_MULTIPLIER;
 
                     if (schema.MaxTimer > 0)
                         abnormality.Timer = Math.Max(0.0f, schema.MaxTimer - abnormality.Timer);
@@ -451,7 +452,7 @@ public sealed class MHRPlayer : CommonPlayer
             return;
         }
 
-        AbnormalitySchema[] debuffSchemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Debuffs);
+        AbnormalitySchema[] debuffSchemas = AbnormalityService.FindAllAbnormalitiesBy(GameType.Rise, "Debuffs");
 
         foreach (AbnormalitySchema schema in debuffSchemas)
         {
@@ -471,7 +472,7 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
-                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<ActionFlags>()),
+                AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<PrimaryActionFlags>()),
                 _ => true
             } && abnormSubId == schema.WithValue && hasSkill;
 
@@ -481,13 +482,13 @@ public sealed class MHRPlayer : CommonPlayer
             {
                 abnormality.Timer = Convert.ToSingle(schema.IsInfinite);
 
-                if (!schema.IsInfinite)
+                if (abnormality.Timer == 0.0f)
                 {
-                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr, schema.Offset, schema.Offsets);
+                    MHRAbnormalityStructure abnormalityStructure = Process.Memory.Read<MHRAbnormalityStructure>(debuffsPtr + schema.Offset);
                     abnormality = MHRAbnormalityAdapter.Convert(schema, abnormalityStructure);
 
                     if (!schema.IsInteger && !schema.IsBuildup)
-                        abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+                        abnormality.Timer /= AbnormalityService.TIMER_MULTIPLIER;
 
                     if (schema.MaxTimer > 0)
                         abnormality.Timer = Math.Max(0.0f, schema.MaxTimer - abnormality.Timer);
@@ -756,8 +757,8 @@ public sealed class MHRPlayer : CommonPlayer
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
 
-            data.Structure.Cooldown /= AbnormalityData.TIMER_MULTIPLIER;
-            data.Structure.MaxCooldown = data.Structure.MaxCooldown == 0 ? 400 : data.Structure.MaxCooldown / AbnormalityData.TIMER_MULTIPLIER;
+            data.Structure.Cooldown /= AbnormalityService.TIMER_MULTIPLIER;
+            data.Structure.MaxCooldown = data.Structure.MaxCooldown == 0 ? 400 : data.Structure.MaxCooldown / AbnormalityService.TIMER_MULTIPLIER;
 
             if (wirebugPtr != Wirebugs[i].Address)
             {
@@ -774,7 +775,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_OFFSETS")
         );
-        extraData.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+        extraData.Timer /= AbnormalityService.TIMER_MULTIPLIER;
         IUpdatable<MHRWirebugExtrasStructure> lastWirebug = Wirebugs[^1];
         lastWirebug.Update(extraData);
 
@@ -814,7 +815,7 @@ public sealed class MHRPlayer : CommonPlayer
     {
         if (!InHuntingZone)
         {
-            _actionFlag = ActionFlags.None;
+            _actionFlag = PrimaryActionFlags.None;
             return;
         }
 
@@ -825,11 +826,11 @@ public sealed class MHRPlayer : CommonPlayer
 
         if (actionFlagArray.IsNullPointer())
         {
-            _actionFlag = ActionFlags.None;
+            _actionFlag = PrimaryActionFlags.None;
             return;
         }
 
-        _actionFlag = (ActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
+        _actionFlag = (PrimaryActionFlags)Process.Memory.Read<uint>(actionFlagArray + 0x20);
     }
 
     [ScannableMethod(typeof(MHRSubmarineData))]
@@ -986,11 +987,11 @@ public sealed class MHRPlayer : CommonPlayer
     private void DerefSongBuffs(long[] buffs)
     {
         int id = 0;
-        AbnormalitySchema[] schemas = AbnormalityData.GetAllAbnormalitiesFromCategory(AbnormalityData.Songs);
+        AbnormalitySchema[] schemas = AbnormalityService.FindAllAbnormalitiesBy(GameType.Rise, "Songs");
         foreach (long buffPtr in buffs)
         {
             MHRHHAbnormality abnormality = Process.Memory.Read<MHRHHAbnormality>(buffPtr);
-            abnormality.Timer /= AbnormalityData.TIMER_MULTIPLIER;
+            abnormality.Timer /= AbnormalityService.TIMER_MULTIPLIER;
 
             AbnormalitySchema maybeSchema = schemas[id];
 

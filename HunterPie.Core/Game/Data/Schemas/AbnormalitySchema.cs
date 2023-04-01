@@ -8,7 +8,6 @@ public struct AbnormalitySchema
 {
     public string Id;
     public int Offset;
-    public int[]? Offsets;
     public int DependsOn;
     public int WithValue;
     public string Name;

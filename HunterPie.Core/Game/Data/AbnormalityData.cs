@@ -31,7 +31,7 @@ public class AbnormalityData
 
     private static XmlDocument _abnormalityData;
     private static IAbnormalityFlagTypeParser? _flagTypeParser;
-        public static Dictionary<string, AbnormalitySchema> Abnormalities { get; private set; }
+    public static Dictionary<string, AbnormalitySchema> Abnormalities { get; private set; }
 
 
     internal static void Init(string path, IAbnormalityFlagTypeParser? flagTypeParser = null)
@@ -61,7 +61,6 @@ public class AbnormalityData
             string name = abnormality.Attributes["Name"]?.Value ?? "ABNORMALITY_UNKNOWN";
             string icon = abnormality.Attributes["Icon"]?.Value ?? "ICON_MISSING";
             string offset = abnormality.Attributes["Offset"]?.Value ?? id;
-            string[]? offsets = abnormality.Attributes["Offsets"]?.Value.Split(",");
             string dependsOn = abnormality.Attributes["DependsOn"]?.Value ?? "0";
             string withValue = abnormality.Attributes["WithValue"]?.Value ?? "0";
             string group = abnormality.ParentNode!.Name;
@@ -78,11 +77,10 @@ public class AbnormalityData
             AbnormalitySchema schema = new()
             {
                 Id = BuildAbnormalityId(id, group),
-                Offsets = ParseOffsets(offsets),
                 Name = name,
                 Icon = icon,
                 Category = category,
-                Group = group,
+                Group = group
             };
 
             int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);
@@ -116,21 +114,5 @@ public class AbnormalityData
                                                             .ToArray();
 
         return abnormalities;
-    }
-
-    private static int[]? ParseOffsets(string[]? offsets)
-    {
-        if (offsets == null)
-            return null;
-
-        int length = offsets.Length;
-        int[] tmpArr = new int[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            int.TryParse(offsets[i], NumberStyles.HexNumber, null, out tmpArr[i]);
-        }
-
-        return tmpArr;
     }
 }

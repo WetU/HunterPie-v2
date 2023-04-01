@@ -46,19 +46,6 @@ public class WindowsMemory : IMemory
         return type.IsPrimitive ? ReadPrimitive<T>(address, count) : ReadStructure<T>(address, count);
     }
 
-    public T Read<T>(long address, int offset, int[]? offsets) where T : struct
-    {
-        if (offsets == null)
-            return Read<T>(address + offset, 1)[0];
-
-        for (int i = 0; i < offsets.Length - 1; i++)
-        {
-            address = Read<long>(address + offsets[i]);
-        }
-
-        return Read<T>(address + offsets[^1], 1)[0];
-    }
-
     public long Read(long address, int[] offsets)
     {
         foreach (int offset in offsets)
