@@ -48,7 +48,6 @@ public sealed class MHRPlayer : CommonPlayer
     private int _masterRank;
     private IWeapon _weapon;
     private Weapon _weaponId = WeaponType.None;
-    private readonly Dictionary<byte, MHREquipmentSkillStructure> _armorSkills = new(48);
     private CommonConditions _commonCondition = CommonConditions.None;
     private DebuffConditions _debuffCondition = DebuffConditions.None;
     //private WeaponConditions _weaponCondition = WeaponConditions.None;
@@ -344,23 +343,6 @@ public sealed class MHRPlayer : CommonPlayer
     }
 
     [ScannableMethod]
-    private void GetPlayerEquipmentSkills()
-    {
-        long armorSkillsPtr = Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("PLAYER_GEAR_SKILLS_ARRAY_OFFSETS")
-        );
-
-        MHREquipmentSkillStructure[] armorSkills = Memory.ReadArrayOfPtrs<MHREquipmentSkillStructure>(armorSkillsPtr);
-
-        _armorSkills.Clear();
-
-        foreach (MHREquipmentSkillStructure skill in armorSkills)
-            if (skill.Id > 0)
-                _armorSkills.Add(skill.Id, skill);
-    }
-
-    [ScannableMethod]
     private void GetConsumableAbnormalities()
     {
         if (!InHuntingZone)
@@ -390,19 +372,13 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(consumableBuffs + schema.DependsOn)
             };
 
-            bool hasSkill = schema.EquipSkillId switch
-            {
-                0 => true,
-                _ => _armorSkills.ContainsKey(schema.EquipSkillId)
-            };
-
             bool isConditionValid = schema.FlagType switch
             {
                 AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
                 AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<PrimaryActionFlags>()),
                 _ => true
-            } && abnormSubId == schema.WithValue && hasSkill;
+            } && abnormSubId == schema.WithValue;
 
             MHRAbnormalityData abnormality = new();
 
@@ -462,19 +438,13 @@ public sealed class MHRPlayer : CommonPlayer
                 _ => Process.Memory.Read<int>(debuffsPtr + schema.DependsOn)
             };
 
-            bool hasSkill = schema.EquipSkillId switch
-            {
-                0 => true,
-                _ => _armorSkills.ContainsKey(schema.EquipSkillId)
-            };
-
             bool isConditionValid = schema.FlagType switch
             {
                 AbnormalityFlagType.RiseCommon => _commonCondition.HasFlag(schema.GetFlagAs<CommonConditions>()),
                 AbnormalityFlagType.RiseDebuff => _debuffCondition.HasFlag(schema.GetFlagAs<DebuffConditions>()),
                 AbnormalityFlagType.RiseAction => _actionFlag.HasFlag(schema.GetFlagAs<PrimaryActionFlags>()),
                 _ => true
-            } && abnormSubId == schema.WithValue && hasSkill;
+            } && abnormSubId == schema.WithValue;
 
             MHRAbnormalityData abnormality = new();
 
