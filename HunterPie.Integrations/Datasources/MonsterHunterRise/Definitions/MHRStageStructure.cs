@@ -27,15 +27,12 @@ public struct MHRStageStructure
     public int ReverbBaseSpace;
     public int CurrentMapNo;
 
-    public bool IsMainMenu() => Type is >= 0 and <= 1;
     public bool IsMakingCharacter() => Type == 2;
     public bool IsSelectingCharacter() => Type == 3;
-    public bool IsVillage() => Type == 4;
     public bool IsHuntingZone() => Type is >= 5 and <= 9;
     public bool IsRampage() => Type == 9;
-    public bool IsResultScreen() => Type == 10;
     public bool IsDemo() => Type == 11;
     public bool IsLoadingScreen() => Type == 12;
 
-    public bool IsIrrelevantStage() => IsMainMenu() || IsMakingCharacter() || IsSelectingCharacter() || IsResultScreen() || IsDemo() || IsLoadingScreen();
+    public bool IsIrrelevantStage() => IsMakingCharacter() || IsSelectingCharacter() || IsDemo() || IsLoadingScreen();
 }

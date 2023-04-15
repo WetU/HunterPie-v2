@@ -37,6 +37,7 @@ public sealed class MHRPlayer : CommonPlayer
     #region Private
     private int _saveSlotId;
     private string _name;
+    private GameStatus _gameStatus;
     private int _stageId = -1;
     private readonly Dictionary<string, IAbnormality> _abnormalities = new();
     private readonly MHRParty _party = new();
@@ -106,7 +107,7 @@ public sealed class MHRPlayer : CommonPlayer
         {
             if (value != _stageId)
             {
-                if (_stageData.IsVillage() && value != 5 && (_lastStageData.IsHuntingZone() || StageId == 5 || _lastStageData.IsIrrelevantStage()))
+                if (_gameStatus == GameStatus.Village && value != 5 && (_lastStageData.IsHuntingZone() || StageId == 5 || _lastStageData.IsIrrelevantStage()))
                     this.Dispatch(_onVillageEnter);
                 else if (_stageData.IsHuntingZone() || value == 5)
                     this.Dispatch(_onVillageLeave);
@@ -117,7 +118,7 @@ public sealed class MHRPlayer : CommonPlayer
         }
     }
 
-    public override bool InHuntingZone => _stageData.IsHuntingZone() || StageId == 5;
+    public override bool InHuntingZone => (_gameStatus == GameStatus.Quest && _stageData.IsHuntingZone()) || StageId == 5;
 
     public override IParty Party => _party;
 
@@ -178,6 +179,15 @@ public sealed class MHRPlayer : CommonPlayer
 
     // TODO: Add DTOs for middlewares
     [ScannableMethod]
+    private void GetGameStatus()
+    {
+        _gameStatus = (GameStatus)Process.Memory.Deref<int>(
+            AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"),
+            AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
+        );
+    }
+
+    [ScannableMethod]
     private void GetStageData()
     {
         long stageAddress = Process.Memory.Read(
@@ -190,12 +200,12 @@ public sealed class MHRPlayer : CommonPlayer
 
         MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
 
-        int zoneId = stageData.IsMainMenu() ? -1
+        int zoneId = _gameStatus == GameStatus.Title ? -1
             : stageData.IsMakingCharacter() ? -2
             : stageData.IsSelectingCharacter() ? 199
-            : stageData.IsVillage() ? stageData.VillageSpace
+            : _gameStatus == GameStatus.Village ? stageData.VillageSpace
             : stageData.IsRampage() ? -6
-            : stageData.IsResultScreen() ? -3
+            : _gameStatus == GameStatus.Result ? -3
             : stageData.IsDemo() ? -4
             : stageData.IsLoadingScreen() ? -5
             : stageData.CurrentMapNo + 200;
@@ -209,7 +219,7 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerSaveData()
     {
-        if (_stageData.IsMainMenu())
+        if (_gameStatus == GameStatus.Title)
         {
             Name = "";
             return;
@@ -229,7 +239,7 @@ public sealed class MHRPlayer : CommonPlayer
 
     private void FindPlayerSaveSlot()
     {
-        if (_stageData.IsMainMenu())
+        if (_gameStatus == GameStatus.Title)
         {
             Name = "";
             _saveSlotId = -1;
@@ -283,7 +293,7 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerWeaponData()
     {
-        if (_stageData.IsMainMenu())
+        if (_gameStatus == GameStatus.Title)
             return;
 
         long weaponIdPtr = Process.Memory.Read(
