@@ -179,22 +179,18 @@ public sealed class MHRPlayer : CommonPlayer
 
     // TODO: Add DTOs for middlewares
     [ScannableMethod]
-    private void GetGameStatus()
-    {
-        long snowGameManager = Process.Memory.Read<long>(AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"));
-
-        if (snowGameManager.IsNullPointer())
-            return;
-
-        _gameStatus = (GameStatus)Process.Memory.Deref<int>(
-            snowGameManager,
-            AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
-        );
-    }
-
-    [ScannableMethod]
     private void GetStageData()
     {
+        _gameStatus = (GameStatus)Process.Memory.Deref<int>(
+            AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"),
+            AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
+        );
+
+        if (_gameStatus == GameStatus.Title)
+            StageId = -1;
+        else if (_gameStatus == GameStatus.Result)
+            StageId = -3;
+
         long stageAddress = Process.Memory.Read(
             AddressMap.GetAbsolute("STAGE_ADDRESS"),
             AddressMap.Get<int[]>("STAGE_OFFSETS")
@@ -205,12 +201,10 @@ public sealed class MHRPlayer : CommonPlayer
 
         MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
 
-        int zoneId = _gameStatus == GameStatus.Title ? -1
-            : stageData.IsMakingCharacter() ? -2
+        int zoneId = stageData.IsMakingCharacter() ? -2
             : stageData.IsSelectingCharacter() ? 199
             : _gameStatus == GameStatus.Village ? stageData.VillageSpace
             : stageData.IsRampage() ? -6
-            : _gameStatus == GameStatus.Result ? -3
             : stageData.IsDemo() ? -4
             : stageData.IsLoadingScreen() ? -5
             : stageData.CurrentMapNo + 200;
