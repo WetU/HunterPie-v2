@@ -181,8 +181,13 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetGameStatus()
     {
+        long snowGameManager = Process.Memory.Read<long>(AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"));
+
+        if (snowGameManager.IsNullPointer())
+            return;
+
         _gameStatus = (GameStatus)Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"),
+            snowGameManager,
             AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
         );
     }
