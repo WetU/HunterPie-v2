@@ -181,14 +181,6 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetStageData()
     {
-        _gameStatus = (GameStatus)Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"),
-            AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
-        );
-
-        if (_gameStatus == GameStatus.Result)
-            StageId = -3;
-
         long stageAddress = Process.Memory.Read(
             AddressMap.GetAbsolute("STAGE_ADDRESS"),
             AddressMap.Get<int[]>("STAGE_OFFSETS")
@@ -197,15 +189,21 @@ public sealed class MHRPlayer : CommonPlayer
         if (stageAddress == 0x00000000)
             return;
 
+        _gameStatus = (GameStatus)Process.Memory.Deref<int>(
+            AddressMap.GetAbsolute("SNOWGAMEMANAGER_ADDRESS"),
+            AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
+        );
+
         MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
 
-        int zoneId = stageData.IsMainMenu() ? -1
+        int zoneId = _gameStatus == GameStatus.Title && stageData.IsMainMenu() ? -1
+            : _gameStatus == GameStatus.Village ? stageData.VillageSpace
+            : _gameStatus == GameStatus.Result ? -3
             : stageData.IsMakingCharacter() ? -2
             : stageData.IsSelectingCharacter() ? 199
-            : _gameStatus == GameStatus.Village ? stageData.VillageSpace
-            : stageData.IsRampage() ? -6
             : stageData.IsDemo() ? -4
             : stageData.IsLoadingScreen() ? -5
+            : stageData.IsRampage() ? -6
             : stageData.CurrentMapNo + 200;
         MHRStageStructure tempStageData = _stageData;
         _stageData = stageData;
