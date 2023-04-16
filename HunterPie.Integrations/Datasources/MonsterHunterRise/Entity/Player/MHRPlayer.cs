@@ -37,7 +37,7 @@ public sealed class MHRPlayer : CommonPlayer
     #region Private
     private int _saveSlotId;
     private string _name;
-    private GameStatus _gameStatus;
+    private GameStatus _gameStatus = GameStatus.None;
     private int _stageId = -1;
     private readonly Dictionary<string, IAbnormality> _abnormalities = new();
     private readonly MHRParty _party = new();
@@ -186,9 +186,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("GAME_STATUS_OFFSETS")
         );
 
-        if (_gameStatus == GameStatus.Title)
-            StageId = -1;
-        else if (_gameStatus == GameStatus.Result)
+        if (_gameStatus == GameStatus.Result)
             StageId = -3;
 
         long stageAddress = Process.Memory.Read(
@@ -201,7 +199,8 @@ public sealed class MHRPlayer : CommonPlayer
 
         MHRStageStructure stageData = Process.Memory.Read<MHRStageStructure>(stageAddress + 0x60);
 
-        int zoneId = stageData.IsMakingCharacter() ? -2
+        int zoneId = stageData.IsMainMenu() ? -1
+            : stageData.IsMakingCharacter() ? -2
             : stageData.IsSelectingCharacter() ? 199
             : _gameStatus == GameStatus.Village ? stageData.VillageSpace
             : stageData.IsRampage() ? -6
@@ -218,7 +217,7 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerSaveData()
     {
-        if (_gameStatus == GameStatus.Title)
+        if (_stageData.IsMainMenu())
         {
             Name = "";
             return;
@@ -238,7 +237,7 @@ public sealed class MHRPlayer : CommonPlayer
 
     private void FindPlayerSaveSlot()
     {
-        if (_gameStatus == GameStatus.Title)
+        if (_stageData.IsMainMenu())
         {
             Name = "";
             _saveSlotId = -1;
@@ -292,7 +291,7 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerWeaponData()
     {
-        if (_gameStatus == GameStatus.Title)
+        if (_stageData.IsMainMenu())
             return;
 
         long weaponIdPtr = Process.Memory.Read(
