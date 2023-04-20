@@ -36,7 +36,7 @@ public sealed class MHRPlayer : CommonPlayer
 {
     #region Private
     private int _saveSlotId;
-    private string _name;
+    private string _name = string.Empty;
     private GameStatus _gameStatus = GameStatus.None;
     private int _stageId = -1;
     private readonly Dictionary<string, IAbnormality> _abnormalities = new();
@@ -128,7 +128,7 @@ public sealed class MHRPlayer : CommonPlayer
 
     public override IStaminaComponent Stamina => _stamina;
 
-    public MHRWirebug[] Wirebugs { get; } = { new(), new(), new() };
+    public MHRWirebug[] Wirebugs { get; } = { new(), new(), new(), new() };
 
     public MHRArgosy Argosy { get; } = new();
 
@@ -186,7 +186,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("STAGE_OFFSETS")
         );
 
-        if (stageAddress == 0x00000000)
+        if (stageAddress.IsNullPointer())
             return;
 
         _gameStatus = (GameStatus)Process.Memory.Deref<int>(
@@ -734,7 +734,11 @@ public sealed class MHRPlayer : CommonPlayer
             };
 
             data.Structure.Cooldown /= AbnormalityService.TIMER_MULTIPLIER;
-            data.Structure.MaxCooldown = data.Structure.MaxCooldown == 0 ? 400 : data.Structure.MaxCooldown / AbnormalityService.TIMER_MULTIPLIER;
+
+            if (data.Structure.MaxCooldown == 0 && i <= 1)
+                data.Structure.MaxCooldown = 480.0f;
+
+            data.Structure.MaxCooldown /= AbnormalityService.TIMER_MULTIPLIER;
 
             if (wirebugPtr != Wirebugs[i].Address)
             {
@@ -746,14 +750,13 @@ public sealed class MHRPlayer : CommonPlayer
             wirebug.Update(data);
         }
 
-        // Update last Wirebug with extra data
+        // Update temporary wirebug
         MHRWirebugExtrasStructure extraData = Process.Memory.Deref<MHRWirebugExtrasStructure>(
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_OFFSETS")
         );
         extraData.Timer /= AbnormalityService.TIMER_MULTIPLIER;
-        IUpdatable<MHRWirebugExtrasStructure> lastWirebug = Wirebugs[^1];
-        lastWirebug.Update(extraData);
+        Wirebugs[^2].Update(extraData);
 
         if (shouldDispatchEvent)
             this.Dispatch(_onWirebugsRefresh, Wirebugs);
