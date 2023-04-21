@@ -761,11 +761,13 @@ public sealed class MHRPlayer : CommonPlayer
         Wirebugs[lastIdx].Update(extraData);
 
         // Update temporary wirebug from Frenzied Bloodlust skill
-        if (Wirebugs[lastIdx].IsAvailable)
+        bool hasWild = Wirebugs[lastIdx].IsAvailable;
+
+        if (hasWild)
             lastIdx = ^1;
 
-        bool isActive = Process.Memory.Deref<uint>(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+        bool isSkillActive = Process.Memory.Deref<uint>(
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_NUM_FROM_SKILL_OFFSETS")
         ) > 0;
 
@@ -773,7 +775,7 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_FROM_SKILL_OFFSETS")
         );
-        temporaryData.Timer = isActive ? temporaryData.Timer / AbnormalityService.TIMER_MULTIPLIER : 0.0f;
+        temporaryData.Timer = isSkillActive ? temporaryData.Timer / AbnormalityService.TIMER_MULTIPLIER : 0.0f;
         Wirebugs[lastIdx].Update(temporaryData);
 
         if (shouldDispatchEvent)
