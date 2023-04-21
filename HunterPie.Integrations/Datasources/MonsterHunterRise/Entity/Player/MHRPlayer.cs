@@ -767,7 +767,7 @@ public sealed class MHRPlayer : CommonPlayer
             lastIdx = ^1;
 
         bool isSkillActive = Process.Memory.Deref<uint>(
-            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_NUM_FROM_SKILL_OFFSETS")
         ) > 0;
 
