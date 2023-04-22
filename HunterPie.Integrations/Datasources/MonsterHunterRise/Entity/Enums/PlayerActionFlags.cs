@@ -47,5 +47,7 @@ public enum SecondaryActionFlags : uint
     PowderMantle_TriggerAttack = 1 << 2,
     PowderMantle_TriggerDamage = 1 << 3,
     Strife_Small = 1 << 4,
-    Strife_Large = 1 << 5
+    Strife_Large = 1 << 5,
+    HeavenSent_Check = 1 << 6,
+    HeavenSent_EnableDist = 1 << 7
 }
