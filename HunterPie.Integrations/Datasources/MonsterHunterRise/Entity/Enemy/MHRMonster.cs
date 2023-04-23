@@ -35,6 +35,7 @@ public class MHRMonster : CommonMonster
     private readonly Dictionary<long, MHRMonsterAilment> _ailments = new();
     private readonly object _syncAilments = new();
     private readonly List<Element> _weaknesses = new();
+    private readonly List<string> _types = new();
 
     public override int Id
     {
@@ -44,6 +45,7 @@ public class MHRMonster : CommonMonster
             if (_id != value)
             {
                 _id = value;
+                GetMonsterTypes();
                 GetMonsterWeaknesses();
                 this.Dispatch(_onSpawn);
             }
@@ -167,6 +169,8 @@ public class MHRMonster : CommonMonster
 
     public override Element[] Weaknesses => _weaknesses.ToArray();
 
+    public override string[] Types => _types.ToArray();
+
     public override float CaptureThreshold
     {
         get => _captureThreshold;
@@ -188,10 +192,18 @@ public class MHRMonster : CommonMonster
         _address = address;
         GetMonsterType();
 
-        if (MonsterType == MonsterType.Mystery)
+        if (MonsterType == MonsterType.Qurio)
             _qurioThreshold = new("PART_QURIO_THRESHOLD");
 
         Log.Debug($"Initialized monster at address {address:X}");
+    }
+
+    private void GetMonsterTypes()
+    {
+        MonsterDataSchema? data = MonsterData.GetMonsterData(Id);
+
+        if (data is { } schema)
+            _types.AddRange(schema.Types);
     }
 
     private void GetMonsterWeaknesses()
@@ -253,7 +265,7 @@ public class MHRMonster : CommonMonster
     [ScannableMethod]
     private void GetMonsterCaptureThreshold()
     {
-        if (MonsterType == MonsterType.Mystery)
+        if (MonsterType == MonsterType.Qurio)
         {
             CaptureThreshold = 0.0f;
             return;
@@ -282,7 +294,7 @@ public class MHRMonster : CommonMonster
             _address,
             AddressMap.Get<int[]>("MONSTER_QURIO_DATA")
         );
-        bool isQurioActive = Process.Memory.Read<sbyte>(qurioDataPtr + 0x12) == 2;
+        bool isQurioActive = Process.Memory.Read<byte>(qurioDataPtr + 0x12) == 2;
 
         // Flinch array
         long monsterFlinchPartsPtr = Process.Memory.ReadPtr(_address, AddressMap.Get<int[]>("MONSTER_FLINCH_HEALTH_COMPONENT_OFFSETS"));
