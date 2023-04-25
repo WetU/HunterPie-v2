@@ -690,29 +690,17 @@ public sealed class MHRPlayer : CommonPlayer
     [ScannableMethod(typeof(MHRWirebugData))]
     private void GetPlayerWirebugs()
     {
-        int defaultbugsNum = Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("WIREBUG_NUM_OFFSETS")
+        MHRWirebugCountStructure wirebugCount = Memory.Deref<MHRWirebugCountStructure>(
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+            AddressMap.Get<int[]>("WIREBUG_COUNT_OFFSETS")
         );
-
-        int wildbugNum = Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("WIREBUG_WILD_NUM_OFFSETS")
-        );
-
-        int skillbugNum = Process.Memory.Deref<int>(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-            AddressMap.Get<int[]>("WIREBUG_SKILL_NUM_OFFSETS")
-        );
-
-        int totalbugsNum = Math.Max(defaultbugsNum + wildbugNum + skillbugNum, 0);
 
         long wirebugsArrayPtr = Process.Memory.Read(
-            AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
+            AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("WIREBUG_DATA_OFFSETS")
         );
 
-        if (totalbugsNum == 0 || wirebugsArrayPtr.IsNullPointer())
+        if (wirebugCount.Total() is 0 || wirebugsArrayPtr.IsNullPointer())
         {
             this.Dispatch(_onWirebugsRefresh, Array.Empty<MHRWirebug>());
             return;
@@ -723,9 +711,6 @@ public sealed class MHRPlayer : CommonPlayer
             AddressMap.Get<int[]>("IS_WIREBUG_BLOCKED_OFFSETS")
         ) != 0;
 
-        int wirebugsArrayLength = Math.Min(Wirebugs.Length, Process.Memory.Read<int>(wirebugsArrayPtr + 0x1C));
-        long[] wirebugsPtrs = Process.Memory.Read<long>(wirebugsArrayPtr + 0x20, (uint)wirebugsArrayLength);
-
         WirebugState wirebugState = isBlocked ? WirebugState.Blocked :
             _debuffCondition.HasFlag(DebuffConditions.IceBlight) ? WirebugState.IceBlight :
             _commonCondition.HasFlag(CommonConditions.WindMantle) ? WirebugState.WindMantle :
@@ -733,20 +718,19 @@ public sealed class MHRPlayer : CommonPlayer
             _commonCondition.HasFlag(CommonConditions.GoldWirebug) ? WirebugState.GoldWirebug :
             WirebugState.None;
 
+        long[] wirebugsPtrs = Memory.ReadArraySafe<long>(wirebugsArrayPtr, (uint)Wirebugs.Length);
+
         bool shouldDispatchEvent = false;
-        for (int i = 0; i < wirebugsArrayLength; i++)
+        for (int i = 0; i < wirebugsPtrs.Length; i++)
         {
             MHRWirebug wirebug = Wirebugs[i];
             long wirebugPtr = wirebugsPtrs[i];
-            WirebugType wirebugType = i < defaultbugsNum ? WirebugType.Default :
-                wildbugNum > 0 && i == defaultbugsNum ? WirebugType.Wild :
-                skillbugNum > 0 && i == defaultbugsNum + wildbugNum ? WirebugType.Skill :
-                WirebugType.None;
+            WirebugType wirebugType = wirebugCount.ToType(i);
 
             var data = new MHRWirebugData
             {
                 IsAvailable = wirebugType != WirebugType.None,
-                IsTemporary = wirebugType is WirebugType.Wild or WirebugType.Skill,
+                IsTemporary = wirebugType is WirebugType.Environment or WirebugType.Skill,
                 WirebugState = wirebugState,
                 Structure = Process.Memory.Read<MHRWirebugStructure>(wirebugPtr)
             };
@@ -766,21 +750,20 @@ public sealed class MHRPlayer : CommonPlayer
 
             if (data.IsTemporary)
             {
-                MHRWirebugExtrasStructure temporaryData = wirebugType == WirebugType.Wild ?
-                    Process.Memory.Deref<MHRWirebugExtrasStructure>(
-                        AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-                        AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_OFFSETS")
-                    ) :
-                    Process.Memory.Deref<MHRWirebugExtrasStructure>(
-                        AddressMap.GetAbsolute("LOCAL_PLAYER_DATA_ADDRESS"),
-                        AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_FROM_SKILL_OFFSETS")
-                    );
+                int[] wirebugExtraOffsets = wirebugType switch
+                {
+                    WirebugType.Environment => AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_OFFSETS"),
+                    _ => AddressMap.Get<int[]>("WIREBUG_EXTRA_DATA_FROM_SKILL_OFFSETS")
+                };
+                MHRWirebugExtrasStructure temporaryData = Memory.Deref<MHRWirebugExtrasStructure>(
+                    AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
+                    wirebugExtraOffsets
+                );
                 temporaryData.Timer /= AbnormalityService.TIMER_MULTIPLIER;
                 wirebug.Update(temporaryData);
             }
 
-            IUpdatable<MHRWirebugData> wirebugInterface = wirebug;
-            wirebugInterface.Update(data);
+            wirebug.Update(data);
         }
 
         if (shouldDispatchEvent)

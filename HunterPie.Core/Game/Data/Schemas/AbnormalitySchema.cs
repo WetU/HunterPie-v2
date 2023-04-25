@@ -27,6 +27,6 @@ public struct AbnormalitySchema
         if (Flag is T flag)
             return flag;
 
-        return default;
+        return default(T);
     }
 }

@@ -10,7 +10,6 @@ using System.Text;
 
 namespace HunterPie.Core.System.Windows.Memory;
 
-#nullable enable
 public class WindowsMemory : IMemory
 {
     private const long NULLPTR = 0;

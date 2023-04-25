@@ -2,7 +2,6 @@
 
 namespace HunterPie.Core.Domain.Memory;
 
-#nullable enable
 public interface IMemoryReader
 {
     public string Read(long address, uint length, Encoding encoding = null);
