@@ -741,6 +741,7 @@ public sealed class MHRPlayer : CommonPlayer
                 data.Structure.MaxCooldown = 480.0f;
 
             data.Structure.MaxCooldown /= AbnormalityService.TIMER_MULTIPLIER;
+            data.Structure.ExtraCooldown /= AbnormalityService.TIMER_MULTIPLIER;
 
             if (wirebugPtr != wirebug.Address)
             {
