@@ -736,10 +736,6 @@ public sealed class MHRPlayer : CommonPlayer
             };
 
             data.Structure.Cooldown /= AbnormalityService.TIMER_MULTIPLIER;
-
-            if (data.Structure.MaxCooldown == 0.0f && data.IsAvailable)
-                data.Structure.MaxCooldown = 480.0f;
-
             data.Structure.MaxCooldown /= AbnormalityService.TIMER_MULTIPLIER;
             data.Structure.ExtraCooldown /= AbnormalityService.TIMER_MULTIPLIER;
 
