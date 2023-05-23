@@ -18,6 +18,8 @@ public static class AbnormalityService
     private static readonly Lazy<Dictionary<string, AbnormalitySchema>> LazyRiseDataSource = new(() => Load(RISE_ABNORMALITIES_FILE));
     private static readonly Lazy<Dictionary<string, AbnormalitySchema>> LazyWorldDataSource = new(() => Load(WORLD_ABNORMALITIES_FILE));
 
+    public const float TIMER_MULTIPLIER = 60.0f;
+
     /// <summary>
     /// Returns an abnormality with the given internal unique identifier
     /// </summary>

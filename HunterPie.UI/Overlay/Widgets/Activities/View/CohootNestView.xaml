@@ -101,8 +101,7 @@
          --><Run Text="/"
                  FontWeight="Medium"
                  Foreground="{StaticResource WHITE_600}"/><!--
-         --><Run Text="{Binding KamuraMaxCount, Mode=OneWay}"
-                 d:Text="5"
+         --><Run Text="5"
                  FontWeight="Medium"
                  Foreground="{StaticResource WHITE_600}"/>
         </TextBlock>
@@ -126,8 +125,7 @@
          --><Run Text="/"
                  FontWeight="Medium"
                  Foreground="{StaticResource WHITE_600}"/><!--
-         --><Run Text="{Binding ElgadoMaxCount, Mode=OneWay}"
-                 d:Text="5"
+         --><Run Text="5"
                  FontWeight="Medium"
                  Foreground="{StaticResource WHITE_600}"/>
         </TextBlock>

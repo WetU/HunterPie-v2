@@ -8,7 +8,6 @@ namespace HunterPie.UI.Overlay.Widgets.Abnormality.ViewModel;
 
 public class AbnormalityBarViewModel : Bindable
 {
-
     private ObservableCollection<AbnormalityViewModel> _abnormalities = new();
     public ObservableCollection<AbnormalityViewModel> Abnormalities { get => _abnormalities; set => SetValue(ref _abnormalities, value); }
 

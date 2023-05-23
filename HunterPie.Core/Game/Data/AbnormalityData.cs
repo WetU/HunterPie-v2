@@ -79,7 +79,7 @@ public class AbnormalityData
                 Name = name,
                 Icon = icon,
                 Category = category,
-                Group = group,
+                Group = group
             };
 
             int.TryParse(offset, NumberStyles.HexNumber, null, out schema.Offset);

@@ -37,7 +37,7 @@ public static class MHRiseUtils
             11 => Weapon.ChargeBlade,
             12 => Weapon.InsectGlaive,
             13 => Weapon.Bow,
-            _ => Weapon.None,
+            _ => Weapon.None
         };
     }
 
