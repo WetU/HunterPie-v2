@@ -23,9 +23,9 @@ public interface IGame : IDisposable
 
     public float TimeElapsed { get; }
 
-    public int MaxDeaths { get; }
+    public uint MaxDeaths { get; }
 
-    public int Deaths { get; }
+    public uint Deaths { get; }
 
     public bool IsInQuest { get; }
 

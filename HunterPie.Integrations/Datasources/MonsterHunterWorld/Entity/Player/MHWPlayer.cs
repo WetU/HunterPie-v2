@@ -175,6 +175,7 @@ public sealed class MHWPlayer : CommonPlayer
     public MHWArgosy Argosy { get; } = new();
 
     public MHWTailraiders Tailraiders { get; } = new();
+
     #endregion
 
     internal MHWPlayer(IProcessManager process) : base(process)

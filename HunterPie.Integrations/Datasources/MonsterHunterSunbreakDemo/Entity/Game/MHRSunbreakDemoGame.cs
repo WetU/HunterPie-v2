@@ -24,7 +24,6 @@ public sealed class MHRSunbreakDemoGame : CommonGame
     public override IPlayer Player => _player;
     public override List<IMonster> Monsters { get; } = new();
     public override bool IsHudOpen { get; protected set; }
-
     public override IChat? Chat => null;
     public override float TimeElapsed
     {
@@ -32,13 +31,13 @@ public sealed class MHRSunbreakDemoGame : CommonGame
         protected set => throw new NotImplementedException();
     }
 
-    public override int MaxDeaths
+    public override uint MaxDeaths
     {
         get => throw new NotImplementedException();
         protected set => throw new NotImplementedException();
     }
 
-    public override int Deaths
+    public override uint Deaths
     {
         get => throw new NotImplementedException();
         protected set => throw new NotImplementedException();

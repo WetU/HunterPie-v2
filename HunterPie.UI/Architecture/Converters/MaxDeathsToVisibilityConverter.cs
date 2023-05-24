@@ -9,8 +9,7 @@ public class MaxDeathsToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        int maxdeaths = (int)value;
-        return maxdeaths == 0
+        return (uint)value == 0
             ? Visibility.Collapsed
             : Visibility.Visible;
     }

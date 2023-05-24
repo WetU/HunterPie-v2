@@ -20,7 +20,6 @@ public interface IPlayer
     public IStaminaComponent Stamina { get; }
     public IWeapon Weapon { get; }
 
-
     public event EventHandler<EventArgs> OnLogin;
     public event EventHandler<EventArgs> OnLogout;
     public event EventHandler<EventArgs> OnDeath;

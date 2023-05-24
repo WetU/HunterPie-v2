@@ -27,11 +27,9 @@ public sealed class MHRConsumableAbnormality : CommonAbnormality, IUpdatable<MHR
             }
         }
     }
-
     public override float MaxTimer { get; protected set; }
     public override bool IsInfinite { get; protected set; }
     public override int Level { get; protected set; }
-
     public override bool IsBuildup { get; protected set; }
 
     public MHRConsumableAbnormality(AbnormalitySchema data)

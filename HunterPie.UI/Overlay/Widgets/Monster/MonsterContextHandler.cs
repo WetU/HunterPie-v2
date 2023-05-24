@@ -57,7 +57,7 @@ public class MonsterContextHandler : BossMonsterViewModel, IContextHandler, IDis
 
     private void OnSpawn(object sender, EventArgs e)
     {
-        IsQurio = Context is MHRMonster { MonsterType: MonsterType.Qurio };
+        IsQurio = Context is MHRMonster { MonsterType: MonsterType.Mystery };
         Name = Context.Name;
 
         Em = BuildMonsterEmByContext();
@@ -156,7 +156,7 @@ public class MonsterContextHandler : BossMonsterViewModel, IContextHandler, IDis
 
     private void UpdateData()
     {
-        IsQurio = Context is MHRMonster { MonsterType: MonsterType.Qurio };
+        IsQurio = Context is MHRMonster { MonsterType: MonsterType.Mystery };
 
         if (Context.Id > -1)
         {
