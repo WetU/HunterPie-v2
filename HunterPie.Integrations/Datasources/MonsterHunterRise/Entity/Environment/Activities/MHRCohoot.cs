@@ -36,8 +36,6 @@ public class MHRCohoot : IEventDispatcher, IUpdatable<MHRCohootStructure>, IDisp
         }
     }
 
-    public int MaxCount => 5;
-
     private readonly SmartEvent<MHRCohoot> _onKamuraCountChange = new();
     public event EventHandler<MHRCohoot> OnKamuraCountChange
     {

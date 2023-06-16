@@ -11,6 +11,9 @@
     <Compile Update="Controls\Buttons\ColorPicker.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Controls\Buttons\ComboButton.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\Buttons\Keybinding.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -128,6 +131,12 @@
     <Compile Update="Overlay\Widgets\Chat\Views\ChatView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Overlay\Widgets\Classes\Views\ClassView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Overlay\Widgets\Classes\Views\InsectGlaiveView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Overlay\Widgets\Damage\View\DamageBarView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -197,6 +206,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Buttons\ColorPicker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Controls\Buttons\ComboButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Controls\Buttons\Keybinding.xaml">
@@ -314,6 +326,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Overlay\Widgets\Chat\Views\ChatView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Overlay\Widgets\Classes\Views\ClassView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Overlay\Widgets\Classes\Views\InsectGlaiveView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Overlay\Widgets\Damage\View\DamageBarView.xaml">

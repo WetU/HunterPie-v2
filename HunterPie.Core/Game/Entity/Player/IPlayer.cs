@@ -1,4 +1,5 @@
 ﻿using HunterPie.Core.Game.Entity.Party;
+using HunterPie.Core.Game.Entity.Player.Classes;
 using HunterPie.Core.Game.Entity.Player.Vitals;
 using HunterPie.Core.Game.Events;
 using System;
@@ -18,7 +19,6 @@ public interface IPlayer
     public IHealthComponent Health { get; }
     public IStaminaComponent Stamina { get; }
     public IWeapon Weapon { get; }
-
 
     public event EventHandler<EventArgs> OnLogin;
     public event EventHandler<EventArgs> OnLogout;

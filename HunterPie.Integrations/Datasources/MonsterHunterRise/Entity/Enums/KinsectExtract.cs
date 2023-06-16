@@ -1,6 +1,8 @@
 ﻿namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
-public enum Scroll
+public enum KinsectExtract
 {
-    Red,
-    Blue
+    Attack,
+    Speed,
+    Defense,
+    None,
 }

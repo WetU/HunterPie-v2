@@ -31,12 +31,15 @@ internal sealed class RiseRichPresence : RichPresence
 
         description = game.Player.StageId switch
         {
-            -2 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_STATE_LOADING']"),
             -1 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_STATE_MAIN_MENU']"),
+            -2 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_CHAR_MAKING']"),
+            -3 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_RESULT_SCREEN']"),
+            -4 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_DEMO_SCREEN']"),
+            -5 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_STATE_LOADING']"),
+            -6 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_RAMPAGE']"),
             (>= 0 and <= 4) or
             (> 5 and < 199) => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_STATE_IDLE']"),
             5 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_PRACTICE']"),
-            207 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_RAMPAGE']"),
             199 => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_RISE_STATE_CHAR_SELECTION']"),
             _ => Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_STATE_EXPLORING']")
         };
@@ -53,7 +56,7 @@ internal sealed class RiseRichPresence : RichPresence
                 .Replace("{Percentage}", $"{targetMonster.Health / targetMonster.MaxHealth * 100:0}");
         }
 
-        string state = game.Player.Party.Size <= 1
+        string state = game.Player.StageId == -2 || game.Player.Party.Size <= 1
             ? Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_PARTY_STATE_SOLO_STRING']")
             : Localization.QueryString("//Strings/Client/Integrations/Discord[@Id='DRPC_PARTY_STATE_GROUP_STRING']");
 

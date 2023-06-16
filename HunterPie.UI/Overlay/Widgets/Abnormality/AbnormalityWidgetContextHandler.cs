@@ -16,6 +16,7 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
     public readonly AbnormalityBarViewModel ViewModel;
     private readonly AbnormalityBarView View;
     private ref AbnormalityWidgetConfig Config => ref _config;
+    private IPlayer Player => Context.Game.Player;
 
     public AbnormalityWidgetContextHandler(IContext context, ref AbnormalityWidgetConfig config)
     {
@@ -32,8 +33,8 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
 
     public void HookEvents()
     {
-        Context.Game.Player.OnAbnormalityStart += OnAbnormalityStart;
-        Context.Game.Player.OnAbnormalityEnd += OnAbnormalityEnd;
+        Player.OnAbnormalityStart += OnAbnormalityStart;
+        Player.OnAbnormalityEnd += OnAbnormalityEnd;
     }
 
     private void OnAbnormalityEnd(object sender, IAbnormality e)
@@ -64,8 +65,8 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
 
     public void UnhookEvents()
     {
-        Context.Game.Player.OnAbnormalityStart -= OnAbnormalityStart;
-        Context.Game.Player.OnAbnormalityEnd -= OnAbnormalityEnd;
+        Player.OnAbnormalityStart -= OnAbnormalityStart;
+        Player.OnAbnormalityEnd -= OnAbnormalityEnd;
         _ = WidgetManager.Unregister<AbnormalityBarView, AbnormalityWidgetConfig>(View);
     }
 
@@ -73,7 +74,7 @@ internal class AbnormalityWidgetContextHandler : IContextHandler
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            foreach (IAbnormality abnormality in Context.Game.Player.Abnormalities)
+            foreach (IAbnormality abnormality in Player.Abnormalities)
             {
                 if (!Config.AllowedAbnormalities.Contains(abnormality.Id))
                     return;

@@ -192,7 +192,7 @@ public class MHRMonster : CommonMonster
         _address = address;
         GetMonsterType();
 
-        if (MonsterType == MonsterType.Qurio)
+        if (MonsterType == MonsterType.Mystery)
             _qurioThreshold = new("PART_QURIO_THRESHOLD");
 
         Log.Debug($"Initialized monster at address {address:X}");
@@ -265,7 +265,7 @@ public class MHRMonster : CommonMonster
     [ScannableMethod]
     private void GetMonsterCaptureThreshold()
     {
-        if (MonsterType == MonsterType.Qurio)
+        if (MonsterType == MonsterType.Mystery)
         {
             CaptureThreshold = 0.0f;
             return;

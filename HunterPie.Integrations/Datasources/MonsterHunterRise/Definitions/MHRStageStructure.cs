@@ -6,27 +6,34 @@ namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Definitions;
 public struct MHRStageStructure
 {
     /**
-     * 0 -> Main menu
-     * 3 -> Char selection
+     * 0 -> None(Main menu)
+     * 1 -> Title
+     * 2 -> CharMake
+     * 3 -> SaveLoad(Char selection)
      * 4 -> Village
-     * 5 -> Hunting Zones
-     * 6 -> Hunting Zones
-     * 7 -> Hunting Zone
-     * 8 ~ 11 -> No idea, but I'll consider them as hunting zones too
-     * 12 -> Loading screen
+     * 5 -> Quest
+     * 6 -> LastBoss
+     * 7 -> LastBoss_MR
+     * 8 -> Arena
+     * 9 -> Hyakuryu
+     * 10 -> Result
+     * 11 -> Demo
+     * 12 -> Move(Loading Screen)
      * **/
     public int Type;
-    public int VillageId; // Probably map section?
-    public int Unk1;
-    public int Section;
-    public int Unk2;
-    public int HuntingId;
+    public int VillageSpace;
+    public int VillageSpaceChecker;
+    public int QuestEnvSpace;
+    public int ReverbBaseSpace;
+    public int CurrentMapNo;
 
-    public bool IsMainMenu() => Type == 0;
+    public bool IsMainMenu() => Type is >= 0 and <= 1;
+    public bool IsMakingCharacter() => Type == 2;
     public bool IsSelectingCharacter() => Type == 3;
-    public bool IsVillage() => Type == 4;
-    public bool IsHuntingZone() => Type is >= 5 and <= 11;
+    public bool IsHuntingZone() => Type is >= 5 and <= 9;
+    public bool IsRampage() => Type == 9;
+    public bool IsDemo() => Type == 11;
     public bool IsLoadingScreen() => Type == 12;
 
-    public bool IsIrrelevantStage() => IsMainMenu() || IsSelectingCharacter() || IsLoadingScreen();
+    public bool IsIrrelevantStage() => IsMainMenu() || IsMakingCharacter() || IsSelectingCharacter() || IsDemo() || IsLoadingScreen();
 }

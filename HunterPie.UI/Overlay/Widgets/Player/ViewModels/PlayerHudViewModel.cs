@@ -6,7 +6,6 @@ namespace HunterPie.UI.Overlay.Widgets.Player.ViewModels;
 
 public class PlayerHudViewModel : ViewModel
 {
-
     private int _level;
     public int Level { get => _level; set => SetValue(ref _level, value); }
 

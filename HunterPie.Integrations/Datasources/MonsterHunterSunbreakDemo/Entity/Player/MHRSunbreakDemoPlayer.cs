@@ -4,9 +4,9 @@ using HunterPie.Core.Domain.Process;
 using HunterPie.Core.Extensions;
 using HunterPie.Core.Game.Data;
 using HunterPie.Core.Game.Data.Schemas;
-using HunterPie.Core.Game.Entity;
 using HunterPie.Core.Game.Entity.Party;
 using HunterPie.Core.Game.Entity.Player;
+using HunterPie.Core.Game.Entity.Player.Classes;
 using HunterPie.Core.Game.Entity.Player.Vitals;
 using HunterPie.Integrations.Datasources.Common.Entity.Player;
 using HunterPie.Integrations.Datasources.Common.Entity.Player.Vitals;
@@ -163,7 +163,6 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerConsumableAbnormalities()
     {
-
         long consumableBuffs = Process.Memory.Read(
             AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("CONS_ABNORMALITIES_OFFSETS")
@@ -204,7 +203,6 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerDebuffAbnormalities()
     {
-
         long debuffsPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("DEBUFF_ABNORMALITIES_OFFSETS")
@@ -246,7 +244,6 @@ public sealed class MHRSunbreakDemoPlayer : CommonPlayer
     [ScannableMethod]
     private void GetPlayerSongAbnormalities()
     {
-
         long songBuffsPtr = Process.Memory.Read(
             AddressMap.GetAbsolute("ABNORMALITIES_ADDRESS"),
             AddressMap.Get<int[]>("HH_ABNORMALITIES_OFFSETS")

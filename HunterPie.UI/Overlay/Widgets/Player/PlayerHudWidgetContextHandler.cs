@@ -1,7 +1,9 @@
 ﻿using HunterPie.Core.Client;
 using HunterPie.Core.Client.Configuration.Overlay;
 using HunterPie.Core.Game;
+using HunterPie.Core.Game.Entity.Game;
 using HunterPie.Core.Game.Entity.Player;
+using HunterPie.Core.Game.Entity.Player.Classes;
 using HunterPie.Core.Game.Enums;
 using HunterPie.Core.Game.Events;
 using HunterPie.Core.System;
@@ -15,7 +17,8 @@ public class PlayerHudWidgetContextHandler : IContextHandler
     private readonly PlayerHudView _view;
     private readonly PlayerHudViewModel _viewModel;
     private readonly IContext _context;
-    private IPlayer Player => _context.Game.Player;
+    private IGame Game => _context.Game;
+    private IPlayer Player => Game.Player;
 
     public PlayerHudWidgetContextHandler(IContext context)
     {
@@ -72,7 +75,7 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     private void OnPlayerAbnormalityEnd(object sender, IAbnormality e)
     {
-        AbnormalityCategory category = _context.Game.AbnormalityCategorizationService.Categorize(e);
+        AbnormalityCategory category = Game.AbnormalityCategorizationService.Categorize(e);
 
         if (category == AbnormalityCategory.None)
             return;
@@ -85,17 +88,17 @@ public class PlayerHudWidgetContextHandler : IContextHandler
 
     private void OnPlayerAbnormalityStart(object sender, IAbnormality e)
     {
-        AbnormalityCategory category = _context.Game.AbnormalityCategorizationService.Categorize(e);
+        AbnormalityCategory category = Game.AbnormalityCategorizationService.Categorize(e);
 
         if (category == AbnormalityCategory.None)
             return;
 
         _viewModel.ActiveAbnormalities.Add(category);
     }
+
     private void OnHeal(object sender, HealthChangeEventArgs e) => _viewModel.Heal = e.Heal;
 
     private void OnStageChange(object sender, EventArgs e) => _viewModel.InHuntingZone = Player.InHuntingZone;
-
     private void OnPlayerLevelChange(object sender, LevelChangeEventArgs e) => _viewModel.Level = Player.MasterRank;
 
     private void OnPlayerWeaponChange(object sender, WeaponChangeEventArgs e)
