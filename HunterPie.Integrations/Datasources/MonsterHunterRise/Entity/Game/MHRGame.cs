@@ -21,6 +21,7 @@ using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Enums;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Player;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Services;
 using HunterPie.Integrations.Datasources.MonsterHunterRise.Utils;
+using System.Net;
 using System.Text;
 
 namespace HunterPie.Integrations.Datasources.MonsterHunterRise.Entity.Game;
@@ -302,22 +303,52 @@ public sealed class MHRGame : CommonGame
         );
 
         uint monsterArraySize = Process.Memory.Read<uint>(address + 0x1C);
-        var monsterAddresses = Process.Memory.Read<long>(address + 0x20, Math.Min(MAXIMUM_MONSTER_ARRAY_SIZE, monsterArraySize))
-            .Where(mAddress => mAddress != 0)
-            .ToHashSet();
+        IEnumerable<long> monsterAddresses = Process.Memory.Read<long>(address + 0x20, Math.Min(MAXIMUM_MONSTER_ARRAY_SIZE, monsterArraySize))
+            .Where(mAddress => mAddress != 0);
+        var monsterHashSets = monsterAddresses.ToHashSet();
 
-        long[] toDespawn = _monsters.Keys.Where(address => !monsterAddresses.Contains(address))
+        long[] toDespawn = _monsters.Keys.Where(address => !monsterHashSets.Contains(address))
             .ToArray();
+
+        long[] toSpawn = monsterHashSets.Where(address => !_monsters.ContainsKey(address))
+            .ToArray();
+
+        foreach (long monsterAddress in monsterAddresses)
+        {
+            long think_param = Process.Memory.ReadPtr(
+                monsterAddress,
+                AddressMap.Get<int[]>("MONSTER_THINK_PARAM_OFFSETS")
+            );
+
+            if (!think_param.IsNullPointer())
+            {
+                byte die_category = Process.Memory.Read<byte>(think_param + 0xA8);
+
+                if (die_category >= 0 && die_category < 3 && _monsters.ContainsKey(monsterAddress))
+                    HandleMonsterDespawn(monsterAddress);
+            }
+        }
 
         foreach (long mAddress in toDespawn)
             HandleMonsterDespawn(mAddress);
 
-        long[] toSpawn = monsterAddresses.Where(address => !_monsters.ContainsKey(address))
-            .ToArray();
-
         foreach (long mAddress in toSpawn)
-            HandleMonsterSpawn(mAddress);
+        {
+            long think_param = Process.Memory.ReadPtr(
+                mAddress,
+                AddressMap.Get<int[]>("MONSTER_THINK_PARAM_OFFSETS")
+            );
 
+            if (!think_param.IsNullPointer())
+            {
+                byte die_category = Process.Memory.Read<byte>(think_param + 0xA8);
+
+                if (die_category >= 0 && die_category < 3)
+                    continue;
+
+                HandleMonsterSpawn(mAddress);
+            }
+        }
     }
 
     private void HandleMonsterSpawn(long monsterAddress)
