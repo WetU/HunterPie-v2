@@ -2,9 +2,8 @@
 
 public enum MonsterDieCategory : ushort
 {
-    Normal = 0,
-    HyakuryuEscape = 1,
+    Die = 0,
+    RampageEscape = 1,
     Capture = 2,
-    Max = 3,
-    Invalid = 65535
+    None = 65535
 }

@@ -302,24 +302,25 @@ public sealed class MHRGame : CommonGame
         );
 
         uint monsterArraySize = Process.Memory.Read<uint>(address + 0x1C);
-        var monsterHashSets = Process.Memory.Read<long>(address + 0x20, Math.Min(MAXIMUM_MONSTER_ARRAY_SIZE, monsterArraySize))
+        var monsterAddresses = Process.Memory.Read<long>(address + 0x20, Math.Min(MAXIMUM_MONSTER_ARRAY_SIZE, monsterArraySize))
             .Where(mAddress => mAddress != 0)
             .ToHashSet();
 
-        long[] toDespawn = _monsters.Keys.Where(address => !monsterHashSets.Contains(address)
-            || (MonsterDieCategory)Process.Memory.ReadPtr(address, AddressMap.Get<int[]>("MONSTER_DIE_CATEGORY_OFFSETS")) != MonsterDieCategory.Invalid)
-            .ToArray();
-
-        long[] toSpawn = monsterHashSets.Where(address => !_monsters.ContainsKey(address)
-            && (MonsterDieCategory)Process.Memory.ReadPtr(address, AddressMap.Get<int[]>("MONSTER_DIE_CATEGORY_OFFSETS")) == MonsterDieCategory.Invalid)
+        long[] toDespawn = _monsters.Keys.Where(address => !monsterAddresses.Contains(address)
+            || (MonsterDieCategory)Process.Memory.ReadPtr(address, AddressMap.Get<int[]>("MONSTER_DIE_CATEGORY_OFFSETS")) != MonsterDieCategory.None)
             .ToArray();
 
         foreach (long mAddress in toDespawn)
             HandleMonsterDespawn(mAddress);
 
+        long[] toSpawn = monsterAddresses.Where(address => !_monsters.ContainsKey(address)
+            && (MonsterDieCategory)Process.Memory.ReadPtr(address, AddressMap.Get<int[]>("MONSTER_DIE_CATEGORY_OFFSETS")) == MonsterDieCategory.None)
+            .ToArray();
+
         foreach (long mAddress in toSpawn)
             HandleMonsterSpawn(mAddress);
     }
+
 
     private void HandleMonsterSpawn(long monsterAddress)
     {
